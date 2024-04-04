@@ -1,34 +1,30 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
 import { Profile } from "@/types";
 
-const getUserProfileInfo= async (): Promise<Profile> => {
+const getUserProfileInfo = async (): Promise<Profile> => {
+  const supabase = createClient();
 
-  const supabase = createServerComponentClient({
-    cookies: cookies
-  });
+  const {
+    data: { user },
+    error: sessionError,
+  } = await supabase.auth.getUser();
 
-  const { data: sessionData , error: sessionError } = await supabase.auth.getSession()
-
-  if ( sessionError ) {
-    console.log(sessionError.message)
+  if (sessionError) {
+    console.log(sessionError.message);
   }
 
-  const { data , error } = await supabase
-  .from('profiles')
-  .select('*')
-  .eq( 'id' , sessionData.session?.user.id )
-  .single()
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user?.id)
+    .single();
 
-
-
-  if ( error ) {
-    console.log(error.message)
+  if (error) {
+    console.log(error.message);
   }
 
-  return data as Profile || []
-
+  return (data as Profile) || [];
 };
 
-export default getUserProfileInfo
+export default getUserProfileInfo;

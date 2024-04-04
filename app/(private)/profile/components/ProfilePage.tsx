@@ -3,7 +3,7 @@ import useLoadProfileImage from "@/hooks/useLoadProfileImage";
 import { Profile, Song } from "@/types";
 import React from "react";
 import Image from "next/image";
-import Header from "@/components/Header";
+import Header from "@/components/ui/Header";
 import PageContent from "@/app/dashboard/components/PageContent";
 import useGetSongsByUserId from "@/hooks/useGetSongsByUserId";
 import { FiMessageSquare } from "react-icons/fi";
@@ -14,58 +14,53 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 
 interface ProfileContentProps {
-  userProfileInfo: Profile
+  userProfileInfo: Profile;
 }
 
 const ProfilePageContent = (props: ProfileContentProps) => {
-
   const { userProfileInfo } = props;
 
-  const { user } = useUser()
-  
-  const supabaseClient = useSupabaseClient()
+  const { user } = useUser();
 
-  console.log(" You clicked on " + userProfileInfo?.id)
+  const supabaseClient = useSupabaseClient();
 
-  console.log( " This is who you are : " + user?.id)
+  console.log(" You clicked on " + userProfileInfo?.id);
 
-  const songs = useGetSongsByUserId(userProfileInfo?.id).songs
+  console.log(" This is who you are : " + user?.id);
 
-  const router = useRouter()
+  const songs = useGetSongsByUserId(userProfileInfo?.id).songs;
 
-  let safeSongs : Song[] = []
+  const router = useRouter();
+
+  let safeSongs: Song[] = [];
 
   if (songs) {
-    safeSongs = songs
+    safeSongs = songs;
   }
 
-  const messageModal = useMessageModal()
+  const messageModal = useMessageModal();
 
   const sendMessage = async () => {
+    messageModal.setOtherId(userProfileInfo.id);
 
-    messageModal.setOtherId(userProfileInfo.id)
-
-    messageModal.setOtherUserName(userProfileInfo.username)
-
+    messageModal.setOtherUserName(userProfileInfo.username);
 
     const { data: conversationData, error } = await supabaseClient
-    .from('conversations')
-    .select('conversation_id')
-    .contains('participant_ids', JSON.stringify([user?.id, userProfileInfo.id ]))
-    
-    if (conversationData && conversationData.length > 0 ) {
+      .from("conversations")
+      .select("conversation_id")
+      .contains(
+        "participant_ids",
+        JSON.stringify([user?.id, userProfileInfo.id])
+      );
 
+    if (conversationData && conversationData.length > 0) {
       const conversationId = conversationData[0].conversation_id;
 
       router.push(`/messages/${conversationId}`);
-      
     } else {
-
-      return messageModal.onOpen()
-
+      return messageModal.onOpen();
     }
-
-  }
+  };
 
   const displayClassName = `
   flex
@@ -87,11 +82,8 @@ const ProfilePageContent = (props: ProfileContentProps) => {
                     focus:outline-none
   `;
 
-
   return (
-    
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
-
       <Header>
         <div className="mt-20">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
@@ -106,7 +98,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
             </div>
             <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
               <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">
-                 {userProfileInfo.username}
+                {userProfileInfo.username}
               </h1>
               <p className="hidden md:block font-semibold text-sm">
                 {userProfileInfo.email}
@@ -118,32 +110,22 @@ const ProfilePageContent = (props: ProfileContentProps) => {
               <button onClick={sendMessage}>
                 <FiMessageSquare />
               </button>
-
-
-
             </div>
           </div>
         </div>
       </Header>
 
       <div className="mt-2 mb-7 px-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-white text-2xl font-semibold">
+            {userProfileInfo.username}'s Shop
+          </h1>
+        </div>
 
-          <div className="flex justify-between items-center">
-            
-              <h1 className="text-white text-2xl font-semibold"> 
-                {userProfileInfo.username}'s Shop
-              </h1>
-
-          </div>
-
-          <PageContent songs={safeSongs} heroImage={userProfileInfo.avatar_url} />
-
+        <PageContent songs={safeSongs} heroImage={userProfileInfo.avatar_url} />
       </div>
-       
-
     </div>
-  )
-
-}
+  );
+};
 
 export default ProfilePageContent;

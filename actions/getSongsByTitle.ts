@@ -1,30 +1,22 @@
-
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
 import { Song } from "@/types";
 import getSongs from "./getSongs";
 
-const getSongsByTitle = async ( title: string ): Promise<Song[]> => {
-
-  const supabase = createServerComponentClient({
-    cookies: cookies
-  });
+const getSongsByTitle = async (title: string): Promise<Song[]> => {
+  const supabase = createClient();
 
   if (!title) {
+    const allSongs = await getSongs();
 
-    const allSongs = await getSongs()
-
-    return allSongs
-
+    return allSongs;
   }
 
-
   const { data, error } = await supabase
-    .from('songs')
-    .select('*')
-    .ilike('title', `%${title}%`)
-    .order('created_at', { ascending: false })
+    .from("songs")
+    .select("*")
+    .ilike("title", `%${title}%`)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.log(error.message);

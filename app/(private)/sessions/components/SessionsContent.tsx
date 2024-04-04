@@ -1,14 +1,13 @@
-
-"use client"
+"use client";
 import JobItem from "@/components/JobItem";
 import { Job } from "@/types";
 import React from "react";
 import Image from "next/image";
 import Button from "@/components/Button";
-import Header from "@/components/Header";
+import Header from "@/components/ui/Header";
 import usePostSessionModal from "@/hooks/usePostSessionModal";
 import useProfileSetupModal from "@/hooks/useProfileSetupModal";
-import defaultImage from "../../../public/images/liked.jpg"
+import defaultImage from "../../../public/images/liked.jpg";
 
 interface SessionsContentProps {
   allOtherJobs: Job[];
@@ -16,30 +15,28 @@ interface SessionsContentProps {
 }
 
 const SessionsContent = (props: SessionsContentProps) => {
-
   const { allOtherJobs, allUserJobs } = props;
 
-  const postSessionModal = usePostSessionModal()
+  const postSessionModal = usePostSessionModal();
 
-  const profileSetupModal = useProfileSetupModal()
+  const profileSetupModal = useProfileSetupModal();
 
-
-//   if (allOtherJobs.length === 0) {
-//     return (
-//       <div
-//         className="
-//                 flex
-//                 flex-col
-//                 gap-y-2
-//                 w-full
-//                 px-6
-//                 text-neutral-400
-//             "
-//       >
-//         No liked songs.
-//       </div>
-//     );
-//   }
+  //   if (allOtherJobs.length === 0) {
+  //     return (
+  //       <div
+  //         className="
+  //                 flex
+  //                 flex-col
+  //                 gap-y-2
+  //                 w-full
+  //                 px-6
+  //                 text-neutral-400
+  //             "
+  //       >
+  //         No liked songs.
+  //       </div>
+  //     );
+  //   }
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
@@ -102,7 +99,6 @@ const SessionsContent = (props: SessionsContentProps) => {
       </div>
     </div>
   );
-
-}
+};
 
 export default SessionsContent;
