@@ -15,6 +15,7 @@ interface SessionsContentProps {
 }
 
 const SessionsContent = (props: SessionsContentProps) => {
+  
   const { allOtherJobs, allUserJobs } = props;
 
   const postSessionModal = usePostSessionModal();
@@ -47,7 +48,7 @@ const SessionsContent = (props: SessionsContentProps) => {
               <Image
                 priority
                 fill
-                src={defaultImage}
+                src='https://picsum.photos/200/300'
                 alt="playlist"
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

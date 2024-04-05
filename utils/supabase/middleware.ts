@@ -64,7 +64,10 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(`${origin}/dashboard`);
   }
 
-  if (!user && pathname !== "/") {
+  if (!user && 
+    ( pathname !== "/login" && pathname !== '/signup' && pathname !== '/' )   
+    // pathname !== '/'
+    ) {
     return NextResponse.redirect(`${origin}/`);
   }
 

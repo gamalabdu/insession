@@ -5,6 +5,9 @@ import { BiSearch } from "react-icons/bi";
 import Button from "../Button";
 import BackForward from "./BackForward";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/server";
+import toast from "react-hot-toast";
+import { redirect } from 'next/navigation'
 
 interface HeaderProps {
   children: React.ReactNode;
@@ -12,24 +15,22 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
+
   const { children, className } = props;
 
-  // const supabase = createClient();
-
-  // const handleLogout = async () => {
-  //   const { error } = await supabase.auth.signOut();
-  //   // player.reset();
-  //   router.refresh();
-
-  //   if (error) {
-  //     toast.error(error.message);
-  //   } else {
-  //     toast.success("Logged Out Sucessfully!");
-  //   }
-  // };
-
   async function signOut() {
-    "use server";
+    "use server"
+
+    const supabase = createClient()
+
+    const { error } = await supabase.auth.signOut()
+
+    if (error) {
+      toast.error(error.message)
+    }
+
+    redirect('/')
+       
   }
 
   return (
@@ -38,7 +39,7 @@ const Header = (props: HeaderProps) => {
         `
         h-fit 
         bg-gradient-to-b 
-        from-emerald-800 
+        from-orange-600 
         p-6
         `,
         className

@@ -11,8 +11,8 @@ import { createClient } from "@/utils/supabase/server";
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Spotify Clone",
-  description: "Listen to music!",
+  title: "InSession",
+  description: "connect with producers and artist!",
 };
 
 export const revalidate = 0;
@@ -22,10 +22,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
+
+  const {  data: { user }  } = await supabase.auth.getUser();
+
+
   return (
     <html lang="en">
       <body className={font.className}>
@@ -38,5 +42,6 @@ export default async function RootLayout({
         </UserProvider>
       </body>
     </html>
-  );
+  )
+
 }

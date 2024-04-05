@@ -41,7 +41,7 @@ const ExploreContent = (props: ExploreContentProps) => {
 
 
         {
-          allUsersNotCurrentUser.map( ( user ) => ( 
+          allUsers.map( ( user ) => ( 
 
           <ExploreItem key={user.id} currentUser={user} />
           

@@ -3,6 +3,7 @@ import { useSessionContext } from "@supabase/auth-helpers-react"
 import { useEffect, useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { useUser } from "./useUser"
+import { createClient } from "@/utils/supabase/client"
 
 const useGetSongsByUserId = (id?: string) => {
 
@@ -12,7 +13,7 @@ const useGetSongsByUserId = (id?: string) => {
 
     const { user } = useUser()
 
-    const { supabaseClient } = useSessionContext()
+    const supabase = createClient()
 
     useEffect(() => {
 
@@ -23,7 +24,7 @@ const useGetSongsByUserId = (id?: string) => {
         setIsLoading(true)
 
         const fetchUserSongs = async () => {
-            const { data , error  } = await supabaseClient
+            const { data , error  } = await supabase
             .from('songs')
             .select('*')
             .eq('user_id', id)
@@ -40,7 +41,7 @@ const useGetSongsByUserId = (id?: string) => {
 
         fetchUserSongs()
 
-    }, [id, supabaseClient])
+    }, [id, supabase])
 
 
     return useMemo(() => ({

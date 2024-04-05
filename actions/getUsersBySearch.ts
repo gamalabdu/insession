@@ -4,6 +4,7 @@ import { Profile } from "@/types";
 import getAllUsers from "./getAllUsers";
 
 const getUsersBySearch = async (search: string): Promise<Profile[]> => {
+  
   const supabase = createClient();
 
   if (!search) {

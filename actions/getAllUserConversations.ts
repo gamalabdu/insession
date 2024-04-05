@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Conversation, Profile } from "@/types";
 
 const getAllConversations = async (): Promise<Conversation[]> => {
+  
   const supabase = createClient();
 
   const { data: sessionData, error: sessionError } =

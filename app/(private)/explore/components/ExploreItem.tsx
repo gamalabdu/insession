@@ -4,10 +4,8 @@ import useGetSongsByUserId from '@/hooks/useGetSongsByUserId'
 import useLoadProfileImage from '@/hooks/useLoadProfileImage'
 import useOnPlay from '@/hooks/useOnPlay'
 import { Profile, Song } from '@/types'
-import { useRouter } from 'next/navigation'
-import router from 'next/router'
 import React, { useEffect } from 'react'
-import qs  from 'query-string'
+
 
 interface ExploreItemProps {
     currentUser: Profile

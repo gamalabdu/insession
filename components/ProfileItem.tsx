@@ -20,7 +20,6 @@ const ProfileItem = (props : ProfileItemProps) => {
 
     const router = useRouter()
 
-
     const handleClick = ( id: string) => {
 
         onClick(id)

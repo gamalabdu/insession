@@ -4,7 +4,6 @@ import React from "react";
 import ExploreContent from "./components/ExploreContent";
 import SearchInput from "@/components/SearchInput";
 import getUsersBySearch from "@/actions/getUsersBySearch";
-// import defaultImage from '../../public/images/liked.jpg'
 
 export const revalidate = 0;
 
@@ -15,9 +14,11 @@ interface ExploreProps {
 }
 
 const Explore = async (props: ExploreProps) => {
+
   const { searchParams } = props;
 
   const allUsers = await getUsersBySearch(searchParams.title);
+
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
@@ -51,19 +52,21 @@ const Explore = async (props: ExploreProps) => {
             Producers in NYC
           </h1>
 
-          {/* <SearchInput
+          <SearchInput
             baseRoute="/explore"
             placeholder="Search by producer name, city, state or genre"
-          /> */}
+          />
 
           {/* <div className='flex flex-row h-[50px] justify-center items-center align-middle bg-neutral-700 p-1 rounded-md'>
                 <input className="bg-transparent pl-2 focus:outline-none text-sm w-full" placeholder='city or state' />
                 <div className='border border-l-1 h-[20px] align-middle'/>
                 <input className='bg-transparent pl-4 focus:outline-none text-sm w-full' placeholder='genre' />
             </div> */}
+
         </div>
 
-        {/* <ExploreContent allUsers={allUsers} /> */}
+        <ExploreContent allUsers={allUsers} />
+        
       </div>
     </div>
   );
