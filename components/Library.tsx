@@ -63,6 +63,8 @@ const Library = ( props: LibaryProps) => {
             </div>
             <div className='flex flex-col gap-y-2 mt-4 px-3'>
                 {
+                    songs.length > 0 ? 
+
                     songs.map( (song) => (
                         <MediaItem
                             onClick={ (id: string) => onPlay(id) } 
@@ -70,6 +72,10 @@ const Library = ( props: LibaryProps) => {
                             song={song}
                         />
                     ))
+
+                    : 
+
+                    <div> No songs uploaded. Click the plus icon to upload a song! </div>
                 }
             </div>
         </div>
