@@ -1,173 +1,146 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import Modal from './Modal'
-import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useRouter } from 'next/navigation'
-import useProfileSetupModal from '@/hooks/useProfileSetupModal'
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
-import { useUser } from '@/hooks/useUser'
-import toast from 'react-hot-toast'
-import uniqid from 'uniqid'
-import Input from './Input'
-import Button from './Button'
-import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
+"use client";
+import { useState } from "react";
+import Modal from "./Modal";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import uniqid from "uniqid";
+import Input from "./Input";
+import Button from "./Button";
+import { createClient } from "@/utils/supabase/client";
+import { Profile } from "@/types";
 
-const ProfileSetupModal = () => {
+const ProfileSetupModal = ({
+  userProfileInfo,
+}: {
+  userProfileInfo: Profile;
+}) => {
+  const defaultOpen = !userProfileInfo.is_enabled;
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const supabaseClient = useSupabaseClient()
+  const { register, handleSubmit, reset } = useForm<FieldValues>({
+    defaultValues: {
+      "first-name": "",
+      "last-name": "",
+      avatar_url: "",
+    },
+  });
 
-    const [ isLoading, setIsLoading ] = useState(false)
-
-    const router = useRouter()
-
-    const { session } = useSessionContext()
-
-    const { user } = useUser()
-
-    const userProfile = useGetUserProfileInfo(user?.id).userProfileInfo
-
-    const profileSetupModal = useProfileSetupModal()
-
-    const { register, handleSubmit, reset } = useForm<FieldValues>({
-        defaultValues: {
-            username: '',
-            fullName: '',
-            email: '',
-            avatar_url: '',
-        }
-    })
-
-
-    const onChange = (open : boolean) => {
-
-        if ( !open ) {
-            reset()
-            profileSetupModal.onClose()
-        }
-
+  const onChange = (open: boolean) => {
+    if (!open) {
+      reset();
+      setIsOpen(false);
     }
+  };
 
+  const onSubmit: SubmitHandler<FieldValues> = async (values) => {
+    const supabase = createClient();
+    try {
+      setIsLoading(true);
 
-    useEffect(() => {
+      const profileImage = values.avatar_url?.[0];
 
-        if ( user ) {
-            router.refresh() 
-            profileSetupModal.onClose()
-        } 
+      if (!profileImage) {
+        toast.error("Missing fields");
+        return;
+      }
 
-        
-    }, [session , router, profileSetupModal.onClose ])
+      const uniqueID = uniqid();
 
-
-
-
-    const onSubmit : SubmitHandler<FieldValues> = async (values) => {
-
-
-        try {
-
-            setIsLoading(true)
-
-            const profileImage = values.avatar_url?.[0]
-
-            if ( !profileImage || !user ) {
-
-                    toast.error("Missing fields")
-                    return
+      // extracting the response from the client
+      const { data: profileImageData, error: profileImageError } =
+        await supabase.storage
+          .from("profile-images")
+          .upload(
+            `image-${userProfileInfo.username}-${uniqueID}`,
+            profileImage,
+            {
+              cacheControl: "3600",
+              upsert: false,
             }
+          );
 
-            const uniqueID = uniqid()
+      if (profileImageError) {
+        setIsLoading(false);
+        return toast.error(profileImageError.message);
+      }
 
-            // extracting the response from the client
-            const { data: profileImageData , error: profileImageError  } = await supabaseClient
-            .storage
-            .from('profile-images')
-            .upload(`image-${values.username}-${uniqueID}`, profileImage, {
-                cacheControl: '3600',
-                upsert: false
-            })
+      const { data: imageDataUrl } = supabase.storage
+        .from("profile-images")
+        .getPublicUrl(`image-${userProfileInfo.username}-${uniqueID}`);
 
-            if ( profileImageError ) {
-                setIsLoading(false)
-                return toast.error(profileImageError.message)
-            }
+      const { error: supabaseError } = await supabase
+        .from("profiles")
+        .update({
+          first_name: values["first-name"],
+          last_name: values["last-name"],
+          avatar_url: imageDataUrl.publicUrl,
+          is_enabled: true,
+        })
+        .eq("id", userProfileInfo.id);
 
+      if (supabaseError) {
+        setIsLoading(false);
+        return toast.error(supabaseError.message);
+      }
 
-            const { data : imageDataUrl } = supabaseClient.storage.from('profile-images').getPublicUrl(`image-${values.username}-${uniqueID}`)
-
-
-            const { error: supabaseError } = await supabaseClient
-            .from('profiles')
-            .insert({ 
-                id: user.id,
-                username: values.username,
-                email: values.email,
-                avatar_url: imageDataUrl.publicUrl,
-            })
-
-            if ( supabaseError ) {
-                setIsLoading(false)
-                return toast.error(supabaseError.message)
-            }
-
-
-            router.refresh()
-            setIsLoading(false)
-            toast.success("Profile updated!")
-            reset()
-            profileSetupModal.onClose()
-
-
-        } catch (error) {
-            toast.error("Something went wrong.")
-        } finally {
-            setIsLoading(false)
-        }
-
-
-    } 
-
-
-
-
-
+      setIsLoading(false);
+      toast.success("Profile updated!");
+      reset();
+      setIsOpen(false);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-
-
     <Modal
-    title="Welcome"
-    description='Lets get your profile setup'
-    isOpen={profileSetupModal.isOpen}
-    onChange={ onChange }
->
-    <form
-     className='flex flex-col gap-y-4'
-     onSubmit={ handleSubmit(onSubmit) }
+      title="Welcome"
+      description="Lets get your profile setup"
+      isOpen={isOpen}
+      onChange={onChange}
+      disableClose
     >
-        <Input id="username" disabled={isLoading} { ...register( 'username', { required: true } ) } placeholder="user name" />
+      <form className="flex flex-col gap-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          id="first-name"
+          disabled={isLoading}
+          {...register("first-name", { required: true })}
+          placeholder="First name"
+        />
 
-        <Input id="email" disabled={isLoading} { ...register( 'email', { required: true } ) } placeholder="Email" />
+        <Input
+          id="last-name"
+          disabled={isLoading}
+          {...register("last-name", { required: true })}
+          placeholder="Last name"
+        />
 
         <div>
-
-            <div className='pb-1'>
-                Select a profile image
-            </div>
-
-            <Input id="avatar_url" type='file' disabled={isLoading} { ...register( 'avatar_url', { required: true } ) } accept='image/*' />
-
+          <div className="pb-1">Select a profile image</div>
+          <Input
+            id="avatar_url"
+            type="file"
+            disabled={isLoading}
+            {...register("avatar_url", { required: true })}
+            accept="image/*"
+          />
         </div>
 
-        <div className='text-sm text-center text-neutral-400'> Don't worry you'll be able to add more once your profile is setup! </div>
+        <div className="text-sm text-center text-neutral-400">
+          Don&apos;t worry you&apos;ll be able to add more once your profile is
+          setup!{" "}
+        </div>
 
-        <Button disabled={isLoading} type='submit'>
-            Create
+        <Button disabled={isLoading} type="submit">
+          Create
         </Button>
+      </form>
+    </Modal>
+  );
+};
 
-    </form>
-</Modal>
-  )
-}
-
-export default ProfileSetupModal
+export default ProfileSetupModal;

@@ -1,6 +1,8 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const PUBLIC_ROUTES = ["/", "/login", "/signup", "/auth/confirm"];
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -60,14 +62,26 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname, origin } = request.nextUrl;
 
-  if (user && pathname === "/") {
-    return NextResponse.redirect(`${origin}/dashboard`);
+  if (user) {
+    if (PUBLIC_ROUTES.includes(pathname)) {
+      return NextResponse.redirect(`${origin}/dashboard`);
+    }
+    if (pathname === "/dashboard") return response;
+    const { data } = await supabase
+      .from("profiles")
+      .select("is_enabled")
+      .eq("id", user.id)
+      .single();
+    if (!data?.is_enabled) {
+      return NextResponse.redirect(`${origin}/dashboard`);
+    }
   }
 
-  if (!user && 
-    ( pathname !== "/login" && pathname !== '/signup' && pathname !== '/' )   
+  if (
+    !user &&
+    !PUBLIC_ROUTES.includes(pathname)
     // pathname !== '/'
-    ) {
+  ) {
     return NextResponse.redirect(`${origin}/`);
   }
 

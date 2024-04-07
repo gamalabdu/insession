@@ -4,6 +4,7 @@ import ListItem from "@/components/ListItem";
 import getSongs from "@/actions/getSongs";
 import PageContent from "./components/PageContent";
 import getUserProfileInfo from "@/actions/getUserProfileInfo";
+import ProfileSetupModal from "@/components/ProfileSetupModal";
 
 export const revalidate = 0;
 
@@ -43,6 +44,7 @@ export default async function Dashboard() {
           heroImage={userProfileInfo?.avatar_url || ""}
         />
       </div>
+      <ProfileSetupModal userProfileInfo={userProfileInfo} />
     </div>
   );
 }

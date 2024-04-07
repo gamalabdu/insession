@@ -7,7 +7,8 @@ import BackForward from "./BackForward";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import toast from "react-hot-toast";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 interface HeaderProps {
   children: React.ReactNode;
@@ -15,22 +16,21 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
-
   const { children, className } = props;
 
   async function signOut() {
-    "use server"
+    "use server";
 
-    const supabase = createClient()
+    const supabase = createClient();
 
-    const { error } = await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut();
 
     if (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
 
-    redirect('/')
-       
+    revalidatePath("/", "layout");
+    redirect("/");
   }
 
   return (

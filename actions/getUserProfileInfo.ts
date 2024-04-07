@@ -1,9 +1,10 @@
+"use server";
+
 import { createClient } from "@/utils/supabase/server";
 
 import { Profile } from "@/types";
 
 const getUserProfileInfo = async (): Promise<Profile> => {
-  
   const supabase = createClient();
 
   const {
