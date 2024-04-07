@@ -8,6 +8,7 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 
 import { useUser } from "@/hooks/useUser";
 import useAuthModal from "@/hooks/useAuthModal";
+import { createClient } from "@/utils/supabase/client";
 
 interface LikeButtonProps {
   songId: string;
@@ -20,24 +21,24 @@ const LikeButton = (props: LikeButtonProps) => {
 
   const router = useRouter();
 
-  const { supabaseClient } = useSessionContext();
-  const authModal = useAuthModal();
+  // const { supabaseClient } = useSessionContext();
+
+  const supabaseClient = createClient()
+
   const { user } = useUser();
+
+  console.log(user)
 
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
   useEffect(() => {
-
-    if (!user?.id) {
-      return;
-    }
   
     const fetchData = async () => {
 
       const { data, error } = await supabaseClient
     .from('liked_songs')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', user?.id)
     .eq('song_id', songId);
 
   if (error) {
@@ -58,17 +59,12 @@ const LikeButton = (props: LikeButtonProps) => {
 
   const handleLike = async () => {
 
-    if (!user) {
-      return authModal.onOpen();
-    }
-
-
     if (isLiked) {
 
       const { error } = await supabaseClient
         .from('liked_songs')
         .delete()
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id)
         .eq('song_id', songId)
 
       if (error) {
@@ -81,7 +77,7 @@ const LikeButton = (props: LikeButtonProps) => {
         .from('liked_songs')
         .insert({
           song_id: songId,
-          user_id: user.id
+          user_id: user?.id
         })
 
       if (error) {
