@@ -13,7 +13,7 @@ export interface UserDetails {
 export interface Song {
   id: string;
   user_id: string;
-  author: string;
+  username: string;
   title: string;
   song_path: string;
   image_path: string;

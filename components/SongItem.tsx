@@ -39,7 +39,7 @@ const SongItem = (props : SongItemProps) => {
             </p>
 
             <p className='text-neutral-400 text-sm pb-4 w-full truncate'>
-                By {song?.author}
+                By {song?.username}
             </p>
 
         </div>
