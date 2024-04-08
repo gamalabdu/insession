@@ -1,33 +1,33 @@
-import React from 'react'
+import React from "react";
 
-import * as Dialog from '@radix-ui/react-dialog'
-import { IoMdClose } from 'react-icons/io'
+import * as Dialog from "@radix-ui/react-dialog";
+import { IoMdClose } from "react-icons/io";
 
 interface ModalProps {
-    isOpen: boolean,
-    onChange: ( open: boolean ) => void,
-    title: string,
-    description: string,
-    children: React.ReactNode
+  isOpen: boolean;
+  onChange: (open: boolean) => void;
+  title: string;
+  description: string;
+  disableClose?: boolean;
+  children: React.ReactNode;
 }
 
-const Modal = (props : ModalProps) => {
-
-    const { isOpen, onChange, title, description, children } = props
-
+const Modal = (props: ModalProps) => {
+  const { isOpen, disableClose, onChange, title, description, children } =
+    props;
 
   return (
-    <Dialog.Root
-    open={isOpen}
-    defaultOpen={isOpen}
-    onOpenChange={onChange}
-    >
-     <Dialog.Portal>
+    <Dialog.Root open={isOpen} defaultOpen={isOpen} onOpenChange={onChange}>
+      <Dialog.Portal>
         <Dialog.Overlay
-        className="bg-neutral-900/90 backdrop-blur-sm fixed inset-0"
+          //   asChild={disableClose}
+          className="bg-neutral-900/90 backdrop-blur-sm fixed inset-0 z-50"
         />
         <Dialog.Content
-        className='
+          onInteractOutside={(e) => {
+            e.preventDefault();
+          }}
+          className="
         fixed 
         drop-shadow-md 
         border 
@@ -47,24 +47,20 @@ const Modal = (props : ModalProps) => {
         bg-neutral-800
         p-[25px]
         focus:outline-none
-        '
+        z-50
+        "
         >
-            <Dialog.Title
-            className='text-xl text-center font-bold mb-4'
-            >
-                {title}
-            </Dialog.Title>
-            <Dialog.Description
-            className='mb-5 text-sm leading-normal text-center'
-            >
-                {description}
-            </Dialog.Description>
-            <div>
-                {children}
-            </div>
+          <Dialog.Title className="text-xl text-center font-bold mb-4">
+            {title}
+          </Dialog.Title>
+          <Dialog.Description className="mb-5 text-sm leading-normal text-center">
+            {description}
+          </Dialog.Description>
+          <div>{children}</div>
+          {!disableClose && (
             <Dialog.Close asChild>
-                <button
-                className='
+              <button
+                className="
                 text-neutral-400 
                 hover:text-white 
                 absolute
@@ -78,15 +74,16 @@ const Modal = (props : ModalProps) => {
                 justify-center
                 rounded-full
                 focus:outline-none
-                '
-                >
-                    <IoMdClose/>
-                </button>
+                "
+              >
+                <IoMdClose />
+              </button>
             </Dialog.Close>
+          )}
         </Dialog.Content>
-     </Dialog.Portal>
+      </Dialog.Portal>
     </Dialog.Root>
-  )
-}
+  );
+};
 
-export default Modal
+export default Modal;

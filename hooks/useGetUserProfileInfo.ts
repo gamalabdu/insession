@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { Profile } from "@/types";
+import { createClient } from "@/utils/supabase/client";
 
 const useGetUserProfileInfo = (id: string | undefined) => {
+
     const [isLoading, setIsLoading] = useState(false);
     const [userProfileInfo, setUserProfileInfo] = useState<Profile | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const { supabaseClient } = useSessionContext();
+    const supabase = createClient()
 
     useEffect(() => {
         if (!id) {
@@ -20,7 +22,7 @@ const useGetUserProfileInfo = (id: string | undefined) => {
         const fetchUserInfo = async () => {
             setIsLoading(true);
             setError(null);
-            const { data, error: fetchError } = await supabaseClient
+            const { data, error: fetchError } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', id)
@@ -38,7 +40,7 @@ const useGetUserProfileInfo = (id: string | undefined) => {
         };
 
         fetchUserInfo();
-    }, [id, supabaseClient]);
+    }, [id, supabase]);
 
     return { isLoading, userProfileInfo, error };
 };

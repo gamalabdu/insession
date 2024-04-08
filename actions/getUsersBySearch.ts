@@ -1,32 +1,23 @@
-
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
 import { Profile } from "@/types";
 import getAllUsers from "./getAllUsers";
 
-
-const getUsersBySearch = async ( search: string ): Promise<Profile[]> => {
-
-  const supabase = createServerComponentClient({
-    cookies: cookies
-  });
-
+const getUsersBySearch = async (search: string): Promise<Profile[]> => {
+  
+  const supabase = createClient();
 
   if (!search) {
+    const allUsers = await getAllUsers();
 
-    const allUsers = await getAllUsers()
-
-    return allUsers
-
+    return allUsers;
   }
 
-
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
+    .from("profiles")
+    .select("*")
     .or(`username.ilike.%${search}%`)
-    .order('created_at', { ascending: false })
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.log(error.message);

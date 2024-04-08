@@ -1,42 +1,32 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
 import { Conversation, Profile } from "@/types";
 
-const getConversationsByConversationId = async (id: string): Promise<Conversation[]> => {
+const getConversationsByConversationId = async (
+  id: string
+): Promise<Conversation[]> => {
+  const supabase = createClient();
 
-  const supabase = createServerComponentClient({
-    cookies: cookies
-  });
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
 
-  const { data: sessionData , error: sessionError } = await supabase.auth.getSession()
-
-  if ( sessionError ) {
-    console.log(sessionError.message)
-    return []
+  if (sessionError) {
+    console.log(sessionError.message);
+    return [];
   }
 
-  const { data , error } = await supabase
-  .from('conversations')
-  .select('*')
-  .eq('conversation_id', id)
-  .order('created_at', { ascending: false })
-  .single()
+  const { data, error } = await supabase
+    .from("conversations")
+    .select("*")
+    .eq("conversation_id", id)
+    .order("created_at", { ascending: false })
+    .single();
 
-
-  if ( error ) {
-    console.log(error.message)
+  if (error) {
+    console.log(error.message);
   }
 
-
-  return data as any || []
-
+  return (data as any) || [];
 };
 
-export default getConversationsByConversationId
-
-
-
-
-
-
+export default getConversationsByConversationId;

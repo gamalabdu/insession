@@ -1,24 +1,21 @@
 import type { Metadata } from "next";
 import { Figtree } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
-import SupabaseProvider from "@/providers/SupabaseProvider";
 import UserProvider from "@/providers/UserProvider";
 import ModalProvider from "@/providers/ModalProvider";
 import ToasterProvider from "@/providers/ToasterProvider";
-import getSongsByUserId from "@/actions/getSongsByUserId";
 import Player from "@/components/Player";
-import Main from "./main/page";
-
+import Header from "@/components/ui/Header";
+import { createClient } from "@/utils/supabase/server";
 
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Spotify Clone",
-  description: "Listen to music!",
+  title: "InSession",
+  description: "connect with producers and artist!",
 };
 
-export const revalidate = 0
+export const revalidate = 0;
 
 export default async function RootLayout({
   children,
@@ -26,36 +23,26 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const userSongs = await getSongsByUserId()
+
+  const supabase = createClient();
+
+
+  const {  data: { user }  } = await supabase.auth.getUser();
+
 
 
   return (
     <html lang="en">
       <body className={font.className}>
         <ToasterProvider />
-        <SupabaseProvider>
-          <UserProvider>
+        <UserProvider>
           <ModalProvider />
-
-            {/* <Sidebar songs={userSongs}>
-              {children}
-            </Sidebar> */}
-
-              <Main children={children} userSongs={userSongs} />
-
-           <Player />
-          </UserProvider>
-        </SupabaseProvider>
+          {/* <Header user={user}>Home!</Header> */}
+          {children}
+          <Player />
+        </UserProvider>
       </body>
     </html>
-  );
+  )
+
 }
-
-
-
-
-
-
-
-
-
