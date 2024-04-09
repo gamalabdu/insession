@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 import { Profile } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 
@@ -13,11 +12,6 @@ const useGetUserProfileInfo = (id: string | undefined) => {
     const supabase = createClient()
 
     useEffect(() => {
-        if (!id) {
-            setUserProfileInfo(null);
-            setError('No ID provided');
-            return;
-        }
 
         const fetchUserInfo = async () => {
             setIsLoading(true);

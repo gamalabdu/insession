@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useState } from 'react'
 import Modal from './Modal'
 import useUploadModal from '@/hooks/useUploadModal'
@@ -12,22 +11,24 @@ import { unique } from 'next/dist/build/utils'
 import uniqid from 'uniqid'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/utils/supabase/client'
 
 const UploadModal = () => {
 
     const uploadModal = useUploadModal()
 
-    const supabaseClient = useSupabaseClient()
+    const supabase = createClient()
 
     const router = useRouter()
 
     const [ isLoading, setIsLoading ] = useState(false)
 
-    const { user } = useUser()
+    const { user, userDetails } = useUser()
+
 
     const { register, handleSubmit, reset } = useForm<FieldValues>({
+
         defaultValues: {
-            author: '',
             title: '',
             song: null,
             image: null,
@@ -62,7 +63,7 @@ const UploadModal = () => {
             const uniqueID = uniqid()
 
             // extracting the response from the client
-            const { data: songData , error: songError  } = await supabaseClient
+            const { data: songData , error: songError  } = await supabase
             .storage
             .from('songs')
             .upload(`song-${values.title}-${uniqueID}`, songFile, {
@@ -78,7 +79,7 @@ const UploadModal = () => {
 
 
              // extracting the response from the client
-             const { data: imageData , error: imageError  } = await supabaseClient
+             const { data: imageData , error: imageError  } = await supabase
              .storage
              .from('images')
              .upload(`image-${values.title}-${uniqueID}`, imageFile, {
@@ -93,12 +94,12 @@ const UploadModal = () => {
             }
 
 
-            const { error: supabaseError } = await supabaseClient
+            const { error: supabaseError } = await supabase
             .from('songs')
             .insert({ 
                 user_id: user.id,
                 title: values.title,
-                author: values.author,
+                username: userDetails?.username,
                 image_path: imageData.path,
                 song_path: songData.path
             })
@@ -117,6 +118,7 @@ const UploadModal = () => {
 
 
         } catch (error) {
+            console.log(error)
             toast.error("Something went wrong.")
         } finally {
             setIsLoading(false)
@@ -138,8 +140,6 @@ const UploadModal = () => {
          onSubmit={ handleSubmit(onSubmit) }
         >
             <Input id="title" disabled={isLoading} { ...register( 'title', { required: true } ) } placeholder="Song title" />
-
-            <Input id="author" disabled={isLoading} { ...register( 'author', { required: true } ) } placeholder="Song author" />
 
             <div>
 

@@ -35,7 +35,7 @@ const Messages = async () => {
 
       {/* { How can we leave the search input in a server component?} */}
       
-      {/* <Header className="from-bg-neutral-900">
+      <Header className="from-bg-neutral-900">
         <div className="mb-2 flex flex-col gap-y-6">
           <h1 className="text-white text-3xl font-semibold"> Messages </h1>
           <SearchInput
@@ -43,7 +43,7 @@ const Messages = async () => {
             placeholder="Look up your messages..."
           />
         </div>
-      </Header> */}
+      </Header>
 
       <MessagesContent conversations={userConversations} />
     </div>

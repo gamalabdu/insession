@@ -20,7 +20,7 @@ const Sessions = async () => {
         <SessionsContent 
            allUserJobs={allUserJobs} 
            allOtherJobs={allOtherJobs} 
-           /> 
+        /> 
 
   )
 

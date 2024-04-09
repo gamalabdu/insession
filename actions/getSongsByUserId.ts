@@ -3,20 +3,18 @@ import { createClient } from "@/utils/supabase/server";
 import { Song } from "@/types";
 
 const getSongsByUserId = async (): Promise<Song[]> => {
+
   const supabase = createClient();
 
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (sessionError) {
-    console.log(sessionError.message);
-    return [];
-  }
+  const {
+    data: { user },
+    error: sessionError,
+  } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
     .from("songs")
     .select("*")
-    .eq("user_id", sessionData.session?.user.id)
+    .eq("user_id", user?.id)
     .order("created_at", { ascending: false });
 
   if (error) {

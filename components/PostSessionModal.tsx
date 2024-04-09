@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Modal from "./Modal";
 import {
   useSessionContext,
-  useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -14,17 +13,15 @@ import Button from "./Button";
 import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
 import usePostSessionModal from "@/hooks/usePostSessionModal";
 import uniqid from 'uniqid'
+import { createClient } from "@/utils/supabase/client";
 
 const PostSessionModal = () => {
-
     
-  const supabaseClient = useSupabaseClient();
+  const supabase = createClient();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-
-  const { session } = useSessionContext();
 
   const { user } = useUser();
 
@@ -50,12 +47,6 @@ const PostSessionModal = () => {
     }
   };
 
-  useEffect(() => {
-    if (session) {
-      router.refresh();
-      postSessionModal.onClose();
-    }
-  }, [session, router, postSessionModal.onClose]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
 
@@ -65,7 +56,7 @@ const PostSessionModal = () => {
       setIsLoading(true);
 
 
-      const { error: supabaseError } = await supabaseClient
+      const { error: supabaseError } = await supabase
         .from("jobs")
         .insert({
             user_id: user?.id,
@@ -145,15 +136,11 @@ const PostSessionModal = () => {
           placeholder="300"
         />
 
-        {/* <div className="text-sm text-center text-neutral-400">
-          {" "}
-          Don't worry you'll be able to add more once your profile is setup!{" "}
-        </div> */}
-
         <Button disabled={isLoading} type="submit">
           Post Session
         </Button>
       </form>
+
     </Modal>
   );
 };

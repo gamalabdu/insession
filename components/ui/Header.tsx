@@ -1,3 +1,4 @@
+
 import { twMerge } from "tailwind-merge";
 import { FaUserAlt } from "react-icons/fa";
 import { HiHome } from "react-icons/hi";
@@ -9,6 +10,7 @@ import { createClient } from "@/utils/supabase/server";
 import toast from "react-hot-toast";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { signOut } from "@/actions/signOut";
 
 interface HeaderProps {
   children: React.ReactNode;
@@ -16,22 +18,8 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps) => {
+
   const { children, className } = props;
-
-  async function signOut() {
-    "use server";
-
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      toast.error(error.message);
-    }
-
-    revalidatePath("/", "layout");
-    redirect("/");
-  }
 
   return (
     <div

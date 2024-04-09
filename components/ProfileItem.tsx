@@ -6,6 +6,7 @@ import React from 'react'
 import PlayButton from './PlayButton'
 import qs  from 'query-string'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 interface ProfileItemProps {
     profile: Profile
@@ -20,9 +21,7 @@ const ProfileItem = (props : ProfileItemProps) => {
 
     const router = useRouter()
 
-    const handleClick = ( id: string) => {
-
-        onClick(id)
+    const handleClick = () => {
 
         const query = {
             id: profile.id
@@ -34,12 +33,19 @@ const ProfileItem = (props : ProfileItemProps) => {
         }) 
 
         router.push(url)
+
+    }
+
+    const handlePlayClick = ( e: React.MouseEvent<HTMLDivElement>, id: string ) => {
+
+        e.stopPropagation()
+        onClick(id)
         
     }
 
   return (
     <div
-    onClick={ () => handleClick(song.id) }
+    onClick={ () => handleClick()  }
     className='relative group flex flex-col items-center justify-center rounded-md overflow-hidden gap-x-4 bg-neutral-400/5 cursor-pointer hover:bg-neutral-400/10 transition p-3' 
     >
         <div className='relative aspect-square w-full h-full rounded-md overflow-hidden'>
@@ -69,9 +75,14 @@ const ProfileItem = (props : ProfileItemProps) => {
 
         </div>
 
-        <div className='absolute bottom-24 right-5'>
+       {
+            song &&
+            <div className='absolute bottom-24 right-5' onClick={(e) => handlePlayClick(e, song.id)} >
             <PlayButton/>
-        </div>
+            </div>
+
+       }
+
 
     </div>
   )

@@ -1,6 +1,5 @@
 import Header from "@/components/ui/Header";
 import ListItem from "@/components/ListItem";
-// import drake from "../../public/images/liked.jpg";
 import getSongs from "@/actions/getSongs";
 import PageContent from "./components/PageContent";
 import getUserProfileInfo from "@/actions/getUserProfileInfo";
@@ -15,9 +14,10 @@ export default async function Dashboard() {
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
+
       <Header>
         <div className="mb-2">
-          <h1 className="text-white text-3xl font-semibold">Welcome back</h1>
+          <h1 className="text-white text-3xl font-semibold"> Welcome back {userProfileInfo.first_name}, </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 mt-4">
             <ListItem
               image={{
@@ -44,7 +44,9 @@ export default async function Dashboard() {
           heroImage={userProfileInfo?.avatar_url || ""}
         />
       </div>
+
       <ProfileSetupModal userProfileInfo={userProfileInfo} />
+
     </div>
   );
 }

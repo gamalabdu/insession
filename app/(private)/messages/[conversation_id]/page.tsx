@@ -1,9 +1,8 @@
 "use client";
 import useGetMessagesByConversationId from "@/hooks/useGetMessagesByConversationId";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChatBubble } from "../components/ChatBubble";
 import Header from "@/components/ui/Header";
-import { useConversationStore } from "@/hooks/useConversationData";
 import Image from "next/image";
 import { FiFilePlus } from "react-icons/fi";
 import Input from "@/components/Input";
@@ -12,9 +11,6 @@ import { useUser } from "@/hooks/useUser";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { GrSend } from "react-icons/gr";
-import { Message } from "@/types";
-import getAllConversations from "@/actions/getAllUserConversations";
-import getConversationsByConversationId from "@/actions/getConversationByConversationId";
 import useGetConversationByConversationId from "@/hooks/useGetConversationByConversationId";
 import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
 

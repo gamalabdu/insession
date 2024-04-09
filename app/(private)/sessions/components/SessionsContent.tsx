@@ -20,25 +20,6 @@ const SessionsContent = (props: SessionsContentProps) => {
 
   const postSessionModal = usePostSessionModal();
 
-  const profileSetupModal = useProfileSetupModal();
-
-  //   if (allOtherJobs.length === 0) {
-  //     return (
-  //       <div
-  //         className="
-  //                 flex
-  //                 flex-col
-  //                 gap-y-2
-  //                 w-full
-  //                 px-6
-  //                 text-neutral-400
-  //             "
-  //       >
-  //         No liked songs.
-  //       </div>
-  //     );
-  //   }
-
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
       <Header>
@@ -76,13 +57,27 @@ const SessionsContent = (props: SessionsContentProps) => {
           </h1>
         </div>
 
-        {allUserJobs?.map((job) => (
+        {
+
+        allUserJobs?.length === 0 ?
+        
+        <div className="flex items-center gap-x-4 w-full">
+            <div className="flex-1">
+              You havent't posted any jobs yet.
+            </div>
+          </div>
+
+        :
+        
+        allUserJobs?.map((job) => (
           <div className="flex items-center gap-x-4 w-full" key={job.job_id}>
             <div className="flex-1">
               <JobItem job={job} />
             </div>
           </div>
-        ))}
+        ))
+        
+        }
 
         <div className="flex justify-between items-center">
           <h1 className="text-white text-2xl font-semibold">
@@ -90,13 +85,28 @@ const SessionsContent = (props: SessionsContentProps) => {
           </h1>
         </div>
 
-        {allOtherJobs?.map((job) => (
+        {
+
+allOtherJobs?.length === 0 ?
+        
+<div className="flex items-center gap-x-4 w-full">
+    <div className="flex-1">
+      There are no posted jobs.
+    </div>
+  </div>
+  
+  :
+
+        allOtherJobs?.map((job) => (
           <div className="flex items-center gap-x-4 w-full" key={job.job_id}>
             <div className="flex-1">
               <JobItem job={job} />
             </div>
           </div>
-        ))}
+        ))
+        
+        }
+
       </div>
     </div>
   );

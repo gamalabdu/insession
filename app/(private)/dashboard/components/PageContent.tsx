@@ -1,14 +1,9 @@
 "use client"
 import SongItem from '@/components/SongItem'
-import useEditProfileModal from '@/hooks/useEditProfileModal'
-import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
 import useOnPlay from '@/hooks/useOnPlay'
-import useProfileSetupModal from '@/hooks/useProfileSetupModal'
-import { useUser } from '@/hooks/useUser'
 import { Song } from '@/types'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image'
-import likedImaged from '../../../public/images/liked.jpg'
 
 interface PageContentProps {
     songs: Song[]

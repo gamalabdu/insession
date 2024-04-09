@@ -1,5 +1,4 @@
-import { Profile, Song } from "@/types"
-import { useSessionContext } from "@supabase/auth-helpers-react"
+import { Song } from "@/types"
 import { useEffect, useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { useUser } from "./useUser"
@@ -9,9 +8,7 @@ const useGetSongsByUserId = (id?: string) => {
 
     const [ isLoading, setIsLoading ] = useState(false)
 
-    const [ songs , setSongs ] = useState<Song[] | null>(null)
-
-    const { user } = useUser()
+    const [songs, setSongs] = useState<Song[]>([]);
 
     const supabase = createClient()
 
@@ -32,6 +29,10 @@ const useGetSongsByUserId = (id?: string) => {
             if ( error ) {
                 setIsLoading(false)
                 return toast.error(error.message)
+            }
+
+            if (data === null) {
+                setSongs([])
             }
 
             setSongs(data as Song[])

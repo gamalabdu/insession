@@ -27,8 +27,6 @@ const LikeButton = (props: LikeButtonProps) => {
 
   const { user } = useUser();
 
-  console.log(user)
-
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
   useEffect(() => {

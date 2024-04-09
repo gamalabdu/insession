@@ -1,19 +1,12 @@
 "use client"
 import React from 'react'
 import Image from 'next/image'
-import useLoadProfileImage from '@/hooks/useLoadProfileImage'
 import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
 import useGetMessagesByConversationId from '@/hooks/useGetMessagesByConversationId'
-import qs  from 'query-string'
 import { useRouter } from 'next/navigation'
-import { useConversationStore } from '@/hooks/useConversationData'
-import { useUser } from '@/hooks/useUser'
 import { Conversation } from '@/types'
 
 interface ConversationItemProps {
-    // participant_ids: string[]
-    // participants_usernames: string[]
-    // conversation_id: string
     conversation: Conversation
 }
 

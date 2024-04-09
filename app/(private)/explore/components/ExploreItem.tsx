@@ -19,20 +19,15 @@ const ExploreItem = (props: ExploreItemProps) => {
 
     const { songs }  = useGetSongsByUserId(currentUser.id)
 
-    let userSongs : Song[] = []
 
-    if(songs !== null) {
-        userSongs = songs
-    }
-
-    const onPlay = useOnPlay(userSongs)
+    const onPlay = useOnPlay(songs)
 
 
   return (
      <ProfileItem 
-        song={userSongs[0]} 
+        song={songs[0]} 
         onClick={(id: string) => onPlay(id) } 
-        key={userSongs[0]?.id } 
+        key={songs[0]?.id } 
         profile={currentUser} 
         profileImageUrl={imageUrl || ''} 
      />

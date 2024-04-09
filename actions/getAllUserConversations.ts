@@ -6,18 +6,15 @@ const getAllConversations = async (): Promise<Conversation[]> => {
   
   const supabase = createClient();
 
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (sessionError) {
-    console.log(sessionError.message);
-    return [];
-  }
+  const {
+    data: { user },
+    error: sessionError,
+  } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
     .from("conversations")
     .select("*")
-    .contains("participant_ids", JSON.stringify([sessionData.session?.user.id]))
+    .contains("participant_ids", JSON.stringify([user?.id]))
     .order("created_at", { ascending: false });
 
   if (error) {

@@ -35,6 +35,19 @@ export const MyUserContextProvider = ({
   const [user, setUser] = useState<User | null>(null);
   const [userDetails, setUserDetails] = useState<Profile | null>(null);
 
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+      setIsLoading((prev) => ({ ...prev, session: false }));
+    });
+    supabase.auth.onAuthStateChange((_, session) => {
+      session && setUser(session.user);
+    });
+  }, []);
+
+
   useEffect(() => {
     if (!user) return setIsLoading((prev) => ({ ...prev, profile: false }));
     const supabase = createClient();
@@ -49,17 +62,6 @@ export const MyUserContextProvider = ({
       setIsLoading((prev) => ({ ...prev, profile: false }));
     })();
   }, [user]);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-      setIsLoading((prev) => ({ ...prev, session: false }));
-    });
-    supabase.auth.onAuthStateChange((_, session) => {
-      session && setUser(session.user);
-    });
-  }, []);
 
   const value = {
     user,

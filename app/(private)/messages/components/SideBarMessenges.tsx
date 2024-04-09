@@ -1,16 +1,9 @@
 "use client"
-import useAuthModal from '@/hooks/useAuthModal'
 import useUploadModal from '@/hooks/useUploadModal'
-import { useUser } from '@/hooks/useUser'
 import { Conversation } from '@/types'
 import React from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { TbPlaylist } from 'react-icons/tb'
-import useOnPlay from '@/hooks/useOnPlay'
-import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
-import useProfileSetupModal from '@/hooks/useProfileSetupModal'
-import usePostSessionModal from '@/hooks/usePostSessionModal'
-import MediaItem from '@/components/MediaItem'
 import ConversationItem from './ConversationItem'
 
 interface SidebarMessengesProps {
@@ -21,25 +14,10 @@ const SideBarMessenges = ( props: SidebarMessengesProps) => {
 
     const { conversations } = props 
 
-    const authModal = useAuthModal()
     const uploadModal = useUploadModal()
-    const profileSetupModal = useProfileSetupModal()
-
-    const { user } = useUser()
-
-    const { userProfileInfo } = useGetUserProfileInfo(user?.id)
 
 
     const onClick = () => {
-
-        
-        if ( !user ) {
-            return authModal.onOpen()
-        }
-
-        if( user && !userProfileInfo ) {
-            return profileSetupModal.onOpen()
-        }
 
         return uploadModal.onOpen()
 
