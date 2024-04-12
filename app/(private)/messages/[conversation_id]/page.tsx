@@ -1,4 +1,3 @@
-
 import Header from "@/components/ui/Header";
 import Image from "next/image";
 import getMessagesByConversationId from "@/actions/getMessagesByConversationId";
@@ -14,28 +13,26 @@ interface ConversationPageProps {
 }
 
 const ConversationPage = async (props: ConversationPageProps) => {
-
   const { params } = props;
 
-  const messages = await getMessagesByConversationId(params.conversation_id)
+  const conversations = await getAllConversations();
 
-  const user = await getUser()
-
-  const conversations = await getAllConversations()
-
-  const currentConversation = conversations.filter((conversation) => conversation.conversation_id === params.conversation_id)[0]
-
+  const currentConversation = conversations.filter(
+    (conversation) => conversation.conversation_id === params.conversation_id
+  )[0];
 
   return (
     <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
-
       <Header>
         <div className="mt-20">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
             <div className="relative rounded-md h-[100px] w-[100px]">
               {/* Main user photo */}
               <Image
-                src={currentConversation.conversation_participants[0].profiles.avatar_url || "/images/liked.jpg"}
+                src={
+                  currentConversation.conversation_participants[0].profiles
+                    .avatar_url || "/images/liked.jpg"
+                }
                 alt="User profile"
                 fill
                 objectFit="cover"
@@ -44,7 +41,10 @@ const ConversationPage = async (props: ConversationPageProps) => {
               {/* Second user photo */}
               <div className="absolute bottom-0 right-0 translate-x-2/4 translate-y-1/4 rounded-md overflow-hidden h-[70px] w-[70px]">
                 <Image
-                  src={currentConversation.conversation_participants[1].profiles.avatar_url}
+                  src={
+                    currentConversation.conversation_participants[1].profiles
+                      .avatar_url
+                  }
                   alt="User profile"
                   fill
                   objectFit="cover"
@@ -57,15 +57,21 @@ const ConversationPage = async (props: ConversationPageProps) => {
                 Conversation between:
               </p>
               <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold pl-8">
-                You & {currentConversation.conversation_participants[1].profiles.username}
+                You &{" "}
+                {
+                  currentConversation.conversation_participants[1].profiles
+                    .username
+                }
               </h1>
             </div>
           </div>
         </div>
       </Header>
 
-      <MessageBoard messages={messages} conversation_id={params.conversation_id} currentConversation={currentConversation} />
-
+      <MessageBoard
+        conversation_id={params.conversation_id}
+        currentConversation={currentConversation}
+      />
     </div>
   );
 };

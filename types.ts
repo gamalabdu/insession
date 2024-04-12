@@ -17,9 +17,9 @@ export interface Song {
   title: string;
   song_path: string;
   image_path: string;
-  duration: string,
-  key: string,
-  bpm: string
+  duration: string;
+  key: string;
+  bpm: string;
 }
 
 export interface Profile {
@@ -31,7 +31,7 @@ export interface Profile {
   is_enabled: boolean;
   first_name: string;
   last_name: string;
-  location: string
+  location: string;
 }
 
 export interface Job {
@@ -44,8 +44,8 @@ export interface Job {
   additional_info: string;
   genre: string;
   budget: number;
-  reference_link: string,
-  reference_files: {name: string, url: string}[]
+  reference_link: string;
+  reference_files: { name: string; url: string }[];
 }
 
 export interface Product {
@@ -91,14 +91,20 @@ export interface Subscription {
   prices?: Price;
 }
 
+export interface StorageFile {
+  id: string;
+  type: string;
+  url: string;
+}
+
 export interface Message {
   message_id: string;
   conversation_id: string;
   sender_id: string;
-  message_type: string;
   content: string;
   seen: boolean;
   sent_at: string;
+  messages_files: StorageFile[];
 }
 
 export interface Conversation {
@@ -107,11 +113,9 @@ export interface Conversation {
 }
 
 export interface ConversationReturnItem {
-  conversation_id: string,
-  conversation_participants: { profiles: { avatar_url: string, username: string, id: string } } []
+  conversation_id: string;
+  conversation_participants: { profiles: Profile }[];
 }
-
-
 
 export interface Participant {
   participant_id: string;
