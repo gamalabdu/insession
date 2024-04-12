@@ -1,36 +1,25 @@
 "use client"
 import LikeButton from '@/components/LikeButton'
+import LikeUserButton from '@/components/LikeUserButton'
 import MediaItem from '@/components/MediaItem'
+import ProfileItem from '@/components/ProfileItem'
 import useOnPlay from '@/hooks/useOnPlay'
-import { useUser } from '@/hooks/useUser'
-import { Song } from '@/types'
-import { useRouter } from 'next/navigation'
-import React, { useEffect } from 'react'
+import { Profile } from '@/types'
+import React from 'react'
+import ExploreItem from '../../explore/components/ExploreItem'
 
 interface LikedContentProps {
-    songs: Song[]
+    artist: Profile[]
 }
 
 const LikedArtistContent = (props: LikedContentProps) => {
 
-    const { songs } = props 
+    const { artist } = props 
 
-    const router = useRouter()
-
-    const { isLoading, user } = useUser()
-
-    const onPlay = useOnPlay(songs)
-
-    useEffect(() => {
-
-        if ( !isLoading && !user ) {
-            router.replace('/')
-        }
-
-    }, [isLoading, user, router])
+    
 
 
-    if ( songs.length === 0 ) {
+    if ( artist.length === 0 ) {
         return (
             <div className='
                 flex
@@ -40,30 +29,36 @@ const LikedArtistContent = (props: LikedContentProps) => {
                 px-6
                 text-neutral-400
             '>
-                No liked songs.
+                No liked Artist.
             </div>
         )
     }
 
 
   return (
-    <div className='flex flex-col gap-y-2 w-full p-6'>
-        { songs.map((song) => (
-            <div 
-                className='flex items-center gap-x-4 w-full'
-                key={song.id}
-            >
-                <div className='flex-1'>
-                    <MediaItem 
-                        onClick={ (id: string) => onPlay(id) }
-                        song={song}
-                    />
-                </div>
-                <LikeButton songId={song.id} />
-            </div>
-        ) )
+    <div className='
+    grid 
+    grid-cols-2 
+    sm:grid-cols-3
+    md:grid-cols-3
+    lg:grid-cols-4
+    xl:grid-cols-5
+    2xl:grid-cols-8
+    gap-4
+    mt-4
+    '>
+
+
+        {
+          artist.map( ( artist ) => ( 
+
+          <ExploreItem key={artist.id} currentUser={artist} />
+          
+          ))
         }
-    </div>
+
+
+      </div>
   )
 }
 

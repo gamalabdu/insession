@@ -1,6 +1,6 @@
 "use client";
 import { Profile, Song } from "@/types";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Header from "@/components/ui/Header";
 import PageContent from "../../dashboard/components/PageContent";
@@ -10,6 +10,7 @@ import useMessageModal from "@/hooks/useMessageModal";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import MessageModal from "@/components/MessageModal";
 
 
 interface ProfileContentProps {
@@ -17,6 +18,8 @@ interface ProfileContentProps {
 }
 
 const ProfilePageContent = (props: ProfileContentProps) => {
+
+
   const { userProfileInfo } = props;
 
   const { user } = useUser();
@@ -27,6 +30,8 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
   const router = useRouter();
 
+  const [ messageModalOpen, setMessageModalOpen ] = useState(false)
+
   let safeSongs: Song[] = [];
 
   if (songs) {
@@ -35,7 +40,11 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
   const messageModal = useMessageModal();
 
+
   const sendMessage = async () => {
+
+    setMessageModalOpen(true)
+
     messageModal.setOtherId(userProfileInfo.id);
 
     messageModal.setOtherUserName(userProfileInfo.username);
@@ -52,10 +61,15 @@ const ProfilePageContent = (props: ProfileContentProps) => {
       const conversationId = conversationData[0].conversation_id;
 
       router.push(`/messages/${conversationId}`);
+
     } else {
       return messageModal.onOpen();
     }
   };
+
+
+
+
 
   const displayClassName = `
   flex
@@ -118,6 +132,11 @@ const ProfilePageContent = (props: ProfileContentProps) => {
         </div>
 
         <PageContent songs={safeSongs} heroImage={userProfileInfo.avatar_url} />
+
+
+        <MessageModal messageModalOpen={messageModalOpen} setMessageModalOpen={setMessageModalOpen} userProfileInfo={userProfileInfo}  />
+
+
       </div>
     </div>
   );

@@ -8,11 +8,13 @@ import ProfileSetupModal from "@/components/ProfileSetupModal";
 export const revalidate = 0;
 
 export default async function Dashboard() {
+
   const songs = await getSongs();
 
   const userProfileInfo = await getUserProfileInfo();
 
   return (
+    
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
 
       <Header>
@@ -27,6 +29,16 @@ export default async function Dashboard() {
               }}
               name={"Liked Songs"}
               href={"liked"}
+            />
+
+            <ListItem
+              image={{
+                src: "https://picsum.photos/200/300",
+                width: 200,
+                height: 300,
+              }}
+              name={"Liked Artist"}
+              href={"liked-artist"}
             />
           </div>
         </div>

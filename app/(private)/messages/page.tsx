@@ -1,25 +1,16 @@
 // "use client"
 import Header from "@/components/ui/Header";
 import SearchInput from "@/components/SearchInput";
-import useGetConversationsByUserId from "@/hooks/useGetConversationsByUserId";
 import React from "react";
 import MessagesContent from "./components/MessagesContent";
 import getAllUserConversations from "@/actions/getAllUserConversations";
-import { useUser } from "@/hooks/useUser";
-import getUserProfileInfo from "@/actions/getUserProfileInfo";
 
-export const revalidate = 0;
 
 const Messages = async () => {
+
   // const { conversations } = useGetConversationsByUserId()
 
   const conversations = await getAllUserConversations();
-
-  const userProfileInfo = await getUserProfileInfo();
-
-  const userConversations = conversations.filter((conversation) =>
-    conversation.participant_ids.includes(userProfileInfo?.id)
-  );
 
   return (
     <div
@@ -45,7 +36,8 @@ const Messages = async () => {
         </div>
       </Header>
 
-      <MessagesContent conversations={userConversations} />
+      <MessagesContent conversations={conversations} />
+
     </div>
   );
 };

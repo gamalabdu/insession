@@ -2,10 +2,8 @@
 import LikeButton from '@/components/LikeButton'
 import MediaItem from '@/components/MediaItem'
 import useOnPlay from '@/hooks/useOnPlay'
-import { useUser } from '@/hooks/useUser'
 import { Song } from '@/types'
-import { useRouter } from 'next/navigation'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 interface LikedContentProps {
     songs: Song[]
@@ -15,19 +13,8 @@ const LikedContent = (props: LikedContentProps) => {
 
     const { songs } = props 
 
-    const router = useRouter()
-
-    const { isLoading, user } = useUser()
 
     const onPlay = useOnPlay(songs)
-
-    useEffect(() => {
-
-        if ( !isLoading && !user ) {
-            router.replace('/')
-        }
-
-    }, [isLoading, user, router])
 
 
     if ( songs.length === 0 ) {

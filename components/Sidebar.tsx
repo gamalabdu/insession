@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import Box from "./Box";
@@ -12,13 +12,10 @@ import { twMerge } from "tailwind-merge";
 import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdTableRows } from "react-icons/md";
-import { useRouter } from "next/router";
 import SideBarMessenges from "@/app/(private)/messages/components/SideBarMessenges";
 import useGetConversationsByUserId from "@/hooks/useGetConversationsByUserId";
-import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
 import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
-import useProfileSetupModal from "@/hooks/useProfileSetupModal";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -34,7 +31,7 @@ const Sidebar = (props: SidebarProps) => {
 
   const { user } = useUser();
 
-  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo;
+  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo
 
   const userConversations = conversations?.filter((conversation) =>
     conversation.participant_ids.includes(userProfileInfo?.id || "")

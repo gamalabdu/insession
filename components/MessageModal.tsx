@@ -2,25 +2,29 @@
 
 import React, { useState } from 'react'
 import Modal from './Modal'
-import useUploadModal from '@/hooks/useUploadModal'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import Input from './Input'
 import Button from './Button'
 import toast from 'react-hot-toast'
 import { useUser } from '@/hooks/useUser'
-import { unique } from 'next/dist/build/utils'
-import uniqid from 'uniqid'
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/navigation'
 import useMessageModal from '@/hooks/useMessageModal'
 import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
-import { Conversation } from '@/types'
+import { createClient } from '@/utils/supabase/client'
+import { Conversation, Profile } from '@/types'
 
-const MessageModal = () => {
 
-    const messageModal = useMessageModal()
+interface MessageModalProps {
+    messageModalOpen: boolean,
+    setMessageModalOpen: Function
+    userProfileInfo: Profile
+}
 
-    const supabaseClient = useSupabaseClient()
+const MessageModal = (props : MessageModalProps) => {
+
+    const { messageModalOpen, setMessageModalOpen, userProfileInfo } = props
+
+    const supabase = createClient()
 
     const router = useRouter()
 
@@ -28,7 +32,8 @@ const MessageModal = () => {
 
     const { user } = useUser()
 
-    const userProfile = useGetUserProfileInfo(user?.id)
+    // console.log( "This is user : ", user )
+    // console.log( "This is other user : ", userProfileInfo )
 
     const { register, handleSubmit, reset } = useForm<FieldValues>({
         defaultValues: {
@@ -40,7 +45,7 @@ const MessageModal = () => {
 
         if ( !open ) {
             reset()
-            messageModal.onClose()
+            setMessageModalOpen(false)
         }
 
     }
@@ -52,17 +57,73 @@ const MessageModal = () => {
 
             setIsLoading(true)
 
-            const { error: supabaseError } = await supabaseClient
+            // adding empty conversation
+            const { data: conversationId , error: conversationError } = await supabase
             .from('conversations')
+            .insert({})
+            .select('conversation_id')
+            .single()
+
+
+
+            if (conversationError) {
+                toast.error(conversationError.message)
+                console.error('Error creating conversation:', conversationError);
+                return { error: conversationError || 'No conversation data returned' };
+            }
+
+
+
+            // adding current user to conversation_participants
+            const { error: addingUser1Error } = await supabase
+            .from('conversation_participants')
             .insert({ 
-                participant_ids: [user?.id, messageModal.otherId] ,
-                participants_names: [userProfile.userProfileInfo?.username, messageModal.otherUserName]
+                conversation_id: conversationId.conversation_id,
+                user_id: user?.id
             })
 
-            if ( supabaseError ) {
-                setIsLoading(false)
-                return toast.error(supabaseError.message)
+            if (addingUser1Error) {
+                toast.error(addingUser1Error.message);
+                console.log(addingUser1Error)
             }
+
+
+              // adding user we are sending message too to conversation_participants
+              const { error: addingUser2Error } = await supabase
+              .from('conversation_participants')
+              .insert({ 
+                  conversation_id: conversationId.conversation_id,
+                  user_id: userProfileInfo.id
+              })
+
+
+              if (addingUser2Error) {
+                toast.error(addingUser2Error.message);
+                console.log(addingUser2Error)
+              }
+
+
+              //adding message from current user to other user
+              const { error: messageError } = await supabase
+              .from('messages')
+              .insert({
+                conversation_id: conversationId.conversation_id,
+                sender_id: user?.id,
+                message_type:'text',
+                content: values.message,
+                seen: false,
+              })
+
+              if ( messageError ) {
+                toast.error(messageError.message);
+                console.log(messageError)
+              }
+
+              router.push(`/messages/${conversationId}`);
+
+              toast.success("Message sent!");
+              reset();
+              setMessageModalOpen(false)
 
 
 
@@ -73,48 +134,6 @@ const MessageModal = () => {
         }
 
 
-        const { data: conversationData, error } = await supabaseClient
-        .from('conversations')
-        .select('conversation_id')
-        .contains('participant_ids', JSON.stringify([userProfile.userProfileInfo?.id, messageModal.otherId ]))
-
-        
-        if ( conversationData && conversationData.length > 0) {
-            // Access the first conversation's conversation_id
-            const conversationId = conversationData[0].conversation_id;
-
-
-            const { data: messageData , error: messageError } = await supabaseClient
-            .from('messages')
-            .insert(
-            {
-                        conversation_id: conversationId,
-                        sender_id: user?.id,
-                        message_type: 'text',
-                        content: values.message,
-                        seen: true,
-            }
-            )
-
-            if (messageError) {
-                    setIsLoading(false)
-                    toast.error(messageError.message)
-            }
-
-
-        
-            // Redirect to the messages page with the conversation ID
-            router.push(`/messages/${conversationId}`);
-        
-            // Handle loading state and toast
-            setIsLoading(false);
-            toast.success("Message sent!");
-            reset();
-            messageModal.onClose();
-        } else {
-            toast.error("Conversation not found.");
-        }
-
     } 
 
 
@@ -122,14 +141,14 @@ const MessageModal = () => {
     <Modal
         title="Send a message"
         description='say hi or ask if they are intrested in working'
-        isOpen={messageModal.isOpen}
+        isOpen={messageModalOpen}
         onChange={ onChange }
     >
         <form
          className='flex flex-col gap-y-4'
          onSubmit={ handleSubmit(onSubmit) }
         >
-            <Input id="message" disabled={isLoading} { ...register( 'message', { required: true } ) } placeholder="Song title" />
+            <Input id="message" disabled={isLoading} { ...register( 'message', { required: true } ) } placeholder="type your message here..." />
 
             <Button disabled={isLoading} type='submit'>
                 Send

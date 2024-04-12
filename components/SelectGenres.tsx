@@ -56,8 +56,19 @@ const SelectGenres = (props: SelectGenresProps) => {
 
   return (
     <div className="flex flex-col w-full">
-      <label htmlFor="genres" className="mb-2 text-sm">Select Genres</label>
-      <div className="border border-gray-300 rounded-md h-[100px] overflow-auto">
+
+      <div className='flex gap-2'>
+          <label htmlFor="genres" className="mb-2 text-sm"> Select Genres : </label>
+            {selectedGenres.length > 0 ? (
+              <p className='text-sm'>{selectedGenres.join(' / ')}</p>
+            ) : (
+              <p className='text-sm text-neutral-500'>No genres selected.</p>
+            )}
+
+      </div>
+
+
+      <div className="border border-gray-300 rounded-md h-[80px] overflow-auto">
 
         {
         
@@ -88,14 +99,14 @@ const SelectGenres = (props: SelectGenresProps) => {
       </div>
       {/* Optionally, you can display the selected genres below */}
       
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <strong>Selected Genres:</strong>
         {selectedGenres.length > 0 ? (
           <p>{selectedGenres.join(' / ')}</p>
         ) : (
           <p>No genres selected.</p>
         )}
-      </div>
+      </div> */}
 
     </div>
   );

@@ -4,10 +4,12 @@ import Image from 'next/image'
 import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
 import useGetMessagesByConversationId from '@/hooks/useGetMessagesByConversationId'
 import { useRouter } from 'next/navigation'
-import { Conversation } from '@/types'
+import {ConversationReturnItem } from '@/types'
+import drakePic from '../../../../public/images/liked.jpg'
+
 
 interface ConversationItemProps {
-    conversation: Conversation
+    conversation: ConversationReturnItem
 }
 
 const ConversationItem = (props: ConversationItemProps) => {
@@ -16,15 +18,13 @@ const ConversationItem = (props: ConversationItemProps) => {
 
     const { conversation } = props 
 
-    const userProfile1 = useGetUserProfileInfo(conversation.participant_ids[0])
-    const userProfile2 = useGetUserProfileInfo(conversation.participant_ids[1])
+    console.log(conversation.profiles)
 
-    const { messages } = useGetMessagesByConversationId(conversation.conversation_id)
+    // const { messages } = useGetMessagesByConversationId(conversation.conversation_id)
 
-    const lastMessage = messages && messages.length > 0 ? messages[messages.length - 1] : null
+    // const lastMessage = messages && messages.length > 0 ? messages[messages.length - 1] : null
 
 
-    
     const handleClick = (conversation_id: string) => {
 
         router.push(`/messages/${conversation_id}`); 
@@ -42,30 +42,34 @@ const ConversationItem = (props: ConversationItemProps) => {
             <div className='relative rounded-md h-[48px] w-[48px]'>
                 {/* Main user photo */}
                 <Image 
-                     src={userProfile1.userProfileInfo?.avatar_url || '/../public/images/liked.jpg'} 
+                    //  src={conversation.profiles[0].avatar_url || '/../public/images/liked.jpg'} 
+                     src={drakePic} 
                     alt='User profile'
-                    layout='fill'
                     objectFit='cover'
                     className='rounded-md' 
+                    width={50}
+                    height={50}
                 /> 
                 {/* Second user photo */}
                 <div className='absolute bottom-0 right-0 translate-x-2/4 translate-y-1/4 rounded-md overflow-hidden h-[36px] w-[36px]'>
                     <Image 
-                         src={userProfile2.userProfileInfo?.avatar_url || '/../public/images/liked.jpg'} 
+                        //  src={conversation.profiles[1].avatar_url || '/../public/images/liked.jpg'} 
+                         src={drakePic} 
                         alt='User profile'
-                        layout='fill'
                         objectFit='cover'
+                        width={40}
+                        height={40}
                     />  
                 </div>
             </div>
 
             <div className='flex flex-col gap-y-1 overflow-hidden w-full'>
                 <p className='text-white truncate'>
-                    You & {conversation.participants_names[1]}
+                    You & {conversation.profiles[1].username}
                 </p>
-                <p className='text-neutral-400 text-sm truncate pl-4 overflow-hidden w-full'>
+                {/* <p className='text-neutral-400 text-sm truncate pl-4 overflow-hidden w-full'>
                     {lastMessage?.content}
-                </p>
+                </p> */}
             </div>
         </div>
     )

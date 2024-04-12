@@ -75,7 +75,7 @@ const ProfileSetupModal = ({
       const { error: supabaseError } = await supabase
         .from("profiles")
         .update({
-          loaction: values.location,
+          location: values.location,
           first_name: values["first-name"],
           last_name: values["last-name"],
           avatar_url: imageDataUrl.publicUrl,

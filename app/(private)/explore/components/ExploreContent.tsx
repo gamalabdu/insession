@@ -2,7 +2,6 @@
 import { Profile } from '@/types'
 import React from 'react'
 import ExploreItem from './ExploreItem'
-import { useUser } from '@/hooks/useUser'
 
 
 interface ExploreContentProps {
@@ -12,10 +11,6 @@ interface ExploreContentProps {
 const ExploreContent = (props: ExploreContentProps) => {
 
     const { allUsers } = props
-
-    const { user } = useUser()
-
-    const allUsersNotCurrentUser = allUsers.filter((thisUser) => thisUser.id != user?.id)
 
 
     if ( allUsers.length === 0) {

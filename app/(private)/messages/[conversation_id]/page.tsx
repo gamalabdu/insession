@@ -6,13 +6,13 @@ import Header from "@/components/ui/Header";
 import Image from "next/image";
 import { FiFilePlus } from "react-icons/fi";
 import Input from "@/components/Input";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { GrSend } from "react-icons/gr";
 import useGetConversationByConversationId from "@/hooks/useGetConversationByConversationId";
 import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
+import { createClient } from "@/utils/supabase/client";
 
 interface ConversationPageProps {
   params: {
@@ -21,7 +21,8 @@ interface ConversationPageProps {
 }
 
 const ConversationPage = (props: ConversationPageProps) => {
-  const supabaseClient = useSupabaseClient();
+
+  const supabase = createClient()
 
   const { params } = props;
 
@@ -47,6 +48,7 @@ const ConversationPage = (props: ConversationPageProps) => {
       ? conversation?.participant_ids[0]
       : conversation?.participant_ids[1];
 
+
   const mainUserPhoto =
     useGetUserProfileInfo(mainUser).userProfileInfo?.avatar_url;
 
@@ -61,7 +63,7 @@ const ConversationPage = (props: ConversationPageProps) => {
     setIsLoading(true);
 
     try {
-      const { data: messageData, error: messageError } = await supabaseClient
+      const { data: messageData, error: messageError } = await supabase
         .from("messages")
         .insert({
           conversation_id: params.conversation_id,

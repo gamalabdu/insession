@@ -14,9 +14,6 @@ const SongItem = (props : SongItemProps) => {
 
     const { song, onClick } = props 
 
-    const imagePath = useLoadImage(song)
-
-
   return (
     <div
     onClick={ () => onClick(song.id) }
@@ -26,7 +23,7 @@ const SongItem = (props : SongItemProps) => {
             <Image 
                 className='object-cover' 
                 fill 
-                src={imagePath || '/./../public/images/liked.jpg'} 
+                src={song.image_path || '/./../public/images/liked.jpg'} 
                 alt={'image'} 
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />

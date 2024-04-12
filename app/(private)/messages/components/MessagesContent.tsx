@@ -1,15 +1,13 @@
 "use client"
-import LikeButton from '@/components/LikeButton'
-import MediaItem from '@/components/MediaItem'
-import useOnPlay from '@/hooks/useOnPlay'
-import { Conversation, Message, Song } from '@/types'
+import { ConversationReturnItem } from '@/types'
 import React from 'react'
 import ConversationItem from './ConversationItem'
-import Link from 'next/link'
+
 
 interface MessagesContentProps {
-    conversations: Conversation[] | null
+    conversations : ConversationReturnItem[]
 }
+
 
 const MessagesContent = (props: MessagesContentProps) => {
 
@@ -18,7 +16,7 @@ const MessagesContent = (props: MessagesContentProps) => {
 
     if ( conversations?.length === 0 ) {
         return (
-        <div className='flex flex-col gap-y-2 w-full px-6 text-neutral-400'>
+        <div className='flex flex-col gap-y-2 w-full px-7 text-neutral-400'>
             No conversations found.
         </div>
       )
@@ -34,11 +32,11 @@ const MessagesContent = (props: MessagesContentProps) => {
       px-6
     '>
         {
-            conversations?.map((conversation) => {
+            conversations?.map((conversation, idx) => {
 
                 return (
                     <div 
-                    key={conversation.conversation_id}
+                    key={idx}
                     className='flex items-center gap-x-4 w-full'
                     >
                     <div className='flex-1 overflow-y-auto'>

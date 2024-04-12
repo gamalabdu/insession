@@ -15,8 +15,6 @@ const ExploreItem = (props: ExploreItemProps) => {
 
     const { currentUser } = props 
 
-    const imageUrl = useLoadProfileImage(currentUser)
-
     const { songs }  = useGetSongsByUserId(currentUser.id)
 
 
@@ -29,7 +27,6 @@ const ExploreItem = (props: ExploreItemProps) => {
         onClick={(id: string) => onPlay(id) } 
         key={songs[0]?.id } 
         profile={currentUser} 
-        profileImageUrl={imageUrl || ''} 
      />
   )
 }

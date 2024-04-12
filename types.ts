@@ -17,6 +17,9 @@ export interface Song {
   title: string;
   song_path: string;
   image_path: string;
+  duration: string,
+  key: string,
+  bpm: string
 }
 
 export interface Profile {
@@ -40,6 +43,8 @@ export interface Job {
   additional_info: string;
   genre: string;
   budget: number;
+  reference_link: string,
+  reference_files: {name: string, url: string}[]
 }
 
 export interface Product {
@@ -98,9 +103,13 @@ export interface Message {
 export interface Conversation {
   conversation_id: string;
   created_at: string;
-  participant_ids: string;
-  participants_names: string;
 }
+
+export interface ConversationReturnItem {
+  conversation_id: string,
+  profiles: { avatar_url: string, username: string, id: string }[]
+}
+
 
 export interface Participant {
   participant_id: string;

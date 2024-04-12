@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
   redirectTo.searchParams.delete("token_hash");
   redirectTo.searchParams.delete("type");
 
-  console.log(token_hash);
 
   if (token_hash && type) {
     const supabase = createClient();

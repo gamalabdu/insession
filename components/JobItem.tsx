@@ -2,6 +2,7 @@
 import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
 import { Job } from '@/types'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 
@@ -15,13 +16,21 @@ const JobItem = (props : JobItemProps) => {
 
     const { userProfileInfo } = useGetUserProfileInfo(job.user_id)
 
+    const router = useRouter()
+
+    const handleClick = (job_id: string) => {
+
+      router.push(`/sessions/${job_id}`); 
+  
+  };
+
 
   return (
 
 
-<div className="flex items-center gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md">
-
-  {/* Separate container for image and text for clarity */}
+<div className="flex items-center gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md" 
+  onClick={ () => handleClick(job.job_id) }
+>
 
   <div className="flex flex-col items-center">
 

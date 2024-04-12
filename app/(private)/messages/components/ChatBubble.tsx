@@ -1,6 +1,5 @@
 import { useUser } from '@/hooks/useUser';
 import { Message } from '@/types';
-import { useSessionContext, useSupabaseClient } from '@supabase/auth-helpers-react';
 import Image from 'next/image';
 import React from 'react'
 

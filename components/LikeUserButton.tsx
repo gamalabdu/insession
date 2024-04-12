@@ -7,14 +7,14 @@ import { toast } from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
 import { createClient } from "@/utils/supabase/client";
 
+
 interface LikeButtonProps {
-  songId: string;
-  userId?: string
+  artistId: string;
 };
 
-const LikeButton = (props: LikeButtonProps) => {
+const LikeUserButton = (props: LikeButtonProps) => {
 
-  const { songId } = props
+  const { artistId } = props
 
   const router = useRouter();
 
@@ -24,41 +24,50 @@ const LikeButton = (props: LikeButtonProps) => {
 
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
+
   useEffect(() => {
-  
     const fetchData = async () => {
-
+      // Ensure user?.id and artistId are defined before making the query
+      if (!user?.id || !artistId) {
+        console.error("User ID or Artist ID is undefined.");
+        setIsLiked(false);
+        return;
+      }
+  
       const { data, error } = await supabaseClient
-    .from('liked_songs')
-    .select('*')
-    .eq('user_id', user?.id)
-    .eq('song_id', songId);
-
-  if (error) {
-    console.error("Error fetching liked song:", error.message);
-    setIsLiked(false); // Handle the error state as appropriate
-    return;
-  }
-
-  setIsLiked(data.length > 0);
-
-    }
-
+        .from('liked_artist')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('artist_id', artistId);
+  
+      if (error) {
+        console.log(error);
+        console.error("Error fetching liked song:", error.message);
+        setIsLiked(false); // Handle the error state as appropriate
+        return;
+      }
+  
+      setIsLiked(data.length > 0);
+    };
+  
     fetchData();
+  }, [artistId, supabaseClient, user?.id]);
+  
 
-  }, [songId, supabaseClient, user?.id]);
+  
 
   const Icon = isLiked ? AiFillHeart : AiOutlineHeart;
+
 
   const handleLike = async () => {
 
     if (isLiked) {
 
       const { error } = await supabaseClient
-        .from('liked_songs')
+        .from('liked_artist')
         .delete()
         .eq('user_id', user?.id)
-        .eq('song_id', songId)
+        .eq('artist_id', artistId)
 
       if (error) {
         toast.error(error.message);
@@ -67,9 +76,9 @@ const LikeButton = (props: LikeButtonProps) => {
       }
     } else {
       const { error } = await supabaseClient
-        .from('liked_songs')
+        .from('liked_artist')
         .insert({
-          song_id: songId,
+          artist_id: artistId,
           user_id: user?.id
         })
 
@@ -96,6 +105,7 @@ const LikeButton = (props: LikeButtonProps) => {
 
    }, [isLiked])
 
+
   return (
     <button 
       className="
@@ -110,4 +120,4 @@ const LikeButton = (props: LikeButtonProps) => {
   );
 }
 
-export default LikeButton;
+export default LikeUserButton;
