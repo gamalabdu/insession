@@ -95,6 +95,7 @@ export const ChatBubble = (props: ChatBubbleProps) => {
             ))}
           </div>
         )}
+        
         {message.content}
       </div>
     </div>
