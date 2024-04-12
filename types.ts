@@ -31,6 +31,7 @@ export interface Profile {
   is_enabled: boolean;
   first_name: string;
   last_name: string;
+  location: string
 }
 
 export interface Job {
@@ -107,8 +108,9 @@ export interface Conversation {
 
 export interface ConversationReturnItem {
   conversation_id: string,
-  profiles: { avatar_url: string, username: string, id: string }[]
+  conversation_participants: { profiles: { avatar_url: string, username: string, id: string } } []
 }
+
 
 
 export interface Participant {

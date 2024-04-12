@@ -24,7 +24,7 @@ const getAllConversations = async (): Promise < ConversationReturnItem [] > => {
   .from('conversations')
   .select(`
     conversation_id,
-    profiles:conversation_participants (
+    conversation_participants (
       profiles (
         id,
         username,
@@ -32,6 +32,7 @@ const getAllConversations = async (): Promise < ConversationReturnItem [] > => {
       )
     )
   `);
+
 
 if (error) {
   console.error('Error fetching data', error);

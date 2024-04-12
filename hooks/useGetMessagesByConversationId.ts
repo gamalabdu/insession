@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 import { Message } from "@/types";
 import { useUser } from "./useUser";
+import { createClient } from "@/utils/supabase/client";
 
 const useGetMessagesByConversationId = (conversation_id: string) => {
 
@@ -10,17 +10,9 @@ const useGetMessagesByConversationId = (conversation_id: string) => {
     const [messages, setMessages] = useState<Message[] | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const { supabaseClient } = useSessionContext();
-
-    const { user } = useUser()
+    const supabase = createClient()
 
     useEffect(() => {
-
-        if (!user?.id) {
-            setMessages(null);
-            setError('No ID provided');
-            return;
-        }
 
         const fetchUserInfo = async () => {
 
@@ -28,7 +20,7 @@ const useGetMessagesByConversationId = (conversation_id: string) => {
 
             setError(null);
             
-            const { data , error: fetchError } = await supabaseClient
+            const { data , error: fetchError } = await supabase
                 .from('messages')
                 .select('*')
                 .eq('conversation_id', conversation_id)
@@ -51,7 +43,7 @@ const useGetMessagesByConversationId = (conversation_id: string) => {
 
 
 
-    }, [supabaseClient]);
+    }, [supabase]);
 
     return { isLoading, messages, error };
 };

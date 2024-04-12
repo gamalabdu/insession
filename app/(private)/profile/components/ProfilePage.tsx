@@ -45,26 +45,6 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
     setMessageModalOpen(true)
 
-    messageModal.setOtherId(userProfileInfo.id);
-
-    messageModal.setOtherUserName(userProfileInfo.username);
-
-    const { data: conversationData, error } = await supabase
-      .from("conversations")
-      .select("conversation_id")
-      .contains(
-        "participant_ids",
-        JSON.stringify([user?.id, userProfileInfo.id])
-      );
-
-    if (conversationData && conversationData.length > 0) {
-      const conversationId = conversationData[0].conversation_id;
-
-      router.push(`/messages/${conversationId}`);
-
-    } else {
-      return messageModal.onOpen();
-    }
   };
 
 

@@ -1,4 +1,4 @@
-// "use client"
+
 import Header from "@/components/ui/Header";
 import SearchInput from "@/components/SearchInput";
 import React from "react";
@@ -7,8 +7,6 @@ import getAllUserConversations from "@/actions/getAllUserConversations";
 
 
 const Messages = async () => {
-
-  // const { conversations } = useGetConversationsByUserId()
 
   const conversations = await getAllUserConversations();
 
@@ -23,8 +21,6 @@ const Messages = async () => {
         overflow-y-auto
         "
     >
-
-      {/* { How can we leave the search input in a server component?} */}
       
       <Header className="from-bg-neutral-900">
         <div className="mb-2 flex flex-col gap-y-6">

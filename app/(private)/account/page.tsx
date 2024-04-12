@@ -80,6 +80,14 @@ const Account = async () => {
               <p className="w-full pb-1 pl-1 text-neutral-300"> Email : </p>
               <p className={displayClassName}>{userProfileInfo?.email}</p>
             </div>
+
+            <div className="flex flex-col items-center align-middle w-full p-3">
+              <p className="w-full pb-1 pl-1 text-neutral-300"> Location : </p>
+              <p className={displayClassName}>{userProfileInfo.location}</p>
+            </div>
+
+
+
           </div>
         </div>
       </div>
