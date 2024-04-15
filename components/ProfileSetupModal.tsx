@@ -8,6 +8,7 @@ import Input from "./Input";
 import Button from "./Button";
 import { createClient } from "@/utils/supabase/client";
 import { Profile } from "@/types";
+import SelectGenres from "./SelectGenres";
 
 const ProfileSetupModal = ({
   userProfileInfo,
@@ -17,12 +18,14 @@ const ProfileSetupModal = ({
   const defaultOpen = !userProfileInfo.is_enabled;
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       "first-name": "",
       "last-name": "",
       avatar_url: "",
+      location: ""
     },
   });
 
@@ -72,6 +75,7 @@ const ProfileSetupModal = ({
       const { error: supabaseError } = await supabase
         .from("profiles")
         .update({
+          location: values.location,
           first_name: values["first-name"],
           last_name: values["last-name"],
           avatar_url: imageDataUrl.publicUrl,
@@ -118,6 +122,15 @@ const ProfileSetupModal = ({
           {...register("last-name", { required: true })}
           placeholder="Last name"
         />
+
+        <Input
+          id="location"
+          disabled={isLoading}
+          {...register("location", { required: true })}
+          placeholder="ex: New York City, NY"
+        />
+
+         <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
 
         <div>
           <div className="pb-1">Select a profile image</div>

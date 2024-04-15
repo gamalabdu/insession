@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
-import { Conversation, Profile } from "@/types";
+import { Conversation } from "@/types";
 import { useUser } from "./useUser";
 
 const useGetConversationsByUserId = () => {
@@ -27,10 +27,6 @@ const useGetConversationsByUserId = () => {
             setIsLoading(true);
 
             setError(null);
-            
-            // const { data , error: fetchError } = await supabaseClient
-            //     .from('conversations')
-            //     .select('*')
 
             const { data, error: fetchError } = await supabaseClient
             .from('conversations')

@@ -14,6 +14,7 @@ interface SearchProps {
 export const revalidate = 0;
 
 const Search = async (props: SearchProps) => {
+  
   const { searchParams } = props;
 
   const songs = await getSongsByTitle(searchParams.title);
@@ -36,6 +37,14 @@ const Search = async (props: SearchProps) => {
         <div className="mb-2 flex flex-col gap-y-6">
           <h1 className="text-white text-3xl font-semibold"> Search </h1>
           <SearchInput placeholder=" What would you like to listen to? " />
+          <div className="flex items-start justify-between px-1 ">
+            <div className="w-[190px]"> Artist / Producer </div>
+            <div> Key </div>
+            <div> BPM </div>
+            <div> Duration </div>
+            <div> Liked </div>
+          </div>
+          <hr />
         </div>
       </Header>
 

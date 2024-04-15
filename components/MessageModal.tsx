@@ -1,143 +1,142 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import Modal from './Modal'
-import useUploadModal from '@/hooks/useUploadModal'
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
-import Input from './Input'
-import Button from './Button'
-import toast from 'react-hot-toast'
-import { useUser } from '@/hooks/useUser'
-import { unique } from 'next/dist/build/utils'
-import uniqid from 'uniqid'
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useRouter } from 'next/navigation'
-import useMessageModal from '@/hooks/useMessageModal'
-import useGetUserProfileInfo from '@/hooks/useGetUserProfileInfo'
-import { Conversation } from '@/types'
+import React, { useState } from "react";
+import Modal from "./Modal";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import Input from "./Input";
+import Button from "./Button";
+import toast from "react-hot-toast";
+import { useUser } from "@/hooks/useUser";
+import { useRouter } from "next/navigation";
+import useMessageModal from "@/hooks/useMessageModal";
+import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
+import { createClient } from "@/utils/supabase/client";
+import { Conversation, Profile } from "@/types";
 
-const MessageModal = () => {
+interface MessageModalProps {
+  messageModalOpen: boolean;
+  setMessageModalOpen: Function;
+  userProfileInfo: Profile;
+}
 
-    const messageModal = useMessageModal()
+const MessageModal = (props: MessageModalProps) => {
+  const { messageModalOpen, setMessageModalOpen, userProfileInfo } = props;
 
-    const supabaseClient = useSupabaseClient()
+  const supabase = createClient();
 
-    const router = useRouter()
+  const router = useRouter();
 
-    const [ isLoading, setIsLoading ] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
-    const { user } = useUser()
+  const { user } = useUser();
 
-    const userProfile = useGetUserProfileInfo(user?.id)
+  // console.log( "This is user : ", user )
+  // console.log( "This is other user : ", userProfileInfo )
 
-    const { register, handleSubmit, reset } = useForm<FieldValues>({
-        defaultValues: {
-            message : ''
-        }
-    })
+  const { register, handleSubmit, reset } = useForm<FieldValues>({
+    defaultValues: {
+      message: "",
+    },
+  });
 
-    const onChange = (open : boolean) => {
-
-        if ( !open ) {
-            reset()
-            messageModal.onClose()
-        }
-
+  const onChange = (open: boolean) => {
+    if (!open) {
+      reset();
+      setMessageModalOpen(false);
     }
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = async (values) => {
+    try {
+      setIsLoading(true);
+
+      // adding empty conversation
+      const { data: conversationId, error: conversationError } = await supabase
+        .from("conversations")
+        .insert({})
+        .select("conversation_id")
+        .single();
 
 
-    const onSubmit : SubmitHandler<FieldValues> = async (values) => {  
+      if (conversationError) {
+        toast.error(conversationError.message);
+        console.error("Error creating conversation:", conversationError);
+        return { error: conversationError || "No conversation data returned" };
+      }
 
-        try {
+      // adding current user to conversation_participants
+      const { error: addingUser1Error } = await supabase
+        .from("conversation_participants")
+        .insert({
+          conversation_id: conversationId.conversation_id,
+          user_id: user?.id,
+        });
 
-            setIsLoading(true)
+      if (addingUser1Error) {
+        toast.error(addingUser1Error.message);
+        console.log(addingUser1Error);
+      }
 
-            const { error: supabaseError } = await supabaseClient
-            .from('conversations')
-            .insert({ 
-                participant_ids: [user?.id, messageModal.otherId] ,
-                participants_names: [userProfile.userProfileInfo?.username, messageModal.otherUserName]
-            })
+      // adding user we are sending message too to conversation_participants
+      const { error: addingUser2Error } = await supabase
+        .from("conversation_participants")
+        .insert({
+          conversation_id: conversationId.conversation_id,
+          user_id: userProfileInfo.id,
+        });
 
-            if ( supabaseError ) {
-                setIsLoading(false)
-                return toast.error(supabaseError.message)
-            }
+      if (addingUser2Error) {
+        toast.error(addingUser2Error.message);
+        console.log(addingUser2Error);
+      }
 
+      //adding message from current user to other user
+      const { error: messageError } = await supabase.from("messages").insert({
+        conversation_id: conversationId.conversation_id,
+        sender_id: user?.id,
+        content: values.message,
+        seen: false,
+      });
 
+      if (messageError) {
+        toast.error(messageError.message);
+        console.log(messageError);
+      }
 
-        } catch (error) {
-            toast.error("Something went wrong.")
-        } finally {
-            setIsLoading(false)
-        }
+      router.push(`/messages/${conversationId.conversation_id}`);
 
+      toast.success("Message sent!");
+      reset();
+      setMessageModalOpen(false);
 
-        const { data: conversationData, error } = await supabaseClient
-        .from('conversations')
-        .select('conversation_id')
-        .contains('participant_ids', JSON.stringify([userProfile.userProfileInfo?.id, messageModal.otherId ]))
-
-        
-        if ( conversationData && conversationData.length > 0) {
-            // Access the first conversation's conversation_id
-            const conversationId = conversationData[0].conversation_id;
-
-
-            const { data: messageData , error: messageError } = await supabaseClient
-            .from('messages')
-            .insert(
-            {
-                        conversation_id: conversationId,
-                        sender_id: user?.id,
-                        message_type: 'text',
-                        content: values.message,
-                        seen: true,
-            }
-            )
-
-            if (messageError) {
-                    setIsLoading(false)
-                    toast.error(messageError.message)
-            }
-
-
-        
-            // Redirect to the messages page with the conversation ID
-            router.push(`/messages/${conversationId}`);
-        
-            // Handle loading state and toast
-            setIsLoading(false);
-            toast.success("Message sent!");
-            reset();
-            messageModal.onClose();
-        } else {
-            toast.error("Conversation not found.");
-        }
-
-    } 
-
+    } catch (error) {
+      toast.error("Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Modal
-        title="Send a message"
-        description='say hi or ask if they are intrested in working'
-        isOpen={messageModal.isOpen}
-        onChange={ onChange }
+      title="Send a message"
+      description="say hi or ask if they are intrested in working"
+      isOpen={messageModalOpen}
+      onChange={onChange}
     >
-        <form
-         className='flex flex-col gap-y-4'
-         onSubmit={ handleSubmit(onSubmit) }
-        >
-            <Input id="message" disabled={isLoading} { ...register( 'message', { required: true } ) } placeholder="Song title" />
+      <form className="flex flex-col gap-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          id="message"
+          disabled={isLoading}
+          {...register("message", { required: true })}
+          placeholder="type your message here..."
+        />
 
-            <Button disabled={isLoading} type='submit'>
-                Send
-            </Button>
-
-        </form>
+        <Button disabled={isLoading} type="submit">
+          Send
+        </Button>
+      </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default MessageModal
+export default MessageModal;

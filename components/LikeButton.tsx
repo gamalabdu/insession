@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-
 import { useUser } from "@/hooks/useUser";
-import useAuthModal from "@/hooks/useAuthModal";
 import { createClient } from "@/utils/supabase/client";
 
 interface LikeButtonProps {
@@ -21,13 +18,9 @@ const LikeButton = (props: LikeButtonProps) => {
 
   const router = useRouter();
 
-  // const { supabaseClient } = useSessionContext();
-
   const supabaseClient = createClient()
 
   const { user } = useUser();
-
-  console.log(user)
 
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
@@ -89,6 +82,7 @@ const LikeButton = (props: LikeButtonProps) => {
     }
 
     router.refresh();
+
   }
 
 

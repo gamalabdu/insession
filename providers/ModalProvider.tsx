@@ -1,6 +1,7 @@
 "use client";
 
 import AuthModal from "@/components/AuthModal";
+import BidModal from "@/components/BidModal";
 import MessageModal from "@/components/MessageModal";
 import PostSessionModal from "@/components/PostSessionModal";
 import UploadModal from "@/components/UploadModal";
@@ -23,6 +24,7 @@ const ModalProvider = () => {
       <AuthModal />
       <UploadModal />
       <PostSessionModal />
+      <BidModal />
       <MessageModal />
     </>
   );

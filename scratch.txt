@@ -1,0 +1,76 @@
+[
+    {
+        "conversation_id": "3ab8cf9c-28a0-4cf7-a667-792682bf789d",
+        "profile": {
+            "id": "d9ecae35-9d04-4864-80f6-536dd199558d",
+            "username": "Ella Rossi",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-Ella%20Rossi-luvnpgad"
+        }
+    },
+    {
+        "conversation_id": "3ab8cf9c-28a0-4cf7-a667-792682bf789d",
+        "profile": {
+            "id": "c14e5d88-2e7e-4251-92d9-9f620c2d27b8",
+            "username": "gamalabdu",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-gamalabdu-luqa06qu"
+        }
+    },
+    {
+        "conversation_id": "51900744-7f15-4b9b-81bc-c2968a42aabe",
+        "profile": {
+            "id": "9e37a176-735e-465b-b8fa-d10f44fd932a",
+            "username": "filip",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-filip-luq3lh6z"
+        }
+    },
+    {
+        "conversation_id": "51900744-7f15-4b9b-81bc-c2968a42aabe",
+        "profile": {
+            "id": "c14e5d88-2e7e-4251-92d9-9f620c2d27b8",
+            "username": "gamalabdu",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-gamalabdu-luqa06qu"
+        }
+    }
+]
+
+
+
+
+
+
+
+
+[
+    {
+        "conversation_id": "3ab8cf9c-28a0-4cf7-a667-792682bf789d",
+        "profiles" [
+            {
+            "id": "d9ecae35-9d04-4864-80f6-536dd199558d",
+            "username": "Ella Rossi",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-Ella%20Rossi-luvnpgad"
+            },
+            {
+            "id": "c14e5d88-2e7e-4251-92d9-9f620c2d27b8",
+            "username": "gamalabdu",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-gamalabdu-luqa06qu"
+            }
+        ]
+    },
+    {
+        "conversation_id": "3ab8cf9c-28a0-4cf7-a667-792682bf789d",
+        "profiles": [
+            {
+            "id": "c14e5d88-2e7e-4251-92d9-9f620c2d27b8",
+            "username": "gamalabdu",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-gamalabdu-luqa06qu"
+            },
+            {
+            "id": "9e37a176-735e-465b-b8fa-d10f44fd932a",
+            "username": "filip",
+            "avatar_url": "https://jdpxivbijcijxgtkwlfc.supabase.co/storage/v1/object/public/profile-images/image-filip-luq3lh6z"
+        }
+
+        ]
+            
+    }
+]

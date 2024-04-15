@@ -1,36 +1,36 @@
 "use client";
-import useLoadProfileImage from "@/hooks/useLoadProfileImage";
 import { Profile, Song } from "@/types";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Header from "@/components/ui/Header";
-import PageContent from "@/app/dashboard/components/PageContent";
+import PageContent from "../../dashboard/components/PageContent";
 import useGetSongsByUserId from "@/hooks/useGetSongsByUserId";
 import { FiMessageSquare } from "react-icons/fi";
 import useMessageModal from "@/hooks/useMessageModal";
 import { useUser } from "@/hooks/useUser";
-import { SupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import MessageModal from "@/components/MessageModal";
+
 
 interface ProfileContentProps {
   userProfileInfo: Profile;
 }
 
 const ProfilePageContent = (props: ProfileContentProps) => {
+
+
   const { userProfileInfo } = props;
 
   const { user } = useUser();
 
-  const supabaseClient = useSupabaseClient();
-
-  console.log(" You clicked on " + userProfileInfo?.id);
-
-  console.log(" This is who you are : " + user?.id);
+  const supabase = createClient()
 
   const songs = useGetSongsByUserId(userProfileInfo?.id).songs;
 
   const router = useRouter();
+
+  const [ messageModalOpen, setMessageModalOpen ] = useState(false)
 
   let safeSongs: Song[] = [];
 
@@ -40,27 +40,16 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
   const messageModal = useMessageModal();
 
+
   const sendMessage = async () => {
-    messageModal.setOtherId(userProfileInfo.id);
 
-    messageModal.setOtherUserName(userProfileInfo.username);
+    setMessageModalOpen(true)
 
-    const { data: conversationData, error } = await supabaseClient
-      .from("conversations")
-      .select("conversation_id")
-      .contains(
-        "participant_ids",
-        JSON.stringify([user?.id, userProfileInfo.id])
-      );
-
-    if (conversationData && conversationData.length > 0) {
-      const conversationId = conversationData[0].conversation_id;
-
-      router.push(`/messages/${conversationId}`);
-    } else {
-      return messageModal.onOpen();
-    }
   };
+
+
+
+
 
   const displayClassName = `
   flex
@@ -123,6 +112,11 @@ const ProfilePageContent = (props: ProfileContentProps) => {
         </div>
 
         <PageContent songs={safeSongs} heroImage={userProfileInfo.avatar_url} />
+
+
+        <MessageModal messageModalOpen={messageModalOpen} setMessageModalOpen={setMessageModalOpen} userProfileInfo={userProfileInfo}  />
+
+
       </div>
     </div>
   );

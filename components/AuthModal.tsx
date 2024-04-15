@@ -6,7 +6,9 @@ import useAuthModal from "@/hooks/useAuthModal";
 import { createClient } from "@/utils/supabase/client";
 
 const AuthModal = () => {
+  
   const supabase = createClient();
+
   const { onClose, isOpen } = useAuthModal();
 
   const onChange = (open: boolean) => {

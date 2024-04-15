@@ -1,34 +1,28 @@
 "use client";
-import useAuthModal from "@/hooks/useAuthModal";
 import useUploadModal from "@/hooks/useUploadModal";
-import { useUser } from "@/hooks/useUser";
 import { Song } from "@/types";
 import React from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { TbPlaylist } from "react-icons/tb";
 import MediaItem from "./MediaItem";
 import useOnPlay from "@/hooks/useOnPlay";
-import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
-import useProfileSetupModal from "@/hooks/useProfileSetupModal";
-import usePostSessionModal from "@/hooks/usePostSessionModal";
 
 interface LibaryProps {
   songs: Song[];
 }
 
 const Library = (props: LibaryProps) => {
+  
   const { songs } = props;
 
   const uploadModal = useUploadModal();
-  const profileSetupModal = useProfileSetupModal();
+
   const onPlay = useOnPlay(songs);
 
   const onClick = () => {
-    if (true) {
-      profileSetupModal.onOpen();
-    }
 
     return uploadModal.onOpen();
+
   };
 
   return (
@@ -48,6 +42,7 @@ const Library = (props: LibaryProps) => {
         {songs.length > 0 ? (
           songs.map((song) => (
             <MediaItem
+              isInLibrary
               onClick={(id: string) => onPlay(id)}
               key={song.id}
               song={song}

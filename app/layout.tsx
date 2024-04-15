@@ -5,7 +5,6 @@ import UserProvider from "@/providers/UserProvider";
 import ModalProvider from "@/providers/ModalProvider";
 import ToasterProvider from "@/providers/ToasterProvider";
 import Player from "@/components/Player";
-import Header from "@/components/ui/Header";
 import { createClient } from "@/utils/supabase/server";
 
 const font = Figtree({ subsets: ["latin"] });

@@ -7,11 +7,10 @@ import toast from "react-hot-toast";
 import uniqid from "uniqid";
 import Input from "./Input";
 import Button from "./Button";
-import useLoadProfileImage from "@/hooks/useLoadProfileImage";
 import { createClient } from "@/utils/supabase/client";
 import { Profile } from "@/types";
 import Image from "next/image";
-import { supabase } from "@supabase/auth-ui-shared";
+import SelectGenres from "./SelectGenres";
 
 const EditProfileModal = ({
   userProfileInfo,
@@ -24,17 +23,15 @@ const EditProfileModal = ({
   const router = useRouter();
   //   const currentProfileImage = useLoadProfileImage(userProfileInfo);
 
+
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+
   const [imagePreviewUrl, setImagePreviewUrl] = useState(
     userProfileInfo.avatar_url
   );
   const [fileSelected, setFileSelected] = useState(false);
 
-  //   useEffect(() => {
-  //     // This effect will update the image preview whenever currentProfileImage changes
-  //     if (currentProfileImage) {
-  //       setImagePreviewUrl(currentProfileImage);
-  //     }
-  //   }, [currentProfileImage]);
+
 
   const { register, handleSubmit, reset, watch, setValue } =
     useForm<FieldValues>({
@@ -47,6 +44,9 @@ const EditProfileModal = ({
       },
     });
 
+
+
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setFileSelected(true);
@@ -58,6 +58,9 @@ const EditProfileModal = ({
     }
   };
 
+
+
+
   const onChange = (open: boolean) => {
     if (!open) {
       reset();
@@ -65,7 +68,12 @@ const EditProfileModal = ({
     }
   };
 
+
+
+
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
+
+
     setIsLoading(true);
 
     try {
@@ -129,7 +137,7 @@ const EditProfileModal = ({
   return (
     <div>
       <Button onClick={() => setIsOpen(true)}>Edit Account Info</Button>
-      <Modal title="" description="" isOpen={isOpen} onChange={onChange}>
+      <Modal title="Update Your Profile" description="" isOpen={isOpen} onChange={onChange}>
         <form
           className="flex flex-col gap-y-4"
           onSubmit={handleSubmit(onSubmit)}
@@ -147,6 +155,10 @@ const EditProfileModal = ({
             {...register("email")}
             placeholder="Email"
           />
+
+
+            <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+
 
           <div className="flex flex-col justify-center">
             {imagePreviewUrl && (

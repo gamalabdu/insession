@@ -1,22 +1,8 @@
-"use client";
-import useGetMessagesByConversationId from "@/hooks/useGetMessagesByConversationId";
-import { useEffect, useState } from "react";
-import { ChatBubble } from "../components/ChatBubble";
 import Header from "@/components/ui/Header";
-import { useConversationStore } from "@/hooks/useConversationData";
 import Image from "next/image";
-import { FiFilePlus } from "react-icons/fi";
-import Input from "@/components/Input";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useUser } from "@/hooks/useUser";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { GrSend } from "react-icons/gr";
-import { Message } from "@/types";
+import MessageBoard from "./components/MessageBoard";
 import getAllConversations from "@/actions/getAllUserConversations";
-import getConversationsByConversationId from "@/actions/getConversationByConversationId";
-import useGetConversationByConversationId from "@/hooks/useGetConversationByConversationId";
-import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
+
 
 interface ConversationPageProps {
   params: {
@@ -24,90 +10,47 @@ interface ConversationPageProps {
   };
 }
 
-const ConversationPage = (props: ConversationPageProps) => {
-  const supabaseClient = useSupabaseClient();
+const ConversationPage = async (props: ConversationPageProps) => {
 
   const { params } = props;
 
-  const router = useRouter();
+  const conversations = await getAllConversations();
 
-  const { messages } = useGetMessagesByConversationId(params.conversation_id);
+  const currentConversation = conversations.filter(
+    (conversation) => conversation.conversation_id === params.conversation_id
+  )[0];
 
-  const { user } = useUser();
 
-  // const { mainUserPhoto, secondUserPhoto, mainUserName, secondUserName } = useConversationStore((state) => state.conversationData);
-
-  const { conversation } = useGetConversationByConversationId(
-    params.conversation_id
-  );
-
-  const mainUser =
-    conversation?.participant_ids[0] === user?.id
-      ? conversation?.participant_ids[0]
-      : conversation?.participant_ids[1];
-
-  const secondUser =
-    conversation?.participant_ids[0] != user?.id
-      ? conversation?.participant_ids[0]
-      : conversation?.participant_ids[1];
-
-  const mainUserPhoto =
-    useGetUserProfileInfo(mainUser).userProfileInfo?.avatar_url;
-
-  const secondUserPhoto =
-    useGetUserProfileInfo(secondUser).userProfileInfo?.avatar_url;
-
-  const [messageContent, setMessageContent] = useState("");
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const sendMessage = async () => {
-    setIsLoading(true);
-
-    try {
-      const { data: messageData, error: messageError } = await supabaseClient
-        .from("messages")
-        .insert({
-          conversation_id: params.conversation_id,
-          sender_id: user?.id,
-          message_type: "text",
-          content: messageContent,
-          seen: true,
-        });
-
-      if (messageError) {
-        setIsLoading(false);
-        toast.error(messageError.message);
-      }
-    } catch {
-      console.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-
-    router.refresh();
-  };
 
   return (
     <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
+
       <Header>
+
         <div className="mt-20">
+
           <div className="flex flex-col md:flex-row items-center gap-x-5">
+
             <div className="relative rounded-md h-[100px] w-[100px]">
-              {/* Main user photo */}
+
               <Image
-                src={mainUserPhoto || "/images/liked.jpg"}
+                src={
+                  currentConversation.conversation_participants[0].profiles.avatar_url || "/images/liked.jpg"
+                }
                 alt="User profile"
-                layout="fill"
+                fill
                 objectFit="cover"
                 className="rounded-md"
               />
-              {/* Second user photo */}
+
               <div className="absolute bottom-0 right-0 translate-x-2/4 translate-y-1/4 rounded-md overflow-hidden h-[70px] w-[70px]">
                 <Image
-                  src={secondUserPhoto || "/images/liked.jpg"}
+                  src={
+                    currentConversation.conversation_participants[1].profiles
+                      .avatar_url
+                  }
                   alt="User profile"
-                  layout="fill"
+                  fill
                   objectFit="cover"
                 />
               </div>
@@ -118,63 +61,38 @@ const ConversationPage = (props: ConversationPageProps) => {
                 Conversation between:
               </p>
               <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold pl-8">
-                You & {conversation?.participants_names[1]}
+                You &{" "}
+                {
+                  currentConversation.conversation_participants[0].profiles
+                    .username
+                }
               </h1>
             </div>
+
+            <div className="border border-red-500 h-full">
+
+              <div className="border rounded-full py-2 px-4"> Files </div>
+
+            </div>
+
+
+
+
           </div>
+
+
         </div>
       </Header>
 
-      <div className="flex flex-col flex-grow h-0 gap-4 p-4 overflow-auto rounded-md">
-        {messages?.map((message, idx) => {
-          return (
-            <ChatBubble
-              mainUserName={conversation?.participants_names[0] || ""}
-              secondUserName={conversation?.participants_names[1] || ""}
-              mainUserPhoto={mainUserPhoto || ""}
-              secondUserPhoto={secondUserPhoto || ""}
-              message={message}
-              key={message.message_id}
-            />
-          );
-        })}
-      </div>
 
-      <div className="w-full bottom-10 h-[50px] flex flex-row align-middle p-2 gap-2">
-        <label
-          htmlFor="file-input"
-          className="cursor-pointer flex flex-col align-middle justify-center"
-        >
-          <FiFilePlus
-            size={22}
-            className="text-neutral-500 mt-1 hover:text-neutral-200"
-          />
-        </label>
 
-        <input
-          id="file-input"
-          type="file"
-          accept="image/*, audio/*, zip"
-          className="hidden"
+        <MessageBoard
+        conversation_id={params.conversation_id}
+        currentConversation={currentConversation}
         />
 
-        <Input
-          type="text"
-          value={messageContent}
-          placeholder="type your message here..."
-          onChange={(e) => setMessageContent(e.target.value)}
-        />
-
-        <div className="cursor-pointer flex flex-col align-middle justify-center">
-          <GrSend
-            onClick={() => sendMessage()}
-            size={20}
-            className="text-neutral-500 mt-1 hover:text-neutral-200"
-          />
-        </div>
-      </div>
     </div>
-  );
-};
+  )
+}
 
 export default ConversationPage;

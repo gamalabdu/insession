@@ -6,8 +6,6 @@ import Image from "next/image";
 import Button from "@/components/Button";
 import Header from "@/components/ui/Header";
 import usePostSessionModal from "@/hooks/usePostSessionModal";
-import useProfileSetupModal from "@/hooks/useProfileSetupModal";
-import defaultImage from "../../../public/images/liked.jpg";
 
 interface SessionsContentProps {
   allOtherJobs: Job[];
@@ -20,24 +18,6 @@ const SessionsContent = (props: SessionsContentProps) => {
 
   const postSessionModal = usePostSessionModal();
 
-  const profileSetupModal = useProfileSetupModal();
-
-  //   if (allOtherJobs.length === 0) {
-  //     return (
-  //       <div
-  //         className="
-  //                 flex
-  //                 flex-col
-  //                 gap-y-2
-  //                 w-full
-  //                 px-6
-  //                 text-neutral-400
-  //             "
-  //       >
-  //         No liked songs.
-  //       </div>
-  //     );
-  //   }
 
   return (
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
@@ -48,13 +28,14 @@ const SessionsContent = (props: SessionsContentProps) => {
               <Image
                 priority
                 fill
-                src='https://picsum.photos/200/300'
+                src="https://picsum.photos/200/300"
                 alt="playlist"
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
             <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
+
               <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">
                 Sessions
               </h1>
@@ -64,6 +45,7 @@ const SessionsContent = (props: SessionsContentProps) => {
               </p>
 
               <Button onClick={postSessionModal.onOpen}>Post a Session</Button>
+              
             </div>
           </div>
         </div>
@@ -76,13 +58,19 @@ const SessionsContent = (props: SessionsContentProps) => {
           </h1>
         </div>
 
-        {allUserJobs?.map((job) => (
-          <div className="flex items-center gap-x-4 w-full" key={job.job_id}>
-            <div className="flex-1">
-              <JobItem job={job} />
-            </div>
+        {allUserJobs?.length === 0 ? (
+          <div className="flex items-center gap-x-4 w-full">
+            <div className="flex-1">You havent't posted any jobs yet.</div>
           </div>
-        ))}
+        ) : (
+          allUserJobs?.map((job) => (
+            <div className="flex items-center gap-x-4 w-full" key={job.job_id} >
+              <div className="flex-1">
+                <JobItem job={job} />
+              </div>
+            </div>
+          ))
+        )}
 
         <div className="flex justify-between items-center">
           <h1 className="text-white text-2xl font-semibold">
@@ -90,13 +78,19 @@ const SessionsContent = (props: SessionsContentProps) => {
           </h1>
         </div>
 
-        {allOtherJobs?.map((job) => (
-          <div className="flex items-center gap-x-4 w-full" key={job.job_id}>
-            <div className="flex-1">
-              <JobItem job={job} />
-            </div>
+        {allOtherJobs?.length === 0 ? (
+          <div className="flex items-center gap-x-4 w-full">
+            <div className="flex-1">There are no posted jobs.</div>
           </div>
-        ))}
+        ) : (
+          allOtherJobs?.map((job) => (
+            <div className="flex items-center gap-x-4 w-full" key={job.job_id} >
+              <div className="flex-1">
+                <JobItem job={job} />
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

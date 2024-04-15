@@ -1,44 +1,38 @@
 "use client";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import Box from "./Box";
 import SidebarItem from "./SidebarItem";
 import Library from "./Library";
-import { Song } from "@/types";
+import { ConversationReturnItem, Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 import { twMerge } from "tailwind-merge";
 import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdTableRows } from "react-icons/md";
-import { useRouter } from "next/router";
 import SideBarMessenges from "@/app/(private)/messages/components/SideBarMessenges";
 import useGetConversationsByUserId from "@/hooks/useGetConversationsByUserId";
-import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
 import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
-import useProfileSetupModal from "@/hooks/useProfileSetupModal";
 
 interface SidebarProps {
   children: React.ReactNode;
   songs: Song[];
+  conversations: ConversationReturnItem[]
 }
 
 const Sidebar = (props: SidebarProps) => {
-  const { children, songs } = props;
+  const { children, songs, conversations } = props;
 
   const pathName = usePathname();
 
-  const { conversations } = useGetConversationsByUserId();
+  // const { conversations } = useGetConversationsByUserId();
 
   const { user } = useUser();
 
-  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo;
-
-  const userConversations = conversations?.filter((conversation) =>
-    conversation.participant_ids.includes(userProfileInfo?.id || "")
-  );
+  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo
 
   const player = usePlayer();
 
@@ -99,7 +93,7 @@ const Sidebar = (props: SidebarProps) => {
         </Box>
         <Box className="overflow-y-auto h-full">
           {routes.find((route) => route.label === "Messages")?.active ? (
-            <SideBarMessenges conversations={userConversations || []} />
+            <SideBarMessenges conversations={conversations} />
           ) : (
             <Library songs={songs} />
           )}
