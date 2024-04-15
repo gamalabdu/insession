@@ -95,6 +95,7 @@ export interface StorageFile {
   id: string;
   type: string;
   url: string;
+  file_name: string
 }
 
 export interface Message {
@@ -114,7 +115,9 @@ export interface Conversation {
 
 export interface ConversationReturnItem {
   conversation_id: string;
-  conversation_participants: { profiles: Profile }[];
+  conversation_participants: {
+    profiles: Profile
+  }[]
 }
 
 export interface Participant {

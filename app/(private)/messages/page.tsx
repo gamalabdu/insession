@@ -2,7 +2,7 @@
 import Header from "@/components/ui/Header";
 import SearchInput from "@/components/SearchInput";
 import React from "react";
-import MessagesContent from "./components/MessagesContent";
+import MessagesPageContent from "./components/MessagesPageContent";
 import getAllUserConversations from "@/actions/getAllUserConversations";
 
 
@@ -32,7 +32,7 @@ const Messages = async () => {
         </div>
       </Header>
 
-      <MessagesContent conversations={conversations} />
+      <MessagesPageContent conversations={conversations} />
 
     </div>
   );

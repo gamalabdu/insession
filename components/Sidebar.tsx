@@ -6,7 +6,7 @@ import { HiHome } from "react-icons/hi";
 import Box from "./Box";
 import SidebarItem from "./SidebarItem";
 import Library from "./Library";
-import { Song } from "@/types";
+import { ConversationReturnItem, Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 import { twMerge } from "tailwind-merge";
 import { MdOutlineTravelExplore } from "react-icons/md";
@@ -20,22 +20,19 @@ import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
 interface SidebarProps {
   children: React.ReactNode;
   songs: Song[];
+  conversations: ConversationReturnItem[]
 }
 
 const Sidebar = (props: SidebarProps) => {
-  const { children, songs } = props;
+  const { children, songs, conversations } = props;
 
   const pathName = usePathname();
 
-  const { conversations } = useGetConversationsByUserId();
+  // const { conversations } = useGetConversationsByUserId();
 
   const { user } = useUser();
 
   const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo
-
-  const userConversations = conversations?.filter((conversation) =>
-    conversation.participant_ids.includes(userProfileInfo?.id || "")
-  );
 
   const player = usePlayer();
 
@@ -96,7 +93,7 @@ const Sidebar = (props: SidebarProps) => {
         </Box>
         <Box className="overflow-y-auto h-full">
           {routes.find((route) => route.label === "Messages")?.active ? (
-            <SideBarMessenges conversations={userConversations || []} />
+            <SideBarMessenges conversations={conversations} />
           ) : (
             <Library songs={songs} />
           )}

@@ -14,6 +14,7 @@ import { BiPlusCircle } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
+import uniqid from "uniqid";
 
 interface MessagesPageProps {
   conversation_id: string;
@@ -31,6 +32,7 @@ const defaultMessage: NewMessage = {
 };
 
 const MessageBoard = (props: MessagesPageProps) => {
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
   const { conversation_id, currentConversation } = props;
@@ -60,11 +62,10 @@ const MessageBoard = (props: MessagesPageProps) => {
     (async () => {
       const { data } = await supabase
         .from("messages")
-        .select("*, messages_files(id, url, type)")
+        .select("*, messages_files(id, url, type, file_name)")
         .eq("conversation_id", conversation_id)
         .order("sent_at", { ascending: true });
-      console.log(data);
-      data && setMessages(data);
+         data && setMessages(data);
     })();
     supabase
       .channel("table_db_changes")
@@ -80,7 +81,12 @@ const MessageBoard = (props: MessagesPageProps) => {
       .subscribe();
   }, [conversation_id]);
 
+
+
+
+
   const sendMessage = async (e: FormEvent) => {
+
     e.preventDefault();
     setIsLoading(true);
 
@@ -97,21 +103,28 @@ const MessageBoard = (props: MessagesPageProps) => {
         .single();
       await Promise.all(
         newMessage.files.map(async (file) => {
-          const { data } = await supabase.storage
+
+          const fileUniqueID = uniqid();
+
+          const { data: messageFilesData } = await supabase.storage
             .from("messages-files")
-            .upload(file.name, file, {
+            .upload( `message-file-${file.name}-${fileUniqueID}`, file, {
               upsert: false,
             });
-          const {
-            data: { publicUrl },
-          } = supabase.storage
+        
+
+          const { data: returnUrl }  = supabase.storage
             .from("messages-files")
-            .getPublicUrl(data?.path || "");
+            .getPublicUrl(`message-file-${file.name}-${fileUniqueID}`);
+
+
           const { error } = await supabase.from("messages_files").insert({
             message_id: messageData?.message_id,
-            url: publicUrl,
+            url: returnUrl.publicUrl,
             type: file.type,
+            file_name: file.name
           });
+
         })
       );
 
@@ -119,31 +132,45 @@ const MessageBoard = (props: MessagesPageProps) => {
         setIsLoading(false);
         toast.error(messageError.message);
       }
+
     } catch {
       console.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
+
+
     setNewMessage(defaultMessage);
-  };
+
+  }
+
+  
+
+
+
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex flex-col flex-grow h-0 gap-4 p-4 overflow-auto rounded-md">
+    <div className="flex flex-col h-full w-full">
+
+      <div className="flex flex-col flex-grow h-0 gap-4 p-6 overflow-auto rounded-md">
+
         {messages?.map((message, idx) => {
           return (
             <ChatBubble
+              isLoading={isLoading}
               secondUser={secondUser || null}
               message={message}
-              key={message.message_id}
+              key={idx}
             />
-          );
+          )
         })}
+
         <div ref={messagesEndRef} />
+        
       </div>
 
       <form
         onSubmit={sendMessage}
-        className="w-full bottom-10 h-[50px] flex flex-row items-end  p-2 gap-2"
+        className="w-full bottom-10 flex flex-row items-end p-4 gap-2"
       >
         <label
           htmlFor="file-input"
@@ -169,7 +196,8 @@ const MessageBoard = (props: MessagesPageProps) => {
           }
         />
 
-        <div className="relative flex-1">
+        <div className="relative flex-1 h-full">
+
           <div className="flex items-center gap-2 absolute top-3 left-3">
             {newMessage.files
               .filter((item) => item.type.startsWith("image/"))

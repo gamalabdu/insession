@@ -18,7 +18,7 @@ const LikeUserButton = (props: LikeButtonProps) => {
 
   const router = useRouter();
 
-  const supabaseClient = createClient()
+  const supabase = createClient()
 
   const { user } = useUser();
 
@@ -26,6 +26,7 @@ const LikeUserButton = (props: LikeButtonProps) => {
 
 
   useEffect(() => {
+    
     const fetchData = async () => {
       // Ensure user?.id and artistId are defined before making the query
       if (!user?.id || !artistId) {
@@ -34,7 +35,7 @@ const LikeUserButton = (props: LikeButtonProps) => {
         return;
       }
   
-      const { data, error } = await supabaseClient
+      const { data, error } = await supabase
         .from('liked_artist')
         .select('*')
         .eq('user_id', user.id)
@@ -51,7 +52,7 @@ const LikeUserButton = (props: LikeButtonProps) => {
     };
   
     fetchData();
-  }, [artistId, supabaseClient, user?.id]);
+  }, [artistId, supabase, user?.id]);
   
 
   
@@ -63,7 +64,7 @@ const LikeUserButton = (props: LikeButtonProps) => {
 
     if (isLiked) {
 
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('liked_artist')
         .delete()
         .eq('user_id', user?.id)
@@ -75,7 +76,8 @@ const LikeUserButton = (props: LikeButtonProps) => {
         setIsLiked(false);
       }
     } else {
-      const { error } = await supabaseClient
+
+      const { error } = await supabase
         .from('liked_artist')
         .insert({
           artist_id: artistId,
@@ -88,6 +90,7 @@ const LikeUserButton = (props: LikeButtonProps) => {
         setIsLiked(true);
         toast.success('Success');
       }
+
     }
 
     router.refresh();

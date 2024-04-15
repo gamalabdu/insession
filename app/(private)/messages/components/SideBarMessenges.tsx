@@ -1,13 +1,13 @@
 "use client"
 import useUploadModal from '@/hooks/useUploadModal'
-import { Conversation } from '@/types'
+import { Conversation, ConversationReturnItem } from '@/types'
 import React from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { TbPlaylist } from 'react-icons/tb'
 import ConversationItem from './ConversationItem'
 
 interface SidebarMessengesProps {
-    conversations: Conversation[] | null
+    conversations: ConversationReturnItem[]
 }
 
 const SideBarMessenges = ( props: SidebarMessengesProps) => {

@@ -1,12 +1,16 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
 import { Message, Profile, StorageFile } from "@/types";
+import { Spinner } from "@nextui-org/spinner";
 import Image from "next/image";
 import React from "react";
+import { LuFileAudio } from "react-icons/lu";
+import { PiFileZip } from "react-icons/pi";
 
 interface ChatBubbleProps {
   message: Message;
   secondUser: Profile | null;
+  isLoading: boolean
 }
 
 type GroupedFiles = {
@@ -14,45 +18,52 @@ type GroupedFiles = {
 };
 
 export const ChatBubble = (props: ChatBubbleProps) => {
-  const { message, secondUser } = props;
 
-  const { user, userDetails, isLoading } = useUser();
+
+  const { message, secondUser, isLoading } = props;
+
+
+  const { user, userDetails, isLoading : loading } = useUser();
 
   const isSignedIn = user?.id === message.sender_id;
 
-  if (isLoading.profile) {
+  if (loading.profile) {
     return <></>;
   }
 
   const avatarUrl = isSignedIn
     ? userDetails?.avatar_url
     : secondUser?.avatar_url;
+    
 
-  const { images, audio, zip }: GroupedFiles = message.messages_files.reduce(
-    (prev, curr) =>
-      curr.type.startsWith("image")
-        ? { ...prev, images: [...prev.images, curr] }
-        : curr.type.startsWith("audio")
-        ? { ...prev, audio: [...prev.audio, curr] }
-        : { ...prev, zip: [...prev.zip, curr] },
-    {
-      images: [],
-      audio: [],
-      zip: [],
-    } as GroupedFiles
-  );
+    const { images, audio , zip }: GroupedFiles = message.messages_files ? message.messages_files.reduce(
+      (prev, curr) =>
+        curr.type.startsWith("image")
+          ? { ...prev, images: [...prev.images, curr] }
+          : curr.type.startsWith("audio")
+          ? { ...prev, audio: [...prev.audio, curr] }
+          : { ...prev, zip: [...prev.zip, curr] },
+      {
+        images: [],
+        audio: [],
+        zip: [],
+      } as GroupedFiles
+    ) : { images: [], audio: [], zip: [] };
+
+
 
   return (
     <div className={`flex ${!isSignedIn ? "justify-start" : "justify-end"}`}>
+
       <div className="mb-1 flex justify-center align-middle mr-2">
         {avatarUrl && (
           <div className="relative rounded-md h-[48px] w-[48px]">
             <Image
               src={avatarUrl}
               alt="userPhoto"
-              objectFit="cover"
               fill
-              className="rounded-md"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="rounded-md object-cover"
             />
           </div>
         )}
@@ -71,13 +82,16 @@ export const ChatBubble = (props: ChatBubbleProps) => {
         </div>
       </div>
 
+
+
       <div
-        className={`${
-          !isSignedIn
-            ? " bg-neutral-700 rounded-md p-2 w-1/2 "
-            : "flex bg-neutral-500 rounded-md p-2 w-1/2"
-        }`}
-      >
+      className={`${
+        !isSignedIn
+          ? " flex bg-neutral-700 rounded-md w-1/2 max-w-fit p-2"
+          : "flex flex-col bg-neutral-600 rounded-md w-1/2 max-w-fit p-2"
+      }`}
+    >
+
         {images.length > 0 && (
           <div
             className={`w-full grid gap-2 ${
@@ -88,16 +102,56 @@ export const ChatBubble = (props: ChatBubbleProps) => {
                 : "grid-cols-2"
             }`}
           >
-            {images.map((item) => (
-              <div className="relative" key={item.url}>
-                <Image fill className="object-contain" src={item.url} alt="" />
+            {images.map((item, idx) => (
+              <div className="relative h-[60px] w-[60px]" key={idx}>
+                <Image
+                  fill
+                  className="object-contain"
+                  src={item.url}
+                  alt="message-image"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
               </div>
             ))}
           </div>
         )}
-        
+  
+        {audio.length > 0 && (
+          <div className={'w-full grid gap-2 p-5 bg-neutral-800 rounded-md'}>
+            {audio.map((item, idx) => (
+              <div className="w-full flex-grow" key={idx}>
+                <LuFileAudio />
+                <span className="w-full">{item.file_name}</span>
+                <audio controls className="w-full" src={item.url}>
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+            ))}
+          </div>
+        )}
+  
+        {zip.length > 0 && (
+            <div className={'w-full grid gap-2 p-5 bg-neutral-800 rounded-md'}>
+            {zip.map((item, idx) => (
+              <div className="relative" key={idx}>
+                <PiFileZip />
+                <a
+                  href={item.url}
+                  download={item.file_name}
+                  className="download-link text-neutral-300 hover:text-neutral-500 underline"
+                >
+                  Download {item.file_name}
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
+  
         {message.content}
-      </div>
+
     </div>
-  );
-};
+    
+    </div>
+  )
+
+}

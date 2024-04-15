@@ -1,10 +1,8 @@
 import Header from "@/components/ui/Header";
 import Image from "next/image";
-import getMessagesByConversationId from "@/actions/getMessagesByConversationId";
 import MessageBoard from "./components/MessageBoard";
 import getAllConversations from "@/actions/getAllUserConversations";
-import { useUser } from "@/hooks/useUser";
-import getUser from "@/actions/getUser";
+
 
 interface ConversationPageProps {
   params: {
@@ -13,6 +11,7 @@ interface ConversationPageProps {
 }
 
 const ConversationPage = async (props: ConversationPageProps) => {
+
   const { params } = props;
 
   const conversations = await getAllConversations();
@@ -21,24 +20,29 @@ const ConversationPage = async (props: ConversationPageProps) => {
     (conversation) => conversation.conversation_id === params.conversation_id
   )[0];
 
+
+
   return (
     <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
+
       <Header>
+
         <div className="mt-20">
+
           <div className="flex flex-col md:flex-row items-center gap-x-5">
+
             <div className="relative rounded-md h-[100px] w-[100px]">
-              {/* Main user photo */}
+
               <Image
                 src={
-                  currentConversation.conversation_participants[0].profiles
-                    .avatar_url || "/images/liked.jpg"
+                  currentConversation.conversation_participants[0].profiles.avatar_url || "/images/liked.jpg"
                 }
                 alt="User profile"
                 fill
                 objectFit="cover"
                 className="rounded-md"
               />
-              {/* Second user photo */}
+
               <div className="absolute bottom-0 right-0 translate-x-2/4 translate-y-1/4 rounded-md overflow-hidden h-[70px] w-[70px]">
                 <Image
                   src={
@@ -59,21 +63,36 @@ const ConversationPage = async (props: ConversationPageProps) => {
               <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold pl-8">
                 You &{" "}
                 {
-                  currentConversation.conversation_participants[1].profiles
+                  currentConversation.conversation_participants[0].profiles
                     .username
                 }
               </h1>
             </div>
+
+            <div className="border border-red-500 h-full">
+
+              <div className="border rounded-full py-2 px-4"> Files </div>
+
+            </div>
+
+
+
+
           </div>
+
+
         </div>
       </Header>
 
-      <MessageBoard
+
+
+        <MessageBoard
         conversation_id={params.conversation_id}
         currentConversation={currentConversation}
-      />
+        />
+
     </div>
-  );
-};
+  )
+}
 
 export default ConversationPage;

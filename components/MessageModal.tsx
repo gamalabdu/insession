@@ -57,6 +57,7 @@ const MessageModal = (props: MessageModalProps) => {
         .select("conversation_id")
         .single();
 
+
       if (conversationError) {
         toast.error(conversationError.message);
         console.error("Error creating conversation:", conversationError);
@@ -102,11 +103,12 @@ const MessageModal = (props: MessageModalProps) => {
         console.log(messageError);
       }
 
-      router.push(`/messages/${conversationId}`);
+      router.push(`/messages/${conversationId.conversation_id}`);
 
       toast.success("Message sent!");
       reset();
       setMessageModalOpen(false);
+
     } catch (error) {
       toast.error("Something went wrong.");
     } finally {
