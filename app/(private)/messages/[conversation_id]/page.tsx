@@ -33,7 +33,8 @@ const ConversationPage = async ({
   const currentUser = conversation.users.find((item) => item.id === user?.id);
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
   return (
-    <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
+    <div className="flex flex-col bg-neutral-900 overflow-hidden rounded-lg h-full w-full">
+
       <Header>
         <div className="mt-20 flex">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
