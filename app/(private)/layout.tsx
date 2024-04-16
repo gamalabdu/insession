@@ -8,9 +8,13 @@ export default async function PrivateLayout({
 }: {
   children: ReactNode;
 }) {
+
+
   const userSongs = await getSongsByUserId();
 
+
   const { results: conversations } = await getAllConversations();
+  
 
   return (
     <Sidebar songs={userSongs} conversations={conversations}>

@@ -105,7 +105,6 @@ const FilesModal = (props: FilesModalProps) => {
               md:grid-cols-3
               lg:grid-cols-4
               xl:grid-cols-4
-              2xl:grid-cols-8 
               gap-4 
               p-3
               h-full
@@ -143,7 +142,6 @@ const FilesModal = (props: FilesModalProps) => {
         md:grid-cols-3
         lg:grid-cols-4
         xl:grid-cols-4
-        2xl:grid-cols-8 
         gap-4 
         p-3
         h-full

@@ -8,10 +8,9 @@ import Button from "./Button";
 import toast from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
-import useMessageModal from "@/hooks/useMessageModal";
-import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
 import { createClient } from "@/utils/supabase/client";
-import { Conversation, Profile } from "@/types";
+import { v4 as uuidv4 } from 'uuid'; 
+
 
 interface MessageModalProps {
   messageModalOpen: boolean;
@@ -48,15 +47,24 @@ const MessageModal = (props: MessageModalProps) => {
   };
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
+
+
+    const uniqid = uuidv4()
+
+    
+
+
     try {
       setIsLoading(true);
 
       // adding empty conversation
-      const { data: conversationId, error: conversationError } = await supabase
+      const { error: conversationError } = await supabase
         .from("conversations")
-        .insert({})
-        .select("conversation_id")
-        .single();
+        .insert({
+          conversation_id: uniqid
+        })
+
+  
 
 
       if (conversationError) {
@@ -66,34 +74,28 @@ const MessageModal = (props: MessageModalProps) => {
       }
 
       // adding current user to conversation_participants
-      const { error: addingUser1Error } = await supabase
+      const { error: addingUsersError } = await supabase
         .from("conversation_participants")
-        .insert({
-          conversation_id: conversationId.conversation_id,
+        .insert([
+          {
+          conversation_id: uniqid,
           user_id: user?.id,
-        });
+          },
+          {
+            conversation_id: uniqid,
+            user_id: userProfileInfo.id,
+          }
+      ]);
 
-      if (addingUser1Error) {
-        toast.error(addingUser1Error.message);
-        console.log(addingUser1Error);
+      if (addingUsersError) {
+        toast.error(addingUsersError.message);
+        console.log(addingUsersError);
       }
 
-      // adding user we are sending message too to conversation_participants
-      const { error: addingUser2Error } = await supabase
-        .from("conversation_participants")
-        .insert({
-          conversation_id: conversationId.conversation_id,
-          user_id: userProfileInfo.id,
-        });
-
-      if (addingUser2Error) {
-        toast.error(addingUser2Error.message);
-        console.log(addingUser2Error);
-      }
 
       //adding message from current user to other user
       const { error: messageError } = await supabase.from("messages").insert({
-        conversation_id: conversationId.conversation_id,
+        conversation_id: uniqid,
         sender_id: user?.id,
         content: values.message,
         seen: false,
@@ -104,7 +106,7 @@ const MessageModal = (props: MessageModalProps) => {
         console.log(messageError);
       }
 
-      router.push(`/messages/${conversationId.conversation_id}`);
+      router.push(`/messages/${uniqid}`);
 
       toast.success("Message sent!");
       reset();

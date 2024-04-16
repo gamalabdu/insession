@@ -23,11 +23,15 @@ interface SidebarProps {
 }
 
 const Sidebar = (props: SidebarProps) => {
+
   const { children, songs, conversations } = props;
 
   const pathName = usePathname();
 
-  // const { conversations } = useGetConversationsByUserId();
+
+  
+
+  
 
   const { user } = useUser();
 

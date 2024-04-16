@@ -8,7 +8,6 @@ import uniqid from "uniqid";
 import Input from "./Input";
 import Button from "./Button";
 import { createClient } from "@/utils/supabase/client";
-import { Profile } from "@/types";
 import Image from "next/image";
 import SelectGenres from "./SelectGenres";
 
