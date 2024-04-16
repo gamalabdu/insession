@@ -22,18 +22,6 @@ export interface Song {
   bpm: string;
 }
 
-export interface Profile {
-  id: string;
-  username: string;
-  email: string;
-  avatar_url: string;
-  created_at: string;
-  is_enabled: boolean;
-  first_name: string;
-  last_name: string;
-  location: string;
-}
-
 export interface Job {
   user_id: string;
   created_by: string;
@@ -95,7 +83,7 @@ export interface StorageFile {
   id: string;
   type: string;
   url: string;
-  file_name: string
+  file_name: string;
 }
 
 export interface Message {
@@ -106,18 +94,6 @@ export interface Message {
   seen: boolean;
   sent_at: string;
   messages_files: StorageFile[];
-}
-
-export interface Conversation {
-  conversation_id: string;
-  created_at: string;
-}
-
-export interface ConversationReturnItem {
-  conversation_id: string;
-  conversation_participants: {
-    profiles: Profile
-  }[]
 }
 
 export interface Participant {
