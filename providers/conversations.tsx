@@ -26,7 +26,7 @@ export default function ConversationsProvider({
   );
 
   useEffect(() => {
-    if (pathname !== "/messages") return setAreLoading(false);
+    if (!pathname.startsWith("/messages")) return setAreLoading(false);
     setAreLoading(true);
     const supabase = createClient();
     (async () => {
