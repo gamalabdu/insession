@@ -2,16 +2,8 @@ import Header from "@/components/ui/Header";
 import SearchInput from "@/components/SearchInput";
 import React from "react";
 import MessagesPageContent from "./components/MessagesPageContent";
-import { getAllConversations } from "@/actions/messages";
 
 export default async function Page() {
-
-
-  const { results: conversations } = await getAllConversations();
-
-
-
-  
   return (
     <div
       className="
@@ -32,7 +24,7 @@ export default async function Page() {
           />
         </div>
       </Header>
-      <MessagesPageContent conversations={conversations} />
+      <MessagesPageContent />
     </div>
   );
 }

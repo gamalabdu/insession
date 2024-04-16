@@ -1,5 +1,4 @@
 "use client";
-import { Profile } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import {
@@ -34,7 +33,6 @@ export const MyUserContextProvider = ({
   const [user, setUser] = useState<User | null>(null);
   const [userDetails, setUserDetails] = useState<Profile | null>(null);
 
-
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
@@ -45,7 +43,6 @@ export const MyUserContextProvider = ({
       session && setUser(session.user);
     });
   }, []);
-
 
   useEffect(() => {
     if (!user) return setIsLoading((prev) => ({ ...prev, profile: false }));

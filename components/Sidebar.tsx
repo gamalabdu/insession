@@ -13,30 +13,14 @@ import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdTableRows } from "react-icons/md";
 import SideBarMessenges from "@/app/(private)/messages/components/SideBarMessenges";
-import { useUser } from "@/hooks/useUser";
-import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
 
 interface SidebarProps {
   children: React.ReactNode;
   songs: Song[];
-  conversations: Conversation[];
 }
 
-const Sidebar = (props: SidebarProps) => {
-
-  const { children, songs, conversations } = props;
-
+const Sidebar = ({ children, songs }: SidebarProps) => {
   const pathName = usePathname();
-
-
-  
-
-  
-
-  const { user } = useUser();
-
-  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo;
-
   const player = usePlayer();
 
   const routes = useMemo(
@@ -96,13 +80,12 @@ const Sidebar = (props: SidebarProps) => {
         </Box>
         <Box className="overflow-y-auto h-full">
           {routes.find((route) => route.label === "Messages")?.active ? (
-            <SideBarMessenges conversations={conversations} />
+            <SideBarMessenges />
           ) : (
             <Library songs={songs} />
           )}
         </Box>
       </div>
-
       <main className="h-full flex-1 overflow-y-auto py-2 pr-2 pl-2">
         {children}
       </main>
