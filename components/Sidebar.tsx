@@ -6,21 +6,20 @@ import { HiHome } from "react-icons/hi";
 import Box from "./Box";
 import SidebarItem from "./SidebarItem";
 import Library from "./Library";
-import { ConversationReturnItem, Song } from "@/types";
+import { Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 import { twMerge } from "tailwind-merge";
 import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdTableRows } from "react-icons/md";
 import SideBarMessenges from "@/app/(private)/messages/components/SideBarMessenges";
-import useGetConversationsByUserId from "@/hooks/useGetConversationsByUserId";
 import { useUser } from "@/hooks/useUser";
 import useGetUserProfileInfo from "@/hooks/useGetUserProfileInfo";
 
 interface SidebarProps {
   children: React.ReactNode;
   songs: Song[];
-  conversations: ConversationReturnItem[]
+  conversations: Conversation[];
 }
 
 const Sidebar = (props: SidebarProps) => {
@@ -32,7 +31,7 @@ const Sidebar = (props: SidebarProps) => {
 
   const { user } = useUser();
 
-  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo
+  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo;
 
   const player = usePlayer();
 

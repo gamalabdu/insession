@@ -34,16 +34,13 @@
 //     router.push(`/messages/${conversation_id}`);
 //   };
 
-
 //   return (
 //     <div  onClick={() => handleClick(conversation.conversation_id)}
 //       className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full h-full p-2 rounded-md border"
 //     >
 
-
-
 //       {/* <div className="relative rounded-md h-[80px] w-[80px] aspect-square"> */}
-//       <div className="relative rounded-md overflow-hidden aspect-square border"> 
+//       <div className="relative rounded-md overflow-hidden aspect-square border">
 
 //         <Image
 //           src={user2.avatar_url || "/../public/images/liked.jpg"}
@@ -54,7 +51,7 @@
 //         />
 
 //         <span>{user2.username}</span>
-        
+
 //       </div>
 
 //       <div className="flex flex-col gap-y-4 overflow-hidden w-full justify-center align-middle">
@@ -71,56 +68,40 @@
 
 // export default ConversationItem;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ConversationReturnItem } from "@/types";
 import { useUser } from "@/hooks/useUser";
 import useGetMessagesByConversationId from "@/hooks/useGetMessagesByConversationId";
 
-interface ConversationItemProps {
-  conversation: ConversationReturnItem;
-}
-
-const ConversationItem = (props: ConversationItemProps) => {
-
+const ConversationItem = ({ conversation_id, users }: Conversation) => {
   const router = useRouter();
-  const { conversation } = props;
-  const { user, userDetails } = useUser();
-  const { messages } = useGetMessagesByConversationId(conversation.conversation_id);
+  const { user } = useUser();
+  const { messages } = useGetMessagesByConversationId(conversation_id);
 
-
-  const user2 = conversation.conversation_participants
-    .filter((participant) => participant.profiles.id !== userDetails?.id)[0]
-    .profiles;
-
-  const lastMessage = messages && messages.length > 0 ? messages[messages.length - 1] : null;
+  const otherUser = users.find((item) => item.id !== user?.id);
+  const lastMessage =
+    messages && messages.length > 0 ? messages[messages.length - 1] : null;
 
   const handleClick = (conversation_id: string) => {
     router.push(`/messages/${conversation_id}`);
   };
 
+  if (!otherUser) {
+    return (
+      <div>
+        <span>The other user has not been found</span>
+      </div>
+    );
+  }
+
   return (
-    <div onClick={() => handleClick(conversation.conversation_id)}
+    <div
+      onClick={() => handleClick(conversation_id)}
       className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md"
     >
-
-        {/* <div className="aspect-square h-[80px] relative overflow-hidden rounded-md bg-gray-200">
+      {/* <div className="aspect-square h-[80px] relative overflow-hidden rounded-md bg-gray-200">
           <Image
             src={user2.avatar_url || "/images/default-avatar.jpg"} // Ensure the path is correct
             alt="User profile"
@@ -131,30 +112,30 @@ const ConversationItem = (props: ConversationItemProps) => {
           />
         </div> */}
 
-<div className="aspect-square h-[70px] relative overflow-hidden rounded-full bg-gray-200">
-  <Image
-    src={user2.avatar_url || "/images/default-avatar.jpg"} // Ensure the path is correct
-    alt="User profile"
-    layout="fill"
-    objectFit="cover"
-    className="rounded-full" // Changed from rounded-md to rounded-full
-    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-  />
-</div>
-
-
-
-      <div className="flex-1 flex flex-col justify-center p-2 truncate">
-
-      <span onClick={ () => router.push(`/profile?id=${user2.id}`)} className="text-sm mt-1 text-neutral-500 hover:text-neutral-400 hover:underline">{user2.username}</span>
-
-        <p className="text-neutral-400 text-base truncate">
-          {lastMessage?.sender_id === user?.id && "You :"}   {lastMessage?.content}
-        </p>
-
+      <div className="aspect-square h-[70px] relative overflow-hidden rounded-full bg-gray-200">
+        <Image
+          src={otherUser.avatar_url}
+          alt="User profile"
+          layout="fill"
+          objectFit="cover"
+          className="rounded-full" // Changed from rounded-md to rounded-full
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       </div>
 
-      
+      <div className="flex-1 flex flex-col justify-center p-2 truncate">
+        <span
+          onClick={() => router.push(`/profile?id=${otherUser.id}`)}
+          className="text-sm mt-1 text-neutral-500 hover:text-neutral-400 hover:underline"
+        >
+          {otherUser.username}
+        </span>
+
+        <p className="text-neutral-400 text-base truncate">
+          {lastMessage?.sender_id === user?.id && "You :"}{" "}
+          {lastMessage?.content}
+        </p>
+      </div>
     </div>
   );
 };

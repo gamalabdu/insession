@@ -1,37 +1,34 @@
 import Header from "@/components/ui/Header";
-import Image from "next/image";
 import MessageBoard from "./components/MessageBoard";
-import getAllConversations from "@/actions/getAllUserConversations";
-
+import { getConversation } from "@/actions/messages";
+import { notFound } from "next/navigation";
 
 interface ConversationPageProps {
   params: {
-    conversation_id: string;
+    conversation_id?: string;
   };
 }
 
-const ConversationPage = async (props: ConversationPageProps) => {
+const ConversationPage = async ({
+  params: { conversation_id },
+}: ConversationPageProps) => {
+  if (!conversation_id) {
+    return notFound();
+  }
+  const {
+    results: [conversation],
+    error,
+  } = await getConversation(conversation_id);
 
-  const { params } = props;
-
-  const conversations = await getAllConversations();
-
-  const currentConversation = conversations.filter(
-    (conversation) => conversation.conversation_id === params.conversation_id
-  )[0];
-
-
-
+  if (error || !conversation) {
+    throw new Error(error || "Not found");
+  }
   return (
     <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
-
       <Header>
-
         <div className="mt-20">
-
           <div className="flex flex-col md:flex-row items-center gap-x-5">
-
-            <div className="relative rounded-md h-[100px] w-[100px]">
+            {/* <div className="relative rounded-md h-[100px] w-[100px]">
 
               <Image
                 src={
@@ -67,32 +64,21 @@ const ConversationPage = async (props: ConversationPageProps) => {
                     .username
                 }
               </h1>
-            </div>
+            </div> */}
 
             <div className="border border-red-500 h-full">
-
               <div className="border rounded-full py-2 px-4"> Files </div>
-
             </div>
-
-
-
-
           </div>
-
-
         </div>
       </Header>
 
-
-
-        <MessageBoard
-        conversation_id={params.conversation_id}
-        currentConversation={currentConversation}
-        />
-
+      <MessageBoard
+        conversation_id={conversation_id}
+        conversation={conversation}
+      />
     </div>
-  )
-}
+  );
+};
 
 export default ConversationPage;

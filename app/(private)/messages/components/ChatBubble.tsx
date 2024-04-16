@@ -1,7 +1,6 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
-import { Message, Profile, StorageFile } from "@/types";
-import { Spinner } from "@nextui-org/spinner";
+import { Message, StorageFile } from "@/types";
 import Image from "next/image";
 import React from "react";
 import { LuFileAudio } from "react-icons/lu";
@@ -9,8 +8,8 @@ import { PiFileZip } from "react-icons/pi";
 
 interface ChatBubbleProps {
   message: Message;
-  secondUser: Profile | null;
-  isLoading: boolean
+  otherUser?: Profile;
+  isLoading: boolean;
 }
 
 type GroupedFiles = {
@@ -18,12 +17,9 @@ type GroupedFiles = {
 };
 
 export const ChatBubble = (props: ChatBubbleProps) => {
+  const { message, otherUser, isLoading } = props;
 
-
-  const { message, secondUser, isLoading } = props;
-
-
-  const { user, userDetails, isLoading : loading } = useUser();
+  const { user, userDetails, isLoading: loading } = useUser();
 
   const isSignedIn = user?.id === message.sender_id;
 
@@ -33,28 +29,26 @@ export const ChatBubble = (props: ChatBubbleProps) => {
 
   const avatarUrl = isSignedIn
     ? userDetails?.avatar_url
-    : secondUser?.avatar_url;
-    
+    : otherUser?.avatar_url;
 
-    const { images, audio , zip }: GroupedFiles = message.messages_files ? message.messages_files.reduce(
-      (prev, curr) =>
-        curr.type.startsWith("image")
-          ? { ...prev, images: [...prev.images, curr] }
-          : curr.type.startsWith("audio")
-          ? { ...prev, audio: [...prev.audio, curr] }
-          : { ...prev, zip: [...prev.zip, curr] },
-      {
-        images: [],
-        audio: [],
-        zip: [],
-      } as GroupedFiles
-    ) : { images: [], audio: [], zip: [] };
-
-
+  const { images, audio, zip }: GroupedFiles = message.messages_files
+    ? message.messages_files.reduce(
+        (prev, curr) =>
+          curr.type.startsWith("image")
+            ? { ...prev, images: [...prev.images, curr] }
+            : curr.type.startsWith("audio")
+            ? { ...prev, audio: [...prev.audio, curr] }
+            : { ...prev, zip: [...prev.zip, curr] },
+        {
+          images: [],
+          audio: [],
+          zip: [],
+        } as GroupedFiles
+      )
+    : { images: [], audio: [], zip: [] };
 
   return (
     <div className={`flex ${!isSignedIn ? "justify-start" : "justify-end"}`}>
-
       <div className="mb-1 flex justify-center align-middle mr-2">
         {avatarUrl && (
           <div className="relative rounded-md h-[48px] w-[48px]">
@@ -77,21 +71,18 @@ export const ChatBubble = (props: ChatBubbleProps) => {
             })}
           </time>
           <div className="ml-1 opacity-50">
-            {isSignedIn ? userDetails?.username : secondUser?.username}
+            {isSignedIn ? userDetails?.username : otherUser?.username}
           </div>
         </div>
       </div>
 
-
-
       <div
-      className={`${
-        !isSignedIn
-          ? " flex bg-neutral-700 rounded-md w-1/2 max-w-fit p-2"
-          : "flex flex-col bg-neutral-600 rounded-md w-1/2 max-w-fit p-2"
-      }`}
-    >
-
+        className={`${
+          !isSignedIn
+            ? " flex bg-neutral-700 rounded-md w-1/2 max-w-fit p-2"
+            : "flex flex-col bg-neutral-600 rounded-md w-1/2 max-w-fit p-2"
+        }`}
+      >
         {images.length > 0 && (
           <div
             className={`w-full grid gap-2 ${
@@ -115,9 +106,9 @@ export const ChatBubble = (props: ChatBubbleProps) => {
             ))}
           </div>
         )}
-  
+
         {audio.length > 0 && (
-          <div className={'w-full grid gap-2 p-5 bg-neutral-800 rounded-md'}>
+          <div className={"w-full grid gap-2 p-5 bg-neutral-800 rounded-md"}>
             {audio.map((item, idx) => (
               <div className="w-full flex-grow" key={idx}>
                 <LuFileAudio />
@@ -129,9 +120,9 @@ export const ChatBubble = (props: ChatBubbleProps) => {
             ))}
           </div>
         )}
-  
+
         {zip.length > 0 && (
-            <div className={'w-full grid gap-2 p-5 bg-neutral-800 rounded-md'}>
+          <div className={"w-full grid gap-2 p-5 bg-neutral-800 rounded-md"}>
             {zip.map((item, idx) => (
               <div className="relative" key={idx}>
                 <PiFileZip />
@@ -146,12 +137,9 @@ export const ChatBubble = (props: ChatBubbleProps) => {
             ))}
           </div>
         )}
-  
+
         {message.content}
-
+      </div>
     </div>
-    
-    </div>
-  )
-
-}
+  );
+};

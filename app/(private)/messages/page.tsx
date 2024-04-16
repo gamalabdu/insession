@@ -1,15 +1,11 @@
-
 import Header from "@/components/ui/Header";
 import SearchInput from "@/components/SearchInput";
 import React from "react";
 import MessagesPageContent from "./components/MessagesPageContent";
-import getAllUserConversations from "@/actions/getAllUserConversations";
+import { getAllConversations } from "@/actions/messages";
 
-
-const Messages = async () => {
-
-  const conversations = await getAllUserConversations();
-
+export default async function Page() {
+  const { results: conversations } = await getAllConversations();
   return (
     <div
       className="
@@ -21,7 +17,6 @@ const Messages = async () => {
         overflow-y-auto
         "
     >
-      
       <Header className="from-bg-neutral-900">
         <div className="mb-2 flex flex-col gap-y-6">
           <h1 className="text-white text-3xl font-semibold"> Messages </h1>
@@ -31,11 +26,7 @@ const Messages = async () => {
           />
         </div>
       </Header>
-
       <MessagesPageContent conversations={conversations} />
-
     </div>
   );
-};
-
-export default Messages;
+}
