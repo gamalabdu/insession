@@ -1,5 +1,4 @@
 "use client";
-import { Message } from "@/types";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { ChatBubble } from "../../components/ChatBubble";
 import { FiFilePlus } from "react-icons/fi";

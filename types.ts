@@ -86,16 +86,6 @@ export interface StorageFile {
   file_name: string;
 }
 
-export interface Message {
-  message_id: string;
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  seen: boolean;
-  sent_at: string;
-  messages_files: StorageFile[];
-}
-
 export interface Participant {
   participant_id: string;
   joined_at: string;

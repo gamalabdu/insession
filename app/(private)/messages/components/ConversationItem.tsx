@@ -26,9 +26,9 @@
 
 //   const user2 = conversation.conversation_participants.filter((participant) => participant.profiles.id != userDetails?.id)[0].profiles
 
-//   const lastMessage = messages && messages.length > 0 ? messages[messages.length - 1] : null;
+//   const latest_message = messages && messages.length > 0 ? messages[messages.length - 1] : null;
 
-//   console.log("This is lastMessage : ", lastMessage?.messages_files)
+//   console.log("This is latest_message : ", latest_message?.messages_files)
 
 //   const handleClick = (conversation_id: string) => {
 //     router.push(`/messages/${conversation_id}`);
@@ -57,7 +57,7 @@
 //       <div className="flex flex-col gap-y-4 overflow-hidden w-full justify-center align-middle">
 
 //         <p className="text-neutral-400 text-lg truncate pl-4 overflow-hidden w-full">
-//           {lastMessage?.content}
+//           {latest_message?.content}
 //         </p>
 
 //       </div>
@@ -73,16 +73,16 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-import useGetMessagesByConversationId from "@/hooks/useGetMessagesByConversationId";
 
-const ConversationItem = ({ conversation_id, users }: Conversation) => {
+const ConversationItem = ({
+  conversation_id,
+  users,
+  latest_message,
+}: ConversationWithMessage) => {
   const router = useRouter();
   const { user } = useUser();
-  const { messages } = useGetMessagesByConversationId(conversation_id);
 
   const otherUser = users.find((item) => item.id !== user?.id);
-  const lastMessage =
-    messages && messages.length > 0 ? messages[messages.length - 1] : null;
 
   const handleClick = (conversation_id: string) => {
     router.push(`/messages/${conversation_id}`);
@@ -95,6 +95,8 @@ const ConversationItem = ({ conversation_id, users }: Conversation) => {
       </div>
     );
   }
+
+  const sender = users.find((item) => item.id === latest_message?.sender_id);
 
   return (
     <div
@@ -132,8 +134,7 @@ const ConversationItem = ({ conversation_id, users }: Conversation) => {
         </span>
 
         <p className="text-neutral-400 text-base truncate">
-          {lastMessage?.sender_id === user?.id && "You :"}{" "}
-          {lastMessage?.content}
+          {sender?.id === user?.id && "You :"} {latest_message?.content}
         </p>
       </div>
     </div>
