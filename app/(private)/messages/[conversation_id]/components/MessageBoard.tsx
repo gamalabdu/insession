@@ -47,9 +47,17 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+
+
   useEffect(() => {
+  
     scrollToBottom();
+  
   }, [messages]);
+
+
+
+
 
   useEffect(() => {
     const supabase = createClient();

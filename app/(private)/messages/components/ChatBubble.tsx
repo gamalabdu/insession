@@ -17,6 +17,8 @@ type GroupedFiles = {
 };
 
 export const ChatBubble = (props: ChatBubbleProps) => {
+
+  
   const { message, otherUser, isLoading } = props;
 
   const { user, userDetails, isLoading: loading } = useUser();

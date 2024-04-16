@@ -20,7 +20,6 @@ const MessagesPageContent = ({ conversations }: Props) => {
       flex-col
       gap-y-2
       w-full
-      max-w-5xl
       px-6
     "
     >

@@ -46,16 +46,42 @@ const MessageModal = (props: MessageModalProps) => {
     }
   };
 
+
+
+
+
+
+
+
+
+
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
 
 
     const uniqid = uuidv4()
 
-    
-
 
     try {
+
+
+
       setIsLoading(true);
+
+
+
+      const { data: existingConversations , error: existingConversationsError } = await supabase
+      .from('conversation_participants')
+        .select('*')
+        .match({ user_id: user?.id })
+        .match({ user_id: userProfileInfo.id })
+
+      console.log("This is conversations " , existingConversations)
+
+
+
+
+
+
 
       // adding empty conversation
       const { error: conversationError } = await supabase
@@ -63,8 +89,6 @@ const MessageModal = (props: MessageModalProps) => {
         .insert({
           conversation_id: uniqid
         })
-
-  
 
 
       if (conversationError) {
@@ -106,7 +130,7 @@ const MessageModal = (props: MessageModalProps) => {
         console.log(messageError);
       }
 
-      router.push(`/messages/${uniqid}`);
+      // router.push(`/messages/${uniqid}`);
 
       toast.success("Message sent!");
       reset();
@@ -118,6 +142,22 @@ const MessageModal = (props: MessageModalProps) => {
       setIsLoading(false);
     }
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <Modal
