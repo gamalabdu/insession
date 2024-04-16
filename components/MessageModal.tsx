@@ -20,6 +20,7 @@ interface MessageModalProps {
 }
 
 const MessageModal = (props: MessageModalProps) => {
+  
   const { messageModalOpen, setMessageModalOpen, userProfileInfo } = props;
 
   const supabase = createClient();

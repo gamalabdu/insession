@@ -25,7 +25,6 @@ const ModalProvider = () => {
       <UploadModal />
       <PostSessionModal />
       <BidModal />
-      <MessageModal />
     </>
   );
 };

@@ -2,6 +2,9 @@ import Header from "@/components/ui/Header";
 import MessageBoard from "./components/MessageBoard";
 import { getConversation } from "@/actions/messages";
 import { notFound } from "next/navigation";
+import getAllConversations from "@/actions/getAllUserConversations";
+import ClientModalHandler from "./components/ClientFileModalHandler";
+
 
 interface ConversationPageProps {
   params: {
@@ -26,13 +29,20 @@ const ConversationPage = async ({
   return (
     <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
       <Header>
+
         <div className="mt-20">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
-            {/* <div className="relative rounded-md h-[100px] w-[100px]">
+            <div className="relative rounded-md h-[100px] w-[100px]">
+
+
+        <div className="mt-20 flex">
+          <div className="flex flex-col md:flex-row items-center gap-x-5">
+            <div className="relative rounded-md h-[100px] w-[100px] ">
 
               <Image
                 src={
-                  currentConversation.conversation_participants[0].profiles.avatar_url || "/images/liked.jpg"
+                  currentConversation.conversation_participants[0].profiles
+                    .avatar_url || "/images/liked.jpg"
                 }
                 alt="User profile"
                 fill
@@ -64,11 +74,10 @@ const ConversationPage = async ({
                     .username
                 }
               </h1>
-            </div> */}
+            </div> 
 
-            <div className="border border-red-500 h-full">
-              <div className="border rounded-full py-2 px-4"> Files </div>
-            </div>
+              <ClientModalHandler conversation_id={params.conversation_id} />
+
           </div>
         </div>
       </Header>
@@ -80,5 +89,6 @@ const ConversationPage = async ({
     </div>
   );
 };
+
 
 export default ConversationPage;
