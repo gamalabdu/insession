@@ -14,7 +14,6 @@ import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
 import uniqid from "uniqid";
 
-
 interface MessagesPageProps {
   conversation_id: string;
   conversation: Conversation;
@@ -30,9 +29,7 @@ const defaultMessage: NewMessage = {
   content: "",
 };
 
-
 const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
 
@@ -99,20 +96,20 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
 
           const { data: messageFilesData } = await supabase.storage
             .from("messages-files")
-            .upload(`message-file-${file.name}-${fileUniqueID}`, file, {
+            .upload(`${fileUniqueID}-message-file-${file.name}`, file, {
               upsert: false,
             });
 
           const { data: returnUrl } = supabase.storage
             .from("messages-files")
-            .getPublicUrl(`message-file-${file.name}-${fileUniqueID}`);
+            .getPublicUrl(`${fileUniqueID}-message-file-${file.name}`);
 
           const { error } = await supabase.from("messages_files").insert({
             message_id: messageData?.message_id,
             url: returnUrl.publicUrl,
             type: file.type,
             file_name: file.name,
-            conversation_id: conversation_id
+            conversation_id: conversation_id,
           });
         })
       );
@@ -236,8 +233,6 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
           )}
         </div>
       </form>
-
-      
     </div>
   );
 };
