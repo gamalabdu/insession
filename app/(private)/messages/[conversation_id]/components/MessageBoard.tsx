@@ -14,6 +14,7 @@ import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
 import uniqid from "uniqid";
 
+
 interface MessagesPageProps {
   conversation_id: string;
   conversation: Conversation;
@@ -29,7 +30,9 @@ const defaultMessage: NewMessage = {
   content: "",
 };
 
+
 const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
 
@@ -109,6 +112,7 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
             url: returnUrl.publicUrl,
             type: file.type,
             file_name: file.name,
+            conversation_id: conversation_id
           });
         })
       );
@@ -232,6 +236,8 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
           )}
         </div>
       </form>
+
+      
     </div>
   );
 };

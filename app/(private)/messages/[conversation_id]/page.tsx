@@ -4,6 +4,7 @@ import { getConversation } from "@/actions/messages";
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
+import ClientModalHandler from "./components/ClientFileModalHandler";
 
 interface ConversationPageProps {
   params: {
@@ -34,11 +35,11 @@ const ConversationPage = async ({
   return (
     <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
       <Header>
-        <div className="mt-20">
+        <div className="mt-20 flex">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
-            <div className="relative rounded-md h-[100px] w-[100px]">
+            <div className="relative rounded-md h-[100px] w-[100px] ">
               <Image
-                src={otherUser!.avatar_url}
+                src={otherUser?.avatar_url || "/images/liked.jpg"}
                 alt="User profile"
                 fill
                 objectFit="cover"
@@ -61,9 +62,8 @@ const ConversationPage = async ({
                 You & {otherUser?.username}
               </h1>
             </div>
-            <div className="border border-red-500 h-full">
-              <div className="border rounded-full py-2 px-4"> Files </div>
-            </div>
+
+            <ClientModalHandler conversation_id={conversation_id} />
           </div>
         </div>
       </Header>
