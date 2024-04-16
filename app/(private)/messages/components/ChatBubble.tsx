@@ -1,6 +1,6 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
-import { Message, StorageFile } from "@/types";
+import { StorageFile } from "@/types";
 import Image from "next/image";
 import React from "react";
 import { LuFileAudio } from "react-icons/lu";
