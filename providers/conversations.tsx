@@ -33,6 +33,7 @@ export default function ConversationsProvider({
       const { data: results, error } = await supabase.rpc(
         "get_conversations_with_message"
       );
+      console.log(results);
       setConversations(results);
       setAreLoading(false);
     })();
@@ -41,8 +42,13 @@ export default function ConversationsProvider({
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
+        async (payload) => {
           const message = payload.new as Message;
+          const { data: files } = await supabase
+            .from("messages_files")
+            .select("type")
+            .eq("message_id", message.message_id)
+            .returns<StorageFile[]>();
           setConversations((prev) => {
             const newArr = [...prev];
             const index = newArr.findIndex(
@@ -51,7 +57,7 @@ export default function ConversationsProvider({
             if (index === -1) {
               return prev;
             }
-            newArr[index].latest_message = message;
+            newArr[index].latest_message = { ...message, files: files || [] };
             return newArr;
           });
         }

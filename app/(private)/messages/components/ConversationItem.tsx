@@ -3,6 +3,13 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 
+const formatFileType = (type: string) => {
+  if (type.includes("image")) {
+    return "an image";
+  }
+  return "a file";
+};
+
 const ConversationItem = ({
   conversation_id,
   users,
@@ -25,7 +32,9 @@ const ConversationItem = ({
     );
   }
 
-  const sender = users.find((item) => item.id === latest_message?.sender_id);
+  const { files, content, sender_id } = latest_message;
+
+  const sender = users.find((item) => item.id === sender_id);
 
   return (
     <div
@@ -49,9 +58,18 @@ const ConversationItem = ({
         >
           {otherUser.username}
         </span>
-        <p className="text-neutral-400 text-base truncate">
-          {sender?.id === user?.id && "You:"} {latest_message?.content}
-        </p>
+        {
+          <p className="text-neutral-400 text-base truncate">
+            {sender?.id === user?.id && "You:"}{" "}
+            {files.length > 0
+              ? files.length === 1
+                ? files[0].type.includes("image")
+                  ? "Sent an image"
+                  : "Sent a file"
+                : `Sent ${files.length} files`
+              : content}
+          </p>
+        }
       </div>
     </div>
   );
