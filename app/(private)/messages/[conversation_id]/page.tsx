@@ -2,6 +2,7 @@ import Header from "@/components/ui/Header";
 import Image from "next/image";
 import MessageBoard from "./components/MessageBoard";
 import getAllConversations from "@/actions/getAllUserConversations";
+import ClientModalHandler from "./components/ClientFileModalHandler";
 
 
 interface ConversationPageProps {
@@ -24,18 +25,14 @@ const ConversationPage = async (props: ConversationPageProps) => {
 
   return (
     <div className="flex flex-col bg-neutral-900 rounded-lg h-full w-full">
-
       <Header>
-
-        <div className="mt-20">
-
+        <div className="mt-20 flex">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
-
-            <div className="relative rounded-md h-[100px] w-[100px]">
-
+            <div className="relative rounded-md h-[100px] w-[100px] ">
               <Image
                 src={
-                  currentConversation.conversation_participants[0].profiles.avatar_url || "/images/liked.jpg"
+                  currentConversation.conversation_participants[0].profiles
+                    .avatar_url || "/images/liked.jpg"
                 }
                 alt="User profile"
                 fill
@@ -69,30 +66,20 @@ const ConversationPage = async (props: ConversationPageProps) => {
               </h1>
             </div>
 
-            <div className="border border-red-500 h-full">
-
-              <div className="border rounded-full py-2 px-4"> Files </div>
-
-            </div>
-
-
+              <ClientModalHandler conversation_id={params.conversation_id} />
 
 
           </div>
-
-
         </div>
       </Header>
 
-
-
-        <MessageBoard
+      <MessageBoard
         conversation_id={params.conversation_id}
         currentConversation={currentConversation}
-        />
+      />
 
     </div>
-  )
+  );
 }
 
 export default ConversationPage;

@@ -149,6 +149,7 @@ const ConversationItem = (props: ConversationItemProps) => {
       <span onClick={ () => router.push(`/profile?id=${user2.id}`)} className="text-sm mt-1 text-neutral-500 hover:text-neutral-400 hover:underline">{user2.username}</span>
 
         <p className="text-neutral-400 text-base truncate">
+           {/* { lastMessage?.messages_files != undefined && lastMessage.messages_files.length > 0 && "You : " + lastMessage.messages_files[lastMessage.messages_files.length - 1].file_name } */}
           {lastMessage?.sender_id === user?.id && "You :"}   {lastMessage?.content}
         </p>
 

@@ -10,11 +10,10 @@ import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/hooks/useUser";
 import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
-import { BiPlusCircle } from "react-icons/bi";
-import { FaPlus } from "react-icons/fa";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
 import uniqid from "uniqid";
+
 
 interface MessagesPageProps {
   conversation_id: string;
@@ -32,6 +31,7 @@ const defaultMessage: NewMessage = {
 };
 
 const MessageBoard = (props: MessagesPageProps) => {
+
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
@@ -122,7 +122,8 @@ const MessageBoard = (props: MessagesPageProps) => {
             message_id: messageData?.message_id,
             url: returnUrl.publicUrl,
             type: file.type,
-            file_name: file.name
+            file_name: file.name,
+            conversation_id: conversation_id
           });
 
         })
@@ -258,6 +259,8 @@ const MessageBoard = (props: MessagesPageProps) => {
           )}
         </div>
       </form>
+
+      
     </div>
   );
 };
