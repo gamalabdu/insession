@@ -30,9 +30,6 @@ const MessageModal = (props: MessageModalProps) => {
 
   const { user } = useUser();
 
-  // console.log( "This is user : ", user )
-  // console.log( "This is other user : ", userProfileInfo )
-
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       message: "",
@@ -119,7 +116,6 @@ const MessageModal = (props: MessageModalProps) => {
 
       if (addingUsersError) {
         toast.error(addingUsersError.message);
-        console.log(addingUsersError);
       }
 
 
@@ -133,7 +129,6 @@ const MessageModal = (props: MessageModalProps) => {
 
       if (messageError) {
         toast.error(messageError.message);
-        console.log(messageError);
       }
 
 

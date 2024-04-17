@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 interface DeleteConversationModalProps {
   isOpen: boolean
   onClose : () => void
-  onDelete: () => void
+  onDelete: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 const DeleteConversationModal = (props: DeleteConversationModalProps) => {
@@ -22,7 +22,7 @@ const DeleteConversationModal = (props: DeleteConversationModalProps) => {
         isOpen={isOpen}
         onChange={onClose}
     >
-        <Button onClick={onDelete}>Delete Conversation</Button>
+        <Button onClick={(e) => onDelete(e)}>Delete Conversation</Button>
     </Modal>
     );
   };

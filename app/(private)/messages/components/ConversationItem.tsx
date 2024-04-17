@@ -55,8 +55,9 @@ const ConversationItem = ({
   };
 
 
-  const handleDelete = async () => {
-
+  const handleDelete = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.stopPropagation();  // Stop event from propagating to higher levels
+    setDeleteLoading(true);  // Show loading indication
     const { error } = await supabase
         .from('conversations')
         .delete()
@@ -64,18 +65,20 @@ const ConversationItem = ({
     
     if (error) {
         toast.error("Failed to delete the conversation: " + error.message);
+        setDeleteLoading(false);
     } else {
         toast.success('Conversation deleted successfully');
         setIsDeleted(true);
+        router.push("/messages");  // Redirect only after successful deletion
     }
     setDeleteModalOpen(false);
-    router.push("/messages")
-};
+  };
 
   
 
   const handleClick = async (conversation_id: string) => {
 
+    if (isDeleted) return;
 
     try {
       // Step 1: Fetch messages that have not been seen
