@@ -1,25 +1,32 @@
 "use client";
-import useUploadModal from "@/hooks/useUploadModal";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { TbPlaylist } from "react-icons/tb";
 import ConversationItem from "./ConversationItem";
 import { ConversationsContext } from "@/providers/conversations";
-import { Spinner } from "@nextui-org/react";
+import { Skeleton, Spinner } from "@nextui-org/react";
+import { FiMessageSquare } from "react-icons/fi";
+import SideMessageModal from "@/components/SideMessageModal";
 
 const SideBarMessenges = () => {
+
   const { conversations, areLoading } = useContext(ConversationsContext);
-  const uploadModal = useUploadModal();
+
+  const [sideMessageModalOpen, setSideMessageModalOpen] = useState<boolean>(false)
+
+  if (areLoading) {
+    return <Loader />;
+  }
+
 
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-between px-5 pt-4">
         <div className="inline-flex items-center gap-x-2">
-          <TbPlaylist size={26} className="text-neutral-400" />
-          <p className="text-neutral-400 font-medium text-md">Your Sessions </p>
+          <FiMessageSquare size={26} className="text-neutral-400" />
+          <p className="text-neutral-400 font-medium text-md">Your Messages </p>
         </div>
         <AiOutlinePlus
-          onClick={() => uploadModal.onOpen()}
+          onClick={() => setSideMessageModalOpen(true)}
           size={20}
           className="text-neutral-400 cursor-pointer hover:text-white transtion"
         />
@@ -40,8 +47,46 @@ const SideBarMessenges = () => {
           ))}
         </div>
       )}
+
+      <SideMessageModal sideMessageModalOpen={sideMessageModalOpen} setSideMessageModalOpen={setSideMessageModalOpen} />
+
     </div>
   );
 };
+
+
+
+
+const Loader = () => (
+  <div className="flex flex-col gap-4 px-6 w-full h-full pt-7">
+    <div className="w-full flex items-center gap-3">
+      <div>
+        <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
+      </div>
+      <div className="w-full flex flex-col gap-2">
+        <Skeleton className="h-3 w-3/5 rounded-lg" />
+        <Skeleton className="h-3 w-4/5 rounded-lg" />
+      </div>
+    </div>
+    <div className=" w-full flex items-center gap-3">
+      <div>
+        <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
+      </div>
+      <div className="w-full flex flex-col gap-2">
+        <Skeleton className="h-3 w-3/5 rounded-lg" />
+        <Skeleton className="h-3 w-4/5 rounded-lg" />
+      </div>
+    </div>
+    <div className="w-full flex items-center gap-3"> 
+      <div>
+        <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
+      </div>
+      <div className="w-full flex flex-col gap-2">
+        <Skeleton className="h-3 w-3/5 rounded-lg" />
+        <Skeleton className="h-3 w-4/5 rounded-lg" />
+      </div>
+    </div>
+  </div>
+);
 
 export default SideBarMessenges;

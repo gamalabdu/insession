@@ -15,7 +15,7 @@ interface Conversation {
 }
 
 interface ConversationWithMessage extends Conversation {
-  latest_message: Message | null;
+  latest_message: Message;
 }
 
 type ConversationParticipant = {

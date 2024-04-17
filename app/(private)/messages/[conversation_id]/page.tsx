@@ -40,7 +40,7 @@ const ConversationPage = async ({
           <div className="flex flex-col md:flex-row items-center gap-x-5">
             <div className="relative rounded-md h-[100px] w-[100px] ">
               <Image
-                src={otherUser?.avatar_url || "/images/liked.jpg"}
+                src={otherUser?.avatar_url || "/images/userIcon.png"}
                 alt="User profile"
                 fill
                 objectFit="cover"

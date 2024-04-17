@@ -8,6 +8,13 @@ import { IoIosMail } from "react-icons/io";
 import { createClient } from "@/utils/supabase/client";
 
 
+const formatFileType = (type: string) => {
+  if (type.includes("image")) {
+    return "an image";
+  }
+  return "a file";
+};
+
 const ConversationItem = ({
   conversation_id,
   users,
@@ -20,44 +27,9 @@ const ConversationItem = ({
 
   const supabase = createClient()
 
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  // const { messages } = useGetMessagesByConversationId(conversation_id);
-
-
-  useEffect(() => {
-
-    const supabase = createClient();
-
-    (async () => {
-      const { data } = await supabase
-        .from("messages")
-        .select("*, messages_files(id, url, type, file_name)")
-        .eq("conversation_id", conversation_id)
-        .order("sent_at", { ascending: true });
-      data && setMessages(data);
-    })();
-    supabase
-      .channel("table_db_changes")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          if (payload.new.conversation_id === conversation_id) {
-            setMessages((prev) => [...prev, payload.new as Message]);
-          }
-        }
-      )
-      .subscribe();
-  }, [conversation_id]);
-
-
-
+  const { messages_files, content, sender_id } = latest_message
 
   const otherUser = users.find((item) => item.id !== user?.id);
-
-  const lastMessage = messages && messages.length > 0 ? messages[messages.length - 1] : null;
-
 
   const handleClick = async (conversation_id: string) => {
 
@@ -98,6 +70,7 @@ const ConversationItem = ({
 
   };
 
+
   if (!otherUser) {
     return (
       <div>
@@ -118,17 +91,16 @@ const ConversationItem = ({
 
             {/* overflow-hidden */}
       <div className="aspect-square h-[70px] relative rounded-full bg-gray-200">
-      <div className="aspect-square h-[70px] relative overflow-hidden rounded-full bg-gray-200">
         <Image
           src={otherUser.avatar_url}
           alt="User profile"
           layout="fill"
           objectFit="cover"
-          className="rounded-full" // Changed from rounded-md to rounded-full
+          className="rounded-full"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
 
-        { lastMessage?.sender_id != user?.id && lastMessage?.seen != true && <IoIosMail size={20} className="absolute right-0 bottom-0" color="red"/> }
+        { sender_id != user?.id && latest_message?.seen != true && <IoIosMail size={20} className="absolute right-0 bottom-0" color="red"/> }
         
       </div>
       <div className="flex-1 flex flex-col justify-center p-2 truncate">
@@ -141,11 +113,23 @@ const ConversationItem = ({
         </span>
         <p className="text-neutral-400 text-base truncate">
 
-          {lastMessage?.sender_id === user?.id && ` You :  ${lastMessage?.content} ` }
+        {/* {latest_message?.sender_id === user?.id && ` You :  ${latest_message?.content} ` } */}
+
+
+            {sender_id === user?.id && "You:"}{" "}
+            {messages_files && messages_files.length > 0
+              ? messages_files.length === 1
+                ? messages_files[0].type.includes("image")
+                  ? "Sent an image"
+                  : "Sent a file"
+                : `Sent ${messages_files.length} files`
+              : content}
+
+
 
           <time className="text-xs opacity-50 ml-1">
             sent at : {" "}
-            {new Date(lastMessage?.sent_at as string).toLocaleTimeString("en-US", {
+            {new Date(latest_message?.sent_at as string).toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "2-digit",
               hour12: true,
@@ -153,7 +137,9 @@ const ConversationItem = ({
           </time>
 
         </p>
-      </div>
+
+        
+
       </div>
     </div>
   )
