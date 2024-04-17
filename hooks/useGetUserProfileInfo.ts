@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Profile } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 
 
