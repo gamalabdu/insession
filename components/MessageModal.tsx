@@ -69,19 +69,25 @@ const MessageModal = (props: MessageModalProps) => {
 
 
 
-      const { data: existingConversations , error: existingConversationsError } = await supabase
-      .from('conversation_participants')
-        .select('*')
-        .match({ user_id: user?.id })
-        .match({ user_id: userProfileInfo.id })
+      const { data: existingConversations, error: existingConversationsError } = await 
+      supabase.rpc("check_conversation_exist", { userid1: user?.id, userid2: userProfileInfo.id });
+  
 
-      console.log("This is conversations " , existingConversations)
+      if ( existingConversations != null ) {
+
+        const { data: messageData, error: messageError } = await supabase
+        .from("messages")
+        .insert({
+          conversation_id: existingConversations,
+          sender_id: user?.id,
+          content: values.message,
+          seen: false,
+        })
 
 
+      }
 
-
-
-
+      else {
 
       // adding empty conversation
       const { error: conversationError } = await supabase
@@ -130,11 +136,17 @@ const MessageModal = (props: MessageModalProps) => {
         console.log(messageError);
       }
 
+
+    }
+
+
       // router.push(`/messages/${uniqid}`);
 
       toast.success("Message sent!");
       reset();
       setMessageModalOpen(false);
+
+
 
     } catch (error) {
       toast.error("Something went wrong.");

@@ -28,14 +28,7 @@ const Sidebar = (props: SidebarProps) => {
 
   const pathName = usePathname();
 
-
-  
-
-  
-
   const { user } = useUser();
-
-  const userProfileInfo = useGetUserProfileInfo(user?.id).userProfileInfo;
 
   const player = usePlayer();
 

@@ -26,7 +26,6 @@ const useGetMessagesByConversationId = (conversation_id: string) => {
                 .eq('conversation_id', conversation_id)
                 .order('sent_at', { ascending: true })
 
-
             setIsLoading(false);
 
             if (fetchError) {
