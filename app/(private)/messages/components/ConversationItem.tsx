@@ -6,6 +6,12 @@ import { useUser } from "@/hooks/useUser";
 import useGetMessagesByConversationId from "@/hooks/useGetMessagesByConversationId";
 import { IoIosMail } from "react-icons/io";
 import { createClient } from "@/utils/supabase/client";
+import { FaX } from "react-icons/fa6";
+import toast from "react-hot-toast";
+import { Skeleton } from "@nextui-org/react";
+import Modal from "@/components/Modal";
+import Button from "@/components/Button";
+import DeleteConversationModal from "./DeleteConversationModal";
 
 
 const formatFileType = (type: string) => {
@@ -14,6 +20,8 @@ const formatFileType = (type: string) => {
   }
   return "a file";
 };
+
+
 
 const ConversationItem = ({
   conversation_id,
@@ -25,13 +33,49 @@ const ConversationItem = ({
 
   const { user } = useUser();
 
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen ] = useState(false)
+  const [isDeleted, setIsDeleted] = useState(false);
+
   const supabase = createClient()
 
   const { messages_files, content, sender_id } = latest_message
 
   const otherUser = users.find((item) => item.id !== user?.id);
 
+
+  const handleUsernameClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    event.stopPropagation() 
+    router.push(`/profile?id=${otherUser?.id}`) 
+  };
+
+  const handleRemoveClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => {
+    event.stopPropagation();
+    setDeleteModalOpen(true);
+  };
+
+
+  const handleDelete = async () => {
+
+    const { error } = await supabase
+        .from('conversations')
+        .delete()
+        .eq('conversation_id', conversation_id);
+    
+    if (error) {
+        toast.error("Failed to delete the conversation: " + error.message);
+    } else {
+        toast.success('Conversation deleted successfully');
+        setIsDeleted(true);
+    }
+    setDeleteModalOpen(false);
+    router.push("/messages")
+};
+
+  
+
   const handleClick = async (conversation_id: string) => {
+
 
     try {
       // Step 1: Fetch messages that have not been seen
@@ -82,12 +126,26 @@ const ConversationItem = ({
   const sender = users.find((item) => item.id === latest_message?.sender_id);
 
 
+  if (deleteLoading) {
+    return (
+      <div className="flex align-middle items-center gap-5">
+        <div>
+          <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
+        </div>
+        <div className="w-full flex flex-col gap-2">
+          <Skeleton className="h-3 w-3/5 rounded-lg" />
+          <Skeleton className="h-3 w-4/5 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
+
   return (
     <div
       onClick={() => handleClick(conversation_id)}
-      className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md"
+      className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md items-center align-middle"
     >
-
 
             {/* overflow-hidden */}
       <div className="aspect-square h-[70px] relative rounded-full bg-gray-200">
@@ -103,9 +161,10 @@ const ConversationItem = ({
         { sender_id != user?.id && latest_message?.seen != true && <IoIosMail size={20} className="absolute right-0 bottom-0" color="red"/> }
         
       </div>
+
       <div className="flex-1 flex flex-col justify-center p-2 truncate">
         <span
-          onClick={() => router.push(`/profile?id=${otherUser.id}`)}
+          onClick={handleUsernameClick}
           className="text-sm mt-1 text-neutral-500 hover:text-neutral-400 hover:underline"
         >
           <span>{otherUser.username}</span>
@@ -141,8 +200,26 @@ const ConversationItem = ({
         
 
       </div>
+
+      <FaX
+      onClick={handleRemoveClick}
+      size={12}
+      color="#a3a3a3"
+      style={{ cursor: 'pointer', fontWeight: 'bold' }}
+    />
+
+
+          <DeleteConversationModal 
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onDelete={handleDelete}
+            />
+
     </div>
   )
 }
 
 export default ConversationItem;
+
+
+

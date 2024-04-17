@@ -12,6 +12,7 @@ import { createClient } from "@/utils/supabase/client";
 import { v4 as uuidv4 } from 'uuid'; 
 import SearchInput from "./SearchInput";
 import Image from "next/image";
+import { FaX } from "react-icons/fa6";
 
 
 interface MessageModalProps {
@@ -209,6 +210,11 @@ const SideMessageModal = (props: MessageModalProps) => {
         {
             selectedUser && 
             <div className="flex flex-col w-full justify-center items-center align-middle">
+
+                <div className="relative top-1 left-6 align-middle justify-end items-end z-10">
+                  <FaX size={10} onClick={() => setSelectedUser(null)} className="cursor-pointer"/>
+                </div>
+
                 <div className="relative h-10 w-10 overflow-hidden rounded-full">
                   <Image
                     src={selectedUser.avatar_url || "/default-avatar.png"} // Fallback to a default image if none is provided
@@ -222,12 +228,18 @@ const SideMessageModal = (props: MessageModalProps) => {
             </div>
         }
 
-        <Input
-          placeholder="Search for username"
-          value={searchedUser}
-          onChange={(e) => setSearchedUser(e.target.value)}
-        />
+     {
 
+      selectedUser === null &&
+
+      <Input
+      placeholder="Search for username"
+      value={searchedUser}
+      onChange={(e) => setSearchedUser(e.target.value)}
+       />
+
+     }
+       
         {resultUsers != undefined && resultUsers?.length > 0 && (
 
           <div 

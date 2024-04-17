@@ -49,6 +49,7 @@ const Search = async (props: SearchProps) => {
       </Header>
 
       <SearchContent songs={songs} />
+      
     </div>
   );
 };

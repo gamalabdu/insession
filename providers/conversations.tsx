@@ -25,10 +25,12 @@ export default function ConversationsProvider({
     []
   );
 
+  const supabase = createClient();
+
   useEffect(() => {
     if (!pathname.startsWith("/messages")) return setAreLoading(false);
     setAreLoading(true);
-    const supabase = createClient();
+
     (async () => {
       const { data: results, error } = await supabase.rpc(
         "get_conversations_with_message"
@@ -57,7 +59,7 @@ export default function ConversationsProvider({
         }
       )
       .subscribe();
-  }, [pathname]);
+  }, [pathname, supabase]);
 
   return (
     <ConversationsContext.Provider value={{ conversations, areLoading }}>
