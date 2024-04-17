@@ -13,6 +13,7 @@ import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdTableRows } from "react-icons/md";
 import SideBarMessenges from "@/app/(private)/messages/components/SideBarMessenges";
+import { useUser } from "@/hooks/useUser";
 
 interface SidebarProps {
   children: React.ReactNode;

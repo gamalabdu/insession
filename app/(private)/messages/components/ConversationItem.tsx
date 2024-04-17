@@ -6,7 +6,6 @@ import { useUser } from "@/hooks/useUser";
 import useGetMessagesByConversationId from "@/hooks/useGetMessagesByConversationId";
 import { IoIosMail } from "react-icons/io";
 import { createClient } from "@/utils/supabase/client";
-import { Message } from "@/types";
 
 
 const ConversationItem = ({
@@ -109,6 +108,7 @@ const ConversationItem = ({
 
   const sender = users.find((item) => item.id === latest_message?.sender_id);
 
+
   return (
     <div
       onClick={() => handleClick(conversation_id)}
@@ -154,8 +154,9 @@ const ConversationItem = ({
 
         </p>
       </div>
+      </div>
     </div>
-  );
-};
+  )
+}
 
 export default ConversationItem;
