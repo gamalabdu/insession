@@ -29,7 +29,10 @@ const defaultMessage: NewMessage = {
 };
 
 const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
+
+
   const [messages, setMessages] = useState<Message[]>([]);
+
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
 
   const supabase = createClient();
@@ -42,16 +45,26 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
 
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
 
+
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+
 
   useEffect(() => {
+  
+    scrollToBottom();
+  
+  }, [messages]);
+
+
+
+  useEffect(() => {
+
     const supabase = createClient();
+
     (async () => {
       const { data } = await supabase
         .from("messages")
@@ -74,8 +87,12 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
       .subscribe();
   }, [conversation_id]);
 
+
+
   const sendMessage = async (e: FormEvent) => {
+
     e.preventDefault();
+
     setIsLoading(true);
 
     try {
@@ -85,7 +102,7 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
           conversation_id: conversation_id,
           sender_id: user?.id,
           content: newMessage.content,
-          seen: true,
+          seen: false,
         })
         .select("message_id")
         .single();
@@ -128,7 +145,9 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
 
   return (
     <div className="flex flex-col h-full w-full">
+
       <div className="flex flex-col flex-grow h-0 gap-4 p-6 overflow-auto rounded-md">
+
         {messages?.map((message, idx) => {
           return (
             <ChatBubble
@@ -141,7 +160,14 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
         })}
 
         <div ref={messagesEndRef} />
+
       </div>
+
+
+
+
+
+      {/* Input Field */}
 
       <form
         onSubmit={sendMessage}
@@ -232,8 +258,12 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
           )}
         </div>
       </form>
+
+
     </div>
-  );
-};
+
+  )
+  
+}
 
 export default MessageBoard;

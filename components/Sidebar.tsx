@@ -21,6 +21,9 @@ interface SidebarProps {
 
 const Sidebar = ({ children, songs }: SidebarProps) => {
   const pathName = usePathname();
+
+  const { user } = useUser();
+
   const player = usePlayer();
 
   const routes = useMemo(
