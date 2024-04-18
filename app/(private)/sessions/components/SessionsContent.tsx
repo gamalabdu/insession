@@ -27,7 +27,7 @@ const SessionsContent = (props: SessionsContentProps) => {
             <div className="relative h-32 w-32 lg:h-44 lg:w-44">
               <Image
                 priority
-                fill
+                layout="fill"
                 src="https://picsum.photos/200/300"
                 alt="playlist"
                 className="object-cover"

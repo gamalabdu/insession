@@ -1,6 +1,6 @@
 "use client"
 import useLoadImage from '@/hooks/useLoadImage'
-import { Profile, Song } from '@/types'
+import { Song } from '@/types'
 import Image from 'next/image'
 import React from 'react'
 import PlayButton from './PlayButton'
@@ -23,7 +23,7 @@ const SongItem = (props : SongItemProps) => {
             <Image 
                 className='object-cover' 
                 fill 
-                src={song.image_path || '/./../public/images/liked.jpg'} 
+                src={song.image_path || '/images/userIcon.png'} 
                 alt={'image'} 
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />

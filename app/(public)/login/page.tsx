@@ -1,7 +1,6 @@
 "use client"
 import React, { useState } from 'react';
 import './styles.css'
-import hyphenLogo from '../../assets/images/hyphen-logo.png'
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { useRouter } from 'next/navigation';

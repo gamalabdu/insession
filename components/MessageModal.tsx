@@ -30,9 +30,6 @@ const MessageModal = (props: MessageModalProps) => {
 
   const { user } = useUser();
 
-  // console.log( "This is user : ", user )
-  // console.log( "This is other user : ", userProfileInfo )
-
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       message: "",
@@ -46,16 +43,48 @@ const MessageModal = (props: MessageModalProps) => {
     }
   };
 
+
+
+
+
+
+
+
+
+
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
 
 
     const uniqid = uuidv4()
 
-    
-
 
     try {
+
+
+
       setIsLoading(true);
+
+
+
+      const { data: existingConversations, error: existingConversationsError } = await 
+      supabase.rpc("check_conversation_exist", { userid1: user?.id, userid2: userProfileInfo.id });
+  
+
+      if ( existingConversations != null ) {
+
+        const { data: messageData, error: messageError } = await supabase
+        .from("messages")
+        .insert({
+          conversation_id: existingConversations,
+          sender_id: user?.id,
+          content: values.message,
+          seen: false,
+        })
+
+
+      }
+
+      else {
 
       // adding empty conversation
       const { error: conversationError } = await supabase
@@ -63,8 +92,6 @@ const MessageModal = (props: MessageModalProps) => {
         .insert({
           conversation_id: uniqid
         })
-
-  
 
 
       if (conversationError) {
@@ -89,7 +116,6 @@ const MessageModal = (props: MessageModalProps) => {
 
       if (addingUsersError) {
         toast.error(addingUsersError.message);
-        console.log(addingUsersError);
       }
 
 
@@ -103,14 +129,19 @@ const MessageModal = (props: MessageModalProps) => {
 
       if (messageError) {
         toast.error(messageError.message);
-        console.log(messageError);
       }
 
-      router.push(`/messages/${uniqid}`);
+
+    }
+
+
+      // router.push(`/messages/${uniqid}`);
 
       toast.success("Message sent!");
       reset();
       setMessageModalOpen(false);
+
+
 
     } catch (error) {
       toast.error("Something went wrong.");
@@ -118,6 +149,22 @@ const MessageModal = (props: MessageModalProps) => {
       setIsLoading(false);
     }
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <Modal

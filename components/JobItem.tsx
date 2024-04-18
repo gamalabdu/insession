@@ -38,8 +38,8 @@ const JobItem = (props : JobItemProps) => {
 
       <Image
         priority
-        fill
-        src={userProfileInfo?.avatar_url || "/images/liked.jpg"}
+        layout='fill'
+        src={userProfileInfo?.avatar_url || "/images/userIcon.png"}
         alt="media-item"
         className="object-cover"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

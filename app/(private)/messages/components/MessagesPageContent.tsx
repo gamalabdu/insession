@@ -5,7 +5,9 @@ import ConversationItem from "./ConversationItem";
 import { ConversationsContext } from "@/providers/conversations";
 import { Skeleton, Spinner } from "@nextui-org/react";
 
+
 const MessagesPageContent = () => {
+
   const { conversations, areLoading } = useContext(ConversationsContext);
 
   if (areLoading) {
@@ -27,7 +29,6 @@ const MessagesPageContent = () => {
       flex-col
       gap-y-2
       w-full
-      max-w-5xl
       px-6
     "
     >
@@ -45,8 +46,8 @@ const MessagesPageContent = () => {
 };
 
 const Loader = () => (
-  <div className="flex flex-col gap-4 px-6">
-    <div className="max-w-[300px] w-full flex items-center gap-3">
+  <div className="flex flex-col gap-4 px-6 w-full">
+    <div className="w-full flex items-center gap-3">
       <div>
         <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
       </div>
@@ -55,7 +56,7 @@ const Loader = () => (
         <Skeleton className="h-3 w-4/5 rounded-lg" />
       </div>
     </div>
-    <div className="max-w-[300px] w-full flex items-center gap-3">
+    <div className=" w-full flex items-center gap-3">
       <div>
         <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
       </div>
@@ -64,7 +65,7 @@ const Loader = () => (
         <Skeleton className="h-3 w-4/5 rounded-lg" />
       </div>
     </div>
-    <div className="max-w-[300px] w-full flex items-center gap-3">
+    <div className="w-full flex items-center gap-3">
       <div>
         <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
       </div>

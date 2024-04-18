@@ -45,7 +45,7 @@ const Account = async () => {
               <div className="relative h-32 w-32 lg:h-44 lg:w-44">
                 <Image
                   fill
-                  src={userProfileInfo?.avatar_url || "/images/liked.jpg"}
+                  src={userProfileInfo?.avatar_url || "/images/userIcon.png"}
                   alt="playlist"
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

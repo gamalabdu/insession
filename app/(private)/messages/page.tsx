@@ -2,8 +2,27 @@ import Header from "@/components/ui/Header";
 import SearchInput from "@/components/SearchInput";
 import React from "react";
 import MessagesPageContent from "./components/MessagesPageContent";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function Page() {
+  
+  // const supabase = createClient();
+
+  // const roomOne = supabase.channel("room_01");
+
+  // roomOne
+  //   .on("presence", { event: "sync" }, () => {
+  //     const newState = roomOne.presenceState();
+  //     console.log("sync", newState);
+  //   })
+  //   .on("presence", { event: "join" }, ({ key, newPresences }) => {
+  //     console.log("join", key, newPresences);
+  //   })
+  //   .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+  //     console.log("leave", key, leftPresences);
+  //   })
+  //   .subscribe();
+
   return (
     <div
       className="
@@ -24,6 +43,7 @@ export default async function Page() {
           />
         </div>
       </Header>
+
       <MessagesPageContent />
     </div>
   );
