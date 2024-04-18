@@ -72,7 +72,7 @@ export async function deleteConversation(
     };
   }
 
-  revalidatePath("/messages", "layout");
+  revalidatePath("/messages");
 
   return {
     results: [conversation_id],

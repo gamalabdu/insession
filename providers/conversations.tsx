@@ -45,6 +45,33 @@ export default function ConversationsProvider({
       setConversations(results);
       setAreLoading(false);
     })();
+    if (pathname !== "/messages") return;
+    supabase
+      .channel("table_db_changes")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        async (payload) => {
+          const message = payload.new as Message;
+          const { data: files } = await supabase
+            .from("messages_files")
+            .select("type")
+            .eq("message_id", message.message_id)
+            .returns<StorageFile[]>();
+          setConversations((prev) => {
+            const newArr = [...prev];
+            const index = newArr.findIndex(
+              (item) => item.conversation_id === message.conversation_id
+            );
+            if (index === -1) {
+              return prev;
+            }
+            newArr[index].latest_message = { ...message, files: files || [] };
+            return newArr;
+          });
+        }
+      )
+      .subscribe();
   }, [pathname]);
 
   return (

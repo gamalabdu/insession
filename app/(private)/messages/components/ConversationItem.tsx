@@ -1,14 +1,12 @@
 "use client";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { IoIosMail } from "react-icons/io";
-import { createClient } from "@/utils/supabase/client";
 import { FaX } from "react-icons/fa6";
-import toast from "react-hot-toast";
-import { Skeleton } from "@nextui-org/react";
 import DeleteConversationModal from "./DeleteConversationModal";
+import Link from "next/link";
 
 const ConversationItem = ({
   conversation_id,
@@ -16,15 +14,10 @@ const ConversationItem = ({
   latest_message,
 }: ConversationWithMessage) => {
   const router = useRouter();
-
   const { user } = useUser();
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const supabase = createClient();
-
   const { messages_files, content, sender_id } = latest_message;
-
   const otherUser = users.find((item) => item.id !== user?.id);
 
   const handleUsernameClick = (
@@ -34,9 +27,8 @@ const ConversationItem = ({
     router.push(`/profile?id=${otherUser?.id}`);
   };
 
-  const handleRemoveClick = (
-    event: React.MouseEvent<SVGElement, MouseEvent>
-  ) => {
+  const handleRemoveClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     event.stopPropagation();
     setDeleteModalOpen(true);
   };
@@ -86,73 +78,75 @@ const ConversationItem = ({
   }
 
   return (
-    <div
-      // onClick={() => handleClick(conversation_id)}
-      className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md items-center align-middle"
-    >
-      {/* overflow-hidden */}
-      <div className="aspect-square h-[70px] relative rounded-full bg-gray-200">
-        <Image
-          src={otherUser.avatar_url}
-          alt="User profile"
-          layout="fill"
-          objectFit="cover"
-          className="rounded-full"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-
-        {sender_id != user?.id && latest_message?.seen != true && (
-          <IoIosMail
-            size={20}
-            className="absolute right-0 bottom-0"
-            color="red"
+    <Fragment>
+      <Link
+        href={`/messages/${conversation_id}`}
+        className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md items-center align-middle"
+      >
+        {/* overflow-hidden */}
+        <div className="aspect-square h-[70px] relative rounded-full bg-gray-200">
+          <Image
+            src={otherUser.avatar_url}
+            alt="User profile"
+            layout="fill"
+            objectFit="cover"
+            className="rounded-full"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-        )}
-      </div>
 
-      <div className="flex-1 flex flex-col justify-center p-2 truncate">
-        <span
-          onClick={handleUsernameClick}
-          className="text-sm mt-1 text-neutral-500 hover:text-neutral-400 hover:underline"
-        >
-          <span>{otherUser.username}</span>
-        </span>
-        <p className="text-neutral-400 text-base truncate">
-          {sender_id === user?.id && "You:"}{" "}
-          {messages_files && messages_files.length > 0
-            ? messages_files.length === 1
-              ? messages_files[0].type.includes("image")
-                ? "Sent an image"
-                : "Sent a file"
-              : `Sent ${messages_files.length} files`
-            : content}
-          <time className="text-xs opacity-50 ml-1">
-            sent at :{" "}
-            {new Date(latest_message?.sent_at as string).toLocaleTimeString(
-              "en-US",
-              {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              }
-            )}
-          </time>
-        </p>
-      </div>
+          {sender_id != user?.id && latest_message?.seen != true && (
+            <IoIosMail
+              size={20}
+              className="absolute right-0 bottom-0"
+              color="red"
+            />
+          )}
+        </div>
 
-      <FaX
-        onClick={handleRemoveClick}
-        size={12}
-        color="#a3a3a3"
-        style={{ cursor: "pointer", fontWeight: "bold" }}
-      />
+        <div className="flex-1 flex flex-col justify-center p-2 truncate">
+          <span
+            onClick={handleUsernameClick}
+            className="text-sm mt-1 text-neutral-500 hover:text-neutral-400 hover:underline max-w-max"
+          >
+            <span>{otherUser.username}</span>
+          </span>
+          <p className="text-neutral-400 text-base truncate">
+            {sender_id === user?.id && "You:"}{" "}
+            {messages_files && messages_files.length > 0
+              ? messages_files.length === 1
+                ? messages_files[0].type.includes("image")
+                  ? "Sent an image"
+                  : "Sent a file"
+                : `Sent ${messages_files.length} files`
+              : content}
+            <time className="text-xs opacity-50 ml-1">
+              sent at :{" "}
+              {new Date(latest_message?.sent_at as string).toLocaleTimeString(
+                "en-US",
+                {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                }
+              )}
+            </time>
+          </p>
+        </div>
 
+        <button onClick={handleRemoveClick}>
+          <FaX
+            size={12}
+            color="#a3a3a3"
+            style={{ cursor: "pointer", fontWeight: "bold" }}
+          />
+        </button>
+      </Link>
       <DeleteConversationModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         conversation_id={conversation_id}
       />
-    </div>
+    </Fragment>
   );
 };
 
