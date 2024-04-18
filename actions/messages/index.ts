@@ -78,22 +78,3 @@ export async function deleteConversation(
     results: [conversation_id],
   };
 }
-
-export async function updateSeenForMessages(conversation_id: string) {
-  const supabase = createClient();
-  const { error } = await supabase
-    .from("messages")
-    .update({ seen: true })
-    .match({ conversation_id });
-
-  if (error) {
-    return {
-      error: error.message,
-      results: [],
-    };
-  }
-
-  return {
-    results: [conversation_id],
-  };
-}

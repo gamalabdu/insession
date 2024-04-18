@@ -102,7 +102,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
             <ChatBubble
               isLoading={isLoading}
               otherUser={otherUser}
-              message={message}
+              message={{ ...message, seen: true }}
               key={idx}
             />
           );

@@ -66,6 +66,17 @@ export default function useMessages(conversation_id: string) {
       .subscribe();
   }, [conversation_id, setConversations]);
 
+  useEffect(() => {
+    if (messages.length === 0) return;
+    const supabase = createClient();
+    (async () => {
+      await supabase
+        .from("messages")
+        .update({ seen: true })
+        .match({ conversation_id });
+    })();
+  }, [messages, conversation_id]);
+
   return {
     messages,
   };
