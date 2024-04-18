@@ -17,6 +17,22 @@ export default function useMessages(conversation_id: string) {
         .select("*, messages_files(id, url, type, file_name)")
         .eq("conversation_id", conversation_id)
         .order("sent_at", { ascending: true });
+      if (data) {
+        setMessages(data);
+        setConversations((prev) => {
+          const newObj = [...prev];
+          const index = newObj.findIndex(
+            (item) => item.conversation_id === conversation_id
+          );
+          if (index === -1) return prev;
+          const conversation = newObj[index];
+          conversation.latest_message = {
+            ...conversation.latest_message,
+            seen: true,
+          };
+          return newObj;
+        });
+      }
       data && setMessages(data);
     })();
     supabase
