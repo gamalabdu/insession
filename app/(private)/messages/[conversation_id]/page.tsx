@@ -1,6 +1,6 @@
 import Header from "@/components/ui/Header";
 import MessageBoard from "./components/MessageBoard";
-import { getConversation } from "@/actions/messages";
+import { getConversation, updateSeenForMessages } from "@/actions/messages";
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
@@ -18,11 +18,11 @@ const ConversationPage = async ({
   if (!conversation_id) {
     return notFound();
   }
+  const { error: updateError } = await updateSeenForMessages(conversation_id);
   const {
     results: [conversation],
     error,
   } = await getConversation(conversation_id);
-
   if (error || !conversation) {
     throw new Error(error || "Not found");
   }
