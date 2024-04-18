@@ -79,13 +79,6 @@ export interface Subscription {
   prices?: Price;
 }
 
-export interface StorageFile {
-  id: string;
-  type: string;
-  url: string;
-  file_name: string;
-}
-
 export interface Participant {
   participant_id: string;
   joined_at: string;

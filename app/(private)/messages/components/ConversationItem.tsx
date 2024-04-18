@@ -1,122 +1,106 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-import useGetMessagesByConversationId from "@/hooks/useGetMessagesByConversationId";
 import { IoIosMail } from "react-icons/io";
 import { createClient } from "@/utils/supabase/client";
 import { FaX } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { Skeleton } from "@nextui-org/react";
-import Modal from "@/components/Modal";
-import Button from "@/components/Button";
 import DeleteConversationModal from "./DeleteConversationModal";
-
-
-const formatFileType = (type: string) => {
-  if (type.includes("image")) {
-    return "an image";
-  }
-  return "a file";
-};
-
-
 
 const ConversationItem = ({
   conversation_id,
   users,
   latest_message,
 }: ConversationWithMessage) => {
-
   const router = useRouter();
 
   const { user } = useUser();
 
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [deleteModalOpen, setDeleteModalOpen ] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
 
-  const supabase = createClient()
+  const supabase = createClient();
 
-  const { messages_files, content, sender_id } = latest_message
+  const { messages_files, content, sender_id } = latest_message;
 
   const otherUser = users.find((item) => item.id !== user?.id);
 
-
-  const handleUsernameClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    event.stopPropagation() 
-    router.push(`/profile?id=${otherUser?.id}`) 
+  const handleUsernameClick = (
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+  ) => {
+    event.stopPropagation();
+    router.push(`/profile?id=${otherUser?.id}`);
   };
 
-  const handleRemoveClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const handleRemoveClick = (
+    event: React.MouseEvent<SVGElement, MouseEvent>
+  ) => {
     event.stopPropagation();
     setDeleteModalOpen(true);
   };
 
-
-  const handleDelete = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.stopPropagation();  // Stop event from propagating to higher levels
-    setDeleteLoading(true);  // Show loading indication
+  const handleDelete = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.stopPropagation(); // Stop event from propagating to higher levels
+    setDeleteLoading(true); // Show loading indication
     const { error } = await supabase
-        .from('conversations')
-        .delete()
-        .eq('conversation_id', conversation_id);
-    
+      .from("conversations")
+      .delete()
+      .eq("conversation_id", conversation_id);
+
     if (error) {
-        toast.error("Failed to delete the conversation: " + error.message);
-        setDeleteLoading(false);
+      toast.error("Failed to delete the conversation: " + error.message);
+      setDeleteLoading(false);
     } else {
-        toast.success('Conversation deleted successfully');
-        setIsDeleted(true);
-        router.push("/messages");  // Redirect only after successful deletion
+      toast.success("Conversation deleted successfully");
+      setIsDeleted(true);
+      router.push("/messages"); // Redirect only after successful deletion
     }
     setDeleteModalOpen(false);
   };
 
-  
-
   const handleClick = async (conversation_id: string) => {
-
     if (isDeleted) return;
 
     try {
       // Step 1: Fetch messages that have not been seen
       const { data: messagesToBeUpdated, error: selectError } = await supabase
-        .from('messages')
-        .select('message_id')
-        .eq('conversation_id', conversation_id)
-        .eq('seen', false);
-  
+        .from("messages")
+        .select("message_id")
+        .eq("conversation_id", conversation_id)
+        .eq("seen", false);
+
       if (selectError) {
         throw selectError;
       }
-  
+
       // Check if there are any messages to update
       if (messagesToBeUpdated.length > 0) {
         // Step 2: Update these messages to mark as seen
         const { error: updateError } = await supabase
-          .from('messages')
+          .from("messages")
           .update({ seen: true })
-          .in('message_id', messagesToBeUpdated.map(msg => msg.message_id));
-  
+          .in(
+            "message_id",
+            messagesToBeUpdated.map((msg) => msg.message_id)
+          );
+
         if (updateError) {
           throw updateError;
         }
       }
-  
-
     } catch (error) {
-      console.log(error || 'An unexpected error occurred');
+      console.log(error || "An unexpected error occurred");
     } finally {
-
-       // Navigate to the conversation page
+      // Navigate to the conversation page
       router.push(`/messages/${conversation_id}`);
-
     }
-
   };
-
 
   if (!otherUser) {
     return (
@@ -125,9 +109,6 @@ const ConversationItem = ({
       </div>
     );
   }
-
-  const sender = users.find((item) => item.id === latest_message?.sender_id);
-
 
   if (deleteLoading) {
     return (
@@ -143,14 +124,12 @@ const ConversationItem = ({
     );
   }
 
-
   return (
     <div
       onClick={() => handleClick(conversation_id)}
       className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md items-center align-middle"
     >
-
-            {/* overflow-hidden */}
+      {/* overflow-hidden */}
       <div className="aspect-square h-[70px] relative rounded-full bg-gray-200">
         <Image
           src={otherUser.avatar_url}
@@ -161,8 +140,13 @@ const ConversationItem = ({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
 
-        { sender_id != user?.id && latest_message?.seen != true && <IoIosMail size={20} className="absolute right-0 bottom-0" color="red"/> }
-        
+        {sender_id != user?.id && latest_message?.seen != true && (
+          <IoIosMail
+            size={20}
+            className="absolute right-0 bottom-0"
+            color="red"
+          />
+        )}
       </div>
 
       <div className="flex-1 flex flex-col justify-center p-2 truncate">
@@ -171,58 +155,44 @@ const ConversationItem = ({
           className="text-sm mt-1 text-neutral-500 hover:text-neutral-400 hover:underline"
         >
           <span>{otherUser.username}</span>
-
         </span>
         <p className="text-neutral-400 text-base truncate">
-
-        {/* {latest_message?.sender_id === user?.id && ` You :  ${latest_message?.content} ` } */}
-
-
-            {sender_id === user?.id && "You:"}{" "}
-            {messages_files && messages_files.length > 0
-              ? messages_files.length === 1
-                ? messages_files[0].type.includes("image")
-                  ? "Sent an image"
-                  : "Sent a file"
-                : `Sent ${messages_files.length} files`
-              : content}
-
-
-
+          {sender_id === user?.id && "You:"}{" "}
+          {messages_files && messages_files.length > 0
+            ? messages_files.length === 1
+              ? messages_files[0].type.includes("image")
+                ? "Sent an image"
+                : "Sent a file"
+              : `Sent ${messages_files.length} files`
+            : content}
           <time className="text-xs opacity-50 ml-1">
-            sent at : {" "}
-            {new Date(latest_message?.sent_at as string).toLocaleTimeString("en-US", {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-            })}
+            sent at :{" "}
+            {new Date(latest_message?.sent_at as string).toLocaleTimeString(
+              "en-US",
+              {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              }
+            )}
           </time>
-
         </p>
-
-        
-
       </div>
 
       <FaX
-      onClick={handleRemoveClick}
-      size={12}
-      color="#a3a3a3"
-      style={{ cursor: 'pointer', fontWeight: 'bold' }}
-    />
+        onClick={handleRemoveClick}
+        size={12}
+        color="#a3a3a3"
+        style={{ cursor: "pointer", fontWeight: "bold" }}
+      />
 
-
-          <DeleteConversationModal 
-                isOpen={deleteModalOpen}
-                onClose={() => setDeleteModalOpen(false)}
-                onDelete={handleDelete}
-            />
-
+      <DeleteConversationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onDelete={handleDelete}
+      />
     </div>
-  )
-}
+  );
+};
 
 export default ConversationItem;
-
-
-

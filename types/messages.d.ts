@@ -1,3 +1,10 @@
+type StorageFile = {
+  id: string;
+  type: string;
+  url: string;
+  file_name: string;
+};
+
 interface Message {
   message_id: string;
   conversation_id: string;
@@ -8,6 +15,10 @@ interface Message {
   messages_files: StorageFile[];
 }
 
+interface MessageWithFiles extends Message {
+  files: StorageFile[];
+}
+
 interface Conversation {
   conversation_id: string;
   created_at: string;
@@ -15,7 +26,7 @@ interface Conversation {
 }
 
 interface ConversationWithMessage extends Conversation {
-  latest_message: Message;
+  latest_message: MessageWithFiles;
 }
 
 type ConversationParticipant = {
