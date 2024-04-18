@@ -19,9 +19,7 @@ const ConversationItem = ({
 
   const { user } = useUser();
 
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
 
   const supabase = createClient();
 
@@ -43,64 +41,41 @@ const ConversationItem = ({
     setDeleteModalOpen(true);
   };
 
-  const handleDelete = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    event.stopPropagation(); // Stop event from propagating to higher levels
-    setDeleteLoading(true); // Show loading indication
-    const { error } = await supabase
-      .from("conversations")
-      .delete()
-      .eq("conversation_id", conversation_id);
+  // const handleClick = async (conversation_id: string) => {
+  //   try {
+  //     // Step 1: Fetch messages that have not been seen
+  //     const { data: messagesToBeUpdated, error: selectError } = await supabase
+  //       .from("messages")
+  //       .select("message_id")
+  //       .eq("conversation_id", conversation_id)
+  //       .eq("seen", false);
 
-    if (error) {
-      toast.error("Failed to delete the conversation: " + error.message);
-      setDeleteLoading(false);
-    } else {
-      toast.success("Conversation deleted successfully");
-      setIsDeleted(true);
-      router.push("/messages"); // Redirect only after successful deletion
-    }
-    setDeleteModalOpen(false);
-  };
+  //     if (selectError) {
+  //       throw selectError;
+  //     }
 
-  const handleClick = async (conversation_id: string) => {
-    if (isDeleted) return;
+  //     // Check if there are any messages to update
+  //     if (messagesToBeUpdated.length > 0) {
+  //       // Step 2: Update these messages to mark as seen
+  //       const { error: updateError } = await supabase
+  //         .from("messages")
+  //         .update({ seen: true })
+  //         .in(
+  //           "message_id",
+  //           messagesToBeUpdated.map((msg) => msg.message_id)
+  //         );
 
-    try {
-      // Step 1: Fetch messages that have not been seen
-      const { data: messagesToBeUpdated, error: selectError } = await supabase
-        .from("messages")
-        .select("message_id")
-        .eq("conversation_id", conversation_id)
-        .eq("seen", false);
-
-      if (selectError) {
-        throw selectError;
-      }
-
-      // Check if there are any messages to update
-      if (messagesToBeUpdated.length > 0) {
-        // Step 2: Update these messages to mark as seen
-        const { error: updateError } = await supabase
-          .from("messages")
-          .update({ seen: true })
-          .in(
-            "message_id",
-            messagesToBeUpdated.map((msg) => msg.message_id)
-          );
-
-        if (updateError) {
-          throw updateError;
-        }
-      }
-    } catch (error) {
-      console.log(error || "An unexpected error occurred");
-    } finally {
-      // Navigate to the conversation page
-      router.push(`/messages/${conversation_id}`);
-    }
-  };
+  //       if (updateError) {
+  //         throw updateError;
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error || "An unexpected error occurred");
+  //   } finally {
+  //     // Navigate to the conversation page
+  //     router.push(`/messages/${conversation_id}`);
+  //   }
+  // };
 
   if (!otherUser) {
     return (
@@ -110,23 +85,9 @@ const ConversationItem = ({
     );
   }
 
-  if (deleteLoading) {
-    return (
-      <div className="flex align-middle items-center gap-5">
-        <div>
-          <Skeleton className="flex rounded-full w-[70px] h-[70px]" />
-        </div>
-        <div className="w-full flex flex-col gap-2">
-          <Skeleton className="h-3 w-3/5 rounded-lg" />
-          <Skeleton className="h-3 w-4/5 rounded-lg" />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
-      onClick={() => handleClick(conversation_id)}
+      // onClick={() => handleClick(conversation_id)}
       className="flex gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md items-center align-middle"
     >
       {/* overflow-hidden */}
@@ -189,7 +150,7 @@ const ConversationItem = ({
       <DeleteConversationModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onDelete={handleDelete}
+        conversation_id={conversation_id}
       />
     </div>
   );

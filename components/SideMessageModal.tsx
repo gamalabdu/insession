@@ -9,11 +9,10 @@ import toast from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { v4 as uuidv4 } from 'uuid'; 
+import { v4 as uuidv4 } from "uuid";
 import SearchInput from "./SearchInput";
 import Image from "next/image";
 import { FaX } from "react-icons/fa6";
-
 
 interface MessageModalProps {
   sideMessageModalOpen: boolean;
@@ -21,23 +20,19 @@ interface MessageModalProps {
 }
 
 const SideMessageModal = (props: MessageModalProps) => {
-  
   const { sideMessageModalOpen, setSideMessageModalOpen } = props;
-
-  const supabase = createClient();
 
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [ searchedUser, setSearchedUser ] = useState<string>('')
+  const [searchedUser, setSearchedUser] = useState<string>("");
 
-  const [ resultUsers , setResultUsers ] = useState<Profile[] | null>()
+  const [resultUsers, setResultUsers] = useState<Profile[] | null>();
 
-  const [ selectedUser , setSelectedUser ] = useState<Profile | null>(null)
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
 
   const { user } = useUser();
-
 
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
@@ -52,25 +47,24 @@ const SideMessageModal = (props: MessageModalProps) => {
     }
   };
 
-
   const handleClick = (resultUser: Profile) => {
+    setSearchedUser("");
 
-    setSearchedUser('')
-
-    setSelectedUser(resultUser)
-
-  }
-
+    setSelectedUser(resultUser);
+  };
 
   useEffect(() => {
-    if (searchedUser.trim()) {  // Only perform the search if the input is not empty
+    if (searchedUser.trim()) {
+      const supabase = createClient();
+
+      // Only perform the search if the input is not empty
       (async () => {
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
           .neq("id", user?.id)
-          .ilike("username", `%${searchedUser}%`);  // Using ilike for case-insensitive matching, and wrapping searchedUser with '%' wildcards
-          
+          .ilike("username", `%${searchedUser}%`); // Using ilike for case-insensitive matching, and wrapping searchedUser with '%' wildcards
+
         if (error) {
           console.error("Error fetching profiles:", error.message);
           return;
@@ -78,123 +72,101 @@ const SideMessageModal = (props: MessageModalProps) => {
         setResultUsers(data as Profile[]);
       })();
     } else {
-      setResultUsers([]);  // Clear results if the search input is empty
+      setResultUsers([]); // Clear results if the search input is empty
     }
-  }, [searchedUser, supabase]);
-
-
-
-
-
-
-
+  }, [searchedUser]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
-
     if (selectedUser === null) {
-        toast.error("No user selected")
-        return
+      toast.error("No user selected");
+      return;
     }
+    const supabase = createClient();
 
-
-    const uniqid = uuidv4()
-
+    let url = "/messages";
 
     try {
-
-
-
       setIsLoading(true);
 
+      const { data: existingConversations, error: existingConversationsError } =
+        await supabase.rpc("check_conversation_exist", {
+          userid1: user?.id,
+          userid2: selectedUser?.id,
+        });
 
-
-      const { data: existingConversations, error: existingConversationsError } = await 
-      supabase.rpc("check_conversation_exist", { userid1: user?.id, userid2: selectedUser?.id });
-  
-
-      if ( existingConversations != null ) {
-
+      if (existingConversations != null) {
         const { data: messageData, error: messageError } = await supabase
-        .from("messages")
-        .insert({
-          conversation_id: existingConversations,
+          .from("messages")
+          .insert({
+            conversation_id: existingConversations,
+            sender_id: user?.id,
+            content: values.message,
+            seen: false,
+          });
+        url = `/messages/${existingConversations}`;
+      } else {
+        const uniqid = uuidv4();
+        // adding empty conversation
+        const { error: conversationError } = await supabase
+          .from("conversations")
+          .insert({
+            conversation_id: uniqid,
+          });
+
+        if (conversationError) {
+          toast.error(conversationError.message);
+          console.error("Error creating conversation:", conversationError);
+          return {
+            error: conversationError || "No conversation data returned",
+          };
+        }
+
+        // adding current user to conversation_participants
+        const { error: addingUsersError } = await supabase
+          .from("conversation_participants")
+          .insert([
+            {
+              conversation_id: uniqid,
+              user_id: user?.id,
+            },
+            {
+              conversation_id: uniqid,
+              user_id: selectedUser?.id,
+            },
+          ]);
+
+        if (addingUsersError) {
+          toast.error(addingUsersError.message);
+          console.log(addingUsersError);
+        }
+
+        //adding message from current user to other user
+        const { error: messageError } = await supabase.from("messages").insert({
+          conversation_id: uniqid,
           sender_id: user?.id,
           content: values.message,
           seen: false,
-        })
+        });
 
+        if (messageError) {
+          toast.error(messageError.message);
+          console.log(messageError);
+        }
 
+        url = `/messages/${uniqid}`;
       }
 
-      else {
-
-      // adding empty conversation
-      const { error: conversationError } = await supabase
-        .from("conversations")
-        .insert({
-          conversation_id: uniqid
-        })
-
-
-      if (conversationError) {
-        toast.error(conversationError.message);
-        console.error("Error creating conversation:", conversationError);
-        return { error: conversationError || "No conversation data returned" };
-      }
-
-      // adding current user to conversation_participants
-      const { error: addingUsersError } = await supabase
-        .from("conversation_participants")
-        .insert([
-          {
-          conversation_id: uniqid,
-          user_id: user?.id,
-          },
-          {
-            conversation_id: uniqid,
-            user_id: selectedUser?.id,
-          }
-      ]);
-
-      if (addingUsersError) {
-        toast.error(addingUsersError.message);
-        console.log(addingUsersError);
-      }
-
-
-      //adding message from current user to other user
-      const { error: messageError } = await supabase.from("messages").insert({
-        conversation_id: uniqid,
-        sender_id: user?.id,
-        content: values.message,
-        seen: false,
-      });
-
-      if (messageError) {
-        toast.error(messageError.message);
-        console.log(messageError);
-      }
-
-
-    }
-
-
-      router.push(`/messages/${uniqid}`);
+      router.push(url);
 
       toast.success("Message sent!");
       reset();
       setSideMessageModalOpen(false);
-
-
-
     } catch (error) {
       toast.error("Something went wrong.");
     } finally {
       setIsLoading(false);
     }
   };
-
-
 
   return (
     <Modal
@@ -203,47 +175,40 @@ const SideMessageModal = (props: MessageModalProps) => {
       isOpen={sideMessageModalOpen}
       onChange={onChange}
     >
-      <form
-        className="flex flex-col gap-y-4"
-          onSubmit={handleSubmit(onSubmit)}
-      >
-        {
-            selectedUser && 
-            <div className="flex flex-col w-full justify-center items-center align-middle">
-
-                <div className="relative top-1 left-6 align-middle justify-end items-end z-10">
-                  <FaX size={10} onClick={() => setSelectedUser(null)} className="cursor-pointer"/>
-                </div>
-
-                <div className="relative h-10 w-10 overflow-hidden rounded-full">
-                  <Image
-                    src={selectedUser.avatar_url || "/default-avatar.png"} // Fallback to a default image if none is provided
-                    alt="User Avatar"
-                    layout="fill"
-                    className="object-cover" // Ensures the image covers the div completely
-                  />
-                </div>
-                <span>{selectedUser.username}</span>
-
+      <form className="flex flex-col gap-y-4" onSubmit={handleSubmit(onSubmit)}>
+        {selectedUser && (
+          <div className="flex flex-col w-full justify-center items-center align-middle">
+            <div className="relative top-1 left-6 align-middle justify-end items-end z-10">
+              <FaX
+                size={10}
+                onClick={() => setSelectedUser(null)}
+                className="cursor-pointer"
+              />
             </div>
-        }
 
-     {
+            <div className="relative h-10 w-10 overflow-hidden rounded-full">
+              <Image
+                src={selectedUser.avatar_url || "/default-avatar.png"} // Fallback to a default image if none is provided
+                alt="User Avatar"
+                layout="fill"
+                className="object-cover" // Ensures the image covers the div completely
+              />
+            </div>
+            <span>{selectedUser.username}</span>
+          </div>
+        )}
 
-      selectedUser === null &&
+        {selectedUser === null && (
+          <Input
+            placeholder="Search for username"
+            value={searchedUser}
+            onChange={(e) => setSearchedUser(e.target.value)}
+          />
+        )}
 
-      <Input
-      placeholder="Search for username"
-      value={searchedUser}
-      onChange={(e) => setSearchedUser(e.target.value)}
-       />
-
-     }
-       
         {resultUsers != undefined && resultUsers?.length > 0 && (
-
-          <div 
-          className="
+          <div
+            className="
           flex 
           flex-col 
           gap-4 
@@ -262,12 +227,10 @@ const SideMessageModal = (props: MessageModalProps) => {
           overflow-auto
           "
           >
-
             {resultUsers?.map((resultUser) => (
-
-              <div 
+              <div
                 className="hover:bg-neutral-500 p-2 rounded-md cursor-pointer flex items-center gap-2"
-                onClick={ () => handleClick(resultUser)}
+                onClick={() => handleClick(resultUser)}
               >
                 <div className="relative h-10 w-10 overflow-hidden rounded-full">
                   <Image
@@ -281,11 +244,8 @@ const SideMessageModal = (props: MessageModalProps) => {
                   {resultUser.username}
                 </span>
               </div>
-
             ))}
-
           </div>
-
         )}
 
         <Input
