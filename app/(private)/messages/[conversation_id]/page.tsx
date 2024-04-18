@@ -34,7 +34,6 @@ const ConversationPage = async ({
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
   return (
     <div className="flex flex-col bg-neutral-900 overflow-hidden rounded-lg h-full w-full">
-
       <Header>
         <div className="mt-20 flex">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
@@ -69,10 +68,7 @@ const ConversationPage = async ({
         </div>
       </Header>
 
-      <MessageBoard
-        conversation_id={conversation_id}
-        conversation={conversation}
-      />
+      <MessageBoard conversation={conversation} />
     </div>
   );
 };

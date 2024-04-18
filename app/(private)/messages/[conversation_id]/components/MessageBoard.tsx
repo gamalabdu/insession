@@ -12,9 +12,9 @@ import Image from "next/image";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
 import uniqid from "uniqid";
+import useMessages from "@/hooks/useMessages";
 
 interface MessagesPageProps {
-  conversation_id: string;
   conversation: Conversation;
 }
 
@@ -28,73 +28,24 @@ const defaultMessage: NewMessage = {
   content: "",
 };
 
-const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
-
-
-  const [messages, setMessages] = useState<Message[]>([]);
-
+const MessageBoard = ({ conversation }: MessagesPageProps) => {
+  const { conversation_id } = conversation;
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
-
-  const supabase = createClient();
-
   const { user } = useUser();
-
   const [isLoading, setIsLoading] = useState(false);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { messages } = useMessages(conversation_id);
 
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
 
-
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-
-
   useEffect(() => {
-  
-    scrollToBottom();
-  
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-
-
-  useEffect(() => {
-
-    const supabase = createClient();
-
-    (async () => {
-      const { data } = await supabase
-        .from("messages")
-        .select("*, messages_files(id, url, type, file_name)")
-        .eq("conversation_id", conversation_id)
-        .order("sent_at", { ascending: true });
-      data && setMessages(data);
-    })();
-    supabase
-      .channel("table_db_changes")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          if (payload.new.conversation_id === conversation_id) {
-            setMessages((prev) => [...prev, payload.new as Message]);
-          }
-        }
-      )
-      .subscribe();
-  }, [conversation_id]);
-
-
-
   const sendMessage = async (e: FormEvent) => {
-
     e.preventDefault();
-
+    const supabase = createClient();
     setIsLoading(true);
-
     try {
       const { data: messageData, error: messageError } = await supabase
         .from("messages")
@@ -145,9 +96,7 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
 
   return (
     <div className="flex flex-col h-full w-full">
-
       <div className="flex flex-col flex-grow h-0 gap-4 p-6 overflow-auto rounded-md">
-
         {messages?.map((message, idx) => {
           return (
             <ChatBubble
@@ -160,12 +109,7 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
         })}
 
         <div ref={messagesEndRef} />
-
       </div>
-
-
-
-
 
       {/* Input Field */}
 
@@ -258,12 +202,8 @@ const MessageBoard = ({ conversation_id, conversation }: MessagesPageProps) => {
           )}
         </div>
       </form>
-
-
     </div>
-
-  )
-  
-}
+  );
+};
 
 export default MessageBoard;

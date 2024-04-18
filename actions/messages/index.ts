@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function getAllConversations(): Promise<
   SupabaseResponse<Conversation>
@@ -45,5 +46,35 @@ export async function getConversation(
 
   return {
     results: [conversation],
+  };
+}
+
+export async function deleteConversation(
+  formData: FormData
+): Promise<SupabaseResponse<string>> {
+  const conversation_id = formData.get("conversation_id")?.toString();
+  if (!conversation_id) {
+    return {
+      results: [],
+      error: "No conversation ID found!",
+    };
+  }
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("conversations")
+    .delete()
+    .eq("conversation_id", conversation_id);
+
+  if (error) {
+    return {
+      error: error.message,
+      results: [],
+    };
+  }
+
+  revalidatePath("/messages", "layout");
+
+  return {
+    results: [conversation_id],
   };
 }
