@@ -25,7 +25,7 @@ export default function useMessages(conversation_id: string) {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
         async (payload) => {
-          const message = payload.new as Message;
+          const message = { ...payload.new, seen: true } as Message;
           const { data: files } = await supabase
             .from("messages_files")
             .select("type")
