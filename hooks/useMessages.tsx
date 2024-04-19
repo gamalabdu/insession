@@ -5,7 +5,9 @@ import { createClient } from "@/utils/supabase/client";
 import { useContext, useEffect, useState } from "react";
 
 export default function useMessages(conversation_id: string) {
+
   const { setConversations } = useContext(ConversationsContext);
+  
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
