@@ -3,6 +3,7 @@ type StorageFile = {
   type: string;
   url: string;
   file_name: string;
+  message_id: string;
 };
 
 interface Message {
@@ -12,7 +13,6 @@ interface Message {
   content: string;
   seen: boolean;
   sent_at: string;
-  messages_files: StorageFile[];
 }
 
 interface MessageWithFiles extends Message {

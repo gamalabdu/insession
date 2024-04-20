@@ -17,7 +17,7 @@ const ConversationItem = ({
   const { user } = useUser();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const { messages_files, content, sender_id } = latest_message;
+  const { files, content, sender_id } = latest_message;
   const otherUser = users.find((item) => item.id !== user?.id);
 
   const handleUsernameClick = (
@@ -112,12 +112,12 @@ const ConversationItem = ({
           </span>
           <p className="text-neutral-400 text-base truncate">
             {sender_id === user?.id && "You:"}{" "}
-            {messages_files && messages_files.length > 0
-              ? messages_files.length === 1
-                ? messages_files[0].type.includes("image")
+            {files && files.length > 0
+              ? files.length === 1
+                ? files[0].type.includes("image")
                   ? "Sent an image"
                   : "Sent a file"
-                : `Sent ${messages_files.length} files`
+                : `Sent ${files.length} files`
               : content}
             <time className="text-xs opacity-50 ml-1">
               sent at :{" "}

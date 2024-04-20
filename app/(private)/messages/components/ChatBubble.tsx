@@ -1,13 +1,12 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
-import { StorageFile } from "@/types";
 import Image from "next/image";
 import React from "react";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
 
 interface ChatBubbleProps {
-  message: Message;
+  message: MessageWithFiles;
   otherUser?: Profile;
   isLoading: boolean;
 }
@@ -17,8 +16,6 @@ type GroupedFiles = {
 };
 
 export const ChatBubble = (props: ChatBubbleProps) => {
-
-  
   const { message, otherUser, isLoading } = props;
 
   const { user, userDetails, isLoading: loading } = useUser();
@@ -33,8 +30,8 @@ export const ChatBubble = (props: ChatBubbleProps) => {
     ? userDetails?.avatar_url
     : otherUser?.avatar_url;
 
-  const { images, audio, zip }: GroupedFiles = message.messages_files
-    ? message.messages_files.reduce(
+  const { images, audio, zip }: GroupedFiles = message.files
+    ? message.files.reduce(
         (prev, curr) =>
           curr.type.startsWith("image")
             ? { ...prev, images: [...prev.images, curr] }

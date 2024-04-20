@@ -20,7 +20,7 @@ interface MessagesPageProps {
 }
 
 interface PresenceInfo {
-  isTyping: number;  // Timestamp when the user last typed
+  isTyping: number; // Timestamp when the user last typed
   presence_ref: string;
 }
 
@@ -37,12 +37,7 @@ const defaultMessage: NewMessage = {
   content: "",
 };
 
-
-
 const MessageBoard = ({ conversation }: MessagesPageProps) => {
-
-
-
   const { conversation_id } = conversation;
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
   const { user } = useUser();
@@ -50,14 +45,11 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages } = useMessages(conversation_id);
 
-
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
 
   const [isOtherUserTyping, setIsOtherUserTyping] = useState<boolean>(false);
 
-
   const supabase = createClient();
-
 
   const channel = supabase.channel(`presence-${conversation_id}`, {
     config: {
@@ -65,31 +57,11 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
     },
   });
 
-
-
-
-
-
-
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-
-
-
-
-
-
-
-
-
-
-
-
   const sendMessage = async (e: FormEvent) => {
-
     e.preventDefault();
 
     const supabase = createClient();
@@ -97,7 +69,6 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
     setIsLoading(true);
 
     try {
-
       const { data: messageData, error: messageError } = await supabase
         .from("messages")
         .insert({
@@ -144,21 +115,11 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
     setNewMessage(defaultMessage);
     channel.track({ isTyping: false });
-    setIsOtherUserTyping(false) 
+    setIsOtherUserTyping(false);
   };
 
-
-
-
-
-  
-
-
-
-
   useEffect(() => {
-
-    const supabase = createClient()
+    const supabase = createClient();
 
     const channel = supabase.channel(`presence-${conversation_id}`, {
       config: {
@@ -171,51 +132,31 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
       const otherUsersTyping = Object.entries(newState)
         .filter(([key]) => key !== user?.id)
         .flatMap(([, sessions]) => sessions)
-        .some(session => Date.now() - session.isTyping < 2000);  // Check if last typing was within the last 2 seconds
+        .some((session) => Date.now() - session.isTyping < 2000); // Check if last typing was within the last 2 seconds
 
       setIsOtherUserTyping(otherUsersTyping);
     };
 
-    channel.on('presence', { event: 'sync' }, presenceChanged).subscribe();
+    channel.on("presence", { event: "sync" }, presenceChanged).subscribe();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Track typing status with a timestamp
       channel.track({ isTyping: Date.now() });
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
       channel.unsubscribe();
       channel.untrack().then(() => setIsOtherUserTyping(false));
     };
   }, [user?.id, conversation_id]);
 
-
-
-
-  
   useDebounce(() => {
-
-    setIsOtherUserTyping(false) 
+    setIsOtherUserTyping(false);
     channel.track({ isTyping: false });
-
-  }, 3000)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  }, 3000);
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -232,22 +173,20 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
         })}
 
         <div ref={messagesEndRef} />
-
-
       </div>
 
       {/* Input Field */}
 
-
-
-      {isOtherUserTyping && <p className="w-full text-end p-2 text-neutral-500">{otherUser?.username} is typing...</p>} 
-
+      {isOtherUserTyping && (
+        <p className="w-full text-end p-2 text-neutral-500">
+          {otherUser?.username} is typing...
+        </p>
+      )}
 
       <form
         onSubmit={sendMessage}
         className="w-full bottom-10 flex flex-row items-end p-4 gap-2"
       >
-
         <label
           htmlFor="file-input"
           className="cursor-pointer flex flex-col align-middle justify-center"
