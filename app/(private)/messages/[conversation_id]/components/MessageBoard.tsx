@@ -37,6 +37,9 @@ const defaultMessage: NewMessage = {
   content: "",
 };
 
+
+
+
 const MessageBoard = ({ conversation }: MessagesPageProps) => {
   const { conversation_id } = conversation;
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
@@ -49,22 +52,24 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
   const [isOtherUserTyping, setIsOtherUserTyping] = useState<boolean>(false);
 
-  const supabase = createClient();
 
-  const channel = supabase.channel(`presence-${conversation_id}`, {
-    config: {
-      presence: { key: user?.id },
-    },
-  });
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = async (e: FormEvent) => {
+
+
     e.preventDefault();
 
     const supabase = createClient();
+
+    const channel = supabase.channel(`presence-${conversation_id}`, {
+      config: {
+        presence: { key: user?.id },
+      },
+    } )
 
     setIsLoading(true);
 
@@ -119,13 +124,12 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
   };
 
   useEffect(() => {
-    const supabase = createClient();
 
-    const channel = supabase.channel(`presence-${conversation_id}`, {
+    const channel = createClient().channel(`presence-${conversation_id}`, {
       config: {
         presence: { key: user?.id },
       },
-    });
+    } )
 
     const presenceChanged = () => {
       const newState: PresenceState = channel.presenceState();
@@ -151,12 +155,19 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
       channel.unsubscribe();
       channel.untrack().then(() => setIsOtherUserTyping(false));
     };
-  }, [user?.id, conversation_id]);
+  }, [
+    user?.id, conversation_id
+  ]);
+
+
 
   useDebounce(() => {
+
     setIsOtherUserTyping(false);
-    channel.track({ isTyping: false });
+
   }, 3000);
+
+
 
   return (
     <div className="flex flex-col h-full w-full">
