@@ -35,8 +35,8 @@ const ConversationPage = async ({
     <div className="flex flex-col bg-neutral-900 overflow-hidden rounded-lg h-full w-full">
       <Header>
         <div className="mt-20 flex">
-          <div className="flex flex-col md:flex-row items-center gap-x-5">
-            <div className="relative rounded-md h-[100px] w-[100px] ">
+          <div className="flex md:flex-row items-center gap-x-5">
+            <div className="relative rounded-md h-[100px] w-[100px]">
               <Image
                 src={otherUser?.avatar_url || "/images/userIcon.png"}
                 alt="User profile"

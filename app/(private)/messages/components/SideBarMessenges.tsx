@@ -9,7 +9,7 @@ import SideMessageModal from "@/components/SideMessageModal";
 
 const SideBarMessenges = () => {
 
-  const { conversations, areLoading } = useContext(ConversationsContext);
+  const { conversations , areLoading } = useContext(ConversationsContext);
 
   const [sideMessageModalOpen, setSideMessageModalOpen] = useState<boolean>(false)
 

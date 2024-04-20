@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 
-import { Message } from "@/types";
 
 const getAllUsers = async (conversation_id: string): Promise<Message[]> => {
 

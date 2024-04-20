@@ -14,6 +14,7 @@ import uniqid from "uniqid";
 import useMessages from "@/hooks/useMessages";
 import { createClient } from "@/utils/supabase/client";
 import useDebounce from "@/hooks/useDebounce";
+import { FaX } from "react-icons/fa6";
 
 interface MessagesPageProps {
   conversation: Conversation;
@@ -37,9 +38,6 @@ const defaultMessage: NewMessage = {
   content: "",
 };
 
-
-
-
 const MessageBoard = ({ conversation }: MessagesPageProps) => {
   const { conversation_id } = conversation;
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
@@ -52,15 +50,11 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
   const [isOtherUserTyping, setIsOtherUserTyping] = useState<boolean>(false);
 
-
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = async (e: FormEvent) => {
-
-
     e.preventDefault();
 
     const supabase = createClient();
@@ -69,7 +63,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
       config: {
         presence: { key: user?.id },
       },
-    } )
+    });
 
     setIsLoading(true);
 
@@ -124,12 +118,11 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
   };
 
   useEffect(() => {
-
     const channel = createClient().channel(`presence-${conversation_id}`, {
       config: {
         presence: { key: user?.id },
       },
-    } )
+    });
 
     const presenceChanged = () => {
       const newState: PresenceState = channel.presenceState();
@@ -155,17 +148,13 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
       channel.unsubscribe();
       channel.untrack().then(() => setIsOtherUserTyping(false));
     };
-  }, [
-    user?.id, conversation_id
-  ]);
-
-
+  }, [user?.id, conversation_id]);
 
   useDebounce(() => {
-
     setIsOtherUserTyping(false);
-
   }, 3000);
+
+
 
 
 
@@ -194,9 +183,10 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
         </p>
       )}
 
-      <form
+      {/* <form
         onSubmit={sendMessage}
         className="w-full bottom-10 flex flex-row items-end p-4 gap-2"
+        className="w-full flex flex-row items-end p-4 gap-2"
       >
         <label
           htmlFor="file-input"
@@ -223,40 +213,94 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
         />
 
         <div className="relative flex-1 h-full">
+
           <div className="flex items-center gap-2 absolute top-3 left-3">
+
             {newMessage.files
               .filter((item) => item.type.startsWith("image/"))
-              .map((item) => (
-                <Image
-                  className="rounded object-cover"
-                  width={64}
-                  height={64}
-                  src={URL.createObjectURL(item)}
-                  key={item.name}
-                  alt=""
-                />
-              ))}
-            {newMessage.files
-              .filter((item) => item.type.startsWith("audio/"))
-              .map((item) => (
-                <div
-                  className="flex flex-col items-center gap-1"
-                  key={item.type + item.name}
-                >
-                  <LuFileAudio size={24} /> {item.name}
+              .map((item, index) => (
+                <div className="relative flex">
+                  <FaX
+                    size={15} // Adjusted for better visibility, consider your design needs
+                    onClick={() => {
+                      setNewMessage(prev => ({
+                        ...prev,
+                        files: prev.files.filter((_, idx) => idx !== index)  // Use index to filter out the file
+                      }));
+                    }}
+                    className="cursor-pointer absolute top-0 right-0 m-1 mix-blend-difference" // margin for padding from edges
+                  />
+                  <Image
+                    className="rounded object-cover"
+                    width={64}
+                    height={64}
+                    src={URL.createObjectURL(item)}
+                    alt=""
+                  />
                 </div>
               ))}
+
+            {newMessage.files
+              .filter((item) => item.type.startsWith("audio/"))
+              .map((item, index) => (
+                <div className="relative flex">
+                  <FaX
+                    size={10} // Adjusted for better visibility, consider your design needs
+                    onClick={() => {
+                      setNewMessage(prev => ({
+                        ...prev,
+                        files: prev.files.filter((_, idx) => idx !== index)  // Use index to filter out the file
+                      }));
+                    }}
+                    className="cursor-pointer absolute top-0 right-1 m-1 mix-blend-difference" // margin for padding from edges
+                  />
+                <div
+                  className="flex flex-col gap-2 items-center align-middle justify-center w-[50px]"
+                  key={index}
+                >
+                  <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[40px]">
+                    <LuFileAudio size={15} className="text-neutral-500" />
+                  </div>
+                  <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
+                    {item.name}
+                  </span>
+
+                </div>
+                </div>
+              ))}
+
+
+
+
             {newMessage.files
               .filter((item) => item.type.includes("zip"))
-              .map((item) => (
-                <div
-                  className="flex flex-col items-center gap-1"
-                  key={item.type + item.name}
-                >
-                  <PiFileZip size={24} /> {item.name}
+              .map((item, index) => (
+                <div className="relative flex">
+                  <FaX
+                    size={12} // Adjusted for better visibility, consider your design needs
+                    onClick={() => {
+                      setNewMessage(prev => ({
+                        ...prev,
+                        files: prev.files.filter((_, idx) => idx !== index)  // Use index to filter out the file
+                      }));
+                    }}
+                    className="cursor-pointer absolute top-0 right-1 m-1 mix-blend-difference" // margin for padding from edges
+                  />
+
+                <div className="flex flex-col gap-2 items-center align-middle justify-center w-[60px]" key={index}>
+                  <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[50px]">
+                    <PiFileZip size={20} className="text-neutral-500" />
+                  </div>
+                  <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
+                    {item.name}
+                  </span>
+                </div>
                 </div>
               ))}
           </div>
+
+
+
           <Input
             type="text"
             value={newMessage.content}
@@ -278,11 +322,163 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
             <button type="submit">
               <GrSend
                 size={20}
+                className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
                 className="text-neutral-500 mt-1 hover:text-neutral-200"
               />
             </button>
           )}
         </div>
+      </form>  */}
+
+      <form
+        onSubmit={sendMessage}
+        className="w-full flex flex-row items-end align-middle justify-center p-2 gap-2"
+      >
+        <label htmlFor="file-input" className="cursor-pointer bg-orange-700 hover:bg-orange-900 text-white p-2 rounded flex items-center justify-center">
+          <FiFilePlus size={20} />
+        </label>
+
+        <input
+          id="file-input"
+          multiple
+          type="file"
+          accept="image/*,audio/*,.zip,application/zip,application/x-zip,application/x-zip-compressed"
+          className="hidden"
+          onChange={(e) => {
+            const newFiles = Array.from(e.target.files || []);
+            setNewMessage(prev => {
+              // Create a map from existing files for quick lookup
+              const existingFiles = new Map(
+                prev.files.map(file => [`${file.name}-${file.size}-${file.lastModified}`, file])
+              );
+        
+              // Add new files if they don't exist in the map
+              newFiles.forEach(file => {
+                const fileKey = `${file.name}-${file.size}-${file.lastModified}`;
+                if (!existingFiles.has(fileKey)) {
+                  existingFiles.set(fileKey, file); // Add new file to map if not already present
+                }
+              });
+        
+              // Set files from map values, which includes all unique files
+              return {
+                ...prev,
+                files: Array.from(existingFiles.values())
+              };
+            });
+          }}
+        />
+
+        <div className="relative flex-1">
+          <div className="absolute top-1 left-3 right-3 flex flex-wrap gap-2 z-10">
+            {newMessage.files
+              .filter((file) => file.type.startsWith("image/"))
+              .map((item, index) => (
+                <div key={index} className="relative">
+                  <FaX
+                    size={12}
+                    onClick={() => {
+                      setNewMessage((prev) => ({
+                        ...prev,
+                        files: prev.files.filter((_, idx) => idx !== index),
+                      }));
+                    }}
+                    className="cursor-pointer absolute top-0 right-0 text-neutral-500"
+                    style={{ margin: "2px" }}
+                  />
+                  <Image
+                    className="rounded object-cover"
+                    width={64}
+                    height={64}
+                    src={URL.createObjectURL(item)}
+                    alt=""
+                  />
+                </div>
+              ))}
+
+            {newMessage.files
+              .filter((item) => item.type.startsWith("audio/"))
+              .map((item, index) => (
+                <div className="relative flex">
+                  <FaX
+                    size={10} // Adjusted for better visibility, consider your design needs
+                    onClick={() => {
+                      setNewMessage((prev) => ({
+                        ...prev,
+                        files: prev.files.filter((_, idx) => idx !== index), // Use index to filter out the file
+                      }));
+                    }}
+                    className="cursor-pointer absolute top-0 right-1 m-1 mix-blend-difference" // margin for padding from edges
+                  />
+                  <div
+                    className="flex flex-col gap-2 items-center align-middle justify-center w-[50px]"
+                    key={index}
+                  >
+                    <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[40px]">
+                      <LuFileAudio size={15} className="text-neutral-500" />
+                    </div>
+                    <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
+                      {item.name}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+            {newMessage.files
+              .filter((item) => item.type.includes("zip"))
+              .map((item, index) => (
+                <div className="relative flex">
+                  <FaX
+                    size={12} // Adjusted for better visibility, consider your design needs
+                    onClick={() => {
+                      setNewMessage((prev) => ({
+                        ...prev,
+                        files: prev.files.filter((_, idx) => idx !== index), // Use index to filter out the file
+                      }));
+                    }}
+                    className="cursor-pointer absolute top-0 right-1 m-1 mix-blend-difference" // margin for padding from edges
+                  />
+
+                  <div
+                    className="flex flex-col gap-2 items-center align-middle justify-center w-[60px]"
+                    key={index}
+                  >
+                    <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[50px]">
+                      <PiFileZip size={20} className="text-neutral-500" />
+                    </div>
+                    <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
+                      {item.name}
+                    </span>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <Input
+            type="text"
+            value={newMessage.content}
+            placeholder="Type your message here..."
+            required={newMessage.files.length === 0}
+            className={`pl-4 pr-4 pt-2 pb-2 rounded-lg w-full ${
+              newMessage.files.length > 0 ? "mt-20" : "mt-3"
+            }`}
+            onChange={(e) =>
+              setNewMessage((prev) => ({ ...prev, content: e.target.value }))
+            }
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="flex items-center justify-center bg-orange-700 hover:bg-orange-900 text-white p-2 rounded"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Spinner size="sm" color="white" />
+          ) : (
+            <GrSend size={20} />
+          )}
+        </button>
       </form>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client"
 import useLoadImage from '@/hooks/useLoadImage'
-import { Profile, Song } from '@/types'
+import { Song } from '@/types'
 import Image from 'next/image'
 import React from 'react'
 import PlayButton from './PlayButton'

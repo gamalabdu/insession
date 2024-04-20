@@ -79,8 +79,8 @@ export const ChatBubble = (props: ChatBubbleProps) => {
       <div
         className={`${
           !isSignedIn
-            ? " flex bg-neutral-700 rounded-md w-1/2 max-w-fit p-2"
-            : "flex flex-col bg-neutral-600 rounded-md w-1/2 max-w-fit p-2"
+            ? "flex flex-col bg-neutral-700 rounded-md gap-5 w-1/2 max-w-fit p-2"
+            : "flex flex-col bg-neutral-600 rounded-md gap-5 w-1/2 max-w-fit p-2"
         }`}
       >
         {images.length > 0 && (
@@ -137,6 +137,7 @@ export const ChatBubble = (props: ChatBubbleProps) => {
             ))}
           </div>
         )}
+
         {!message.content && message.files.length === 0 ? (
           <div className="h-full w-full grid place-content-center flex-1 px-2">
             <Spinner color="white" size="sm" />
@@ -144,6 +145,8 @@ export const ChatBubble = (props: ChatBubbleProps) => {
         ) : (
           message.content
         )}
+
+
       </div>
     </div>
   );

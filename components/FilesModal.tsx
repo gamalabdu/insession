@@ -190,7 +190,7 @@ const FilesModal = (props: FilesModalProps) => {
                   <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[40px]">
                     <PiFileZip size={20} className="text-neutral-500" />
                   </div>
-                  <span className="flex w-full text-xs overflow-hidden text-ellipsis">
+                  <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
                     {zipFile.file_name}
                   </span>
                   <span className="text-xs text-neutral-400">{formattedDate(zipFile.created_at)}</span>

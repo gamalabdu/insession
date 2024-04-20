@@ -1,9 +1,7 @@
 "use client"
 import ProfileItem from '@/components/ProfileItem'
 import useGetSongsByUserId from '@/hooks/useGetSongsByUserId'
-import useLoadProfileImage from '@/hooks/useLoadProfileImage'
 import useOnPlay from '@/hooks/useOnPlay'
-import { Profile, Song } from '@/types'
 import React, { useEffect } from 'react'
 
 

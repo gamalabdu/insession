@@ -16,19 +16,56 @@ const LikeUserButton = (props: LikeButtonProps) => {
 
   const { artistId } = props
 
+
   const router = useRouter();
 
   const supabase = createClient()
 
   const { user } = useUser();
 
+
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
 
-  useEffect(() => {
+  // useEffect(() => {
     
+  //   const fetchData = async () => {
+
+  //     // Ensure user?.id and artistId are defined before making the query
+  //     if (!user?.id || !artistId) {
+  //       console.error("User ID or Artist ID is undefined.");
+  //       setIsLiked(false);
+  //       return;
+  //     }
+  
+  //     const { data, error } = await supabase
+  //       .from('liked_artist')
+  //       .select('*')
+  //       .eq('user_id', user.id)
+  //       .eq('artist_id', artistId);
+  
+  //     if (error) {
+  //       console.log(error);
+  //       console.error("Error fetching liked song:", error.message);
+  //       setIsLiked(false); // Handle the error state as appropriate
+  //       return;
+  //     }
+  
+  //     setIsLiked(data.length > 0);
+  //   };
+  
+  //   fetchData();
+  // }, [artistId, supabase, user?.id]);
+  
+
+
+
+
+
+  useEffect(() => {
+
     const fetchData = async () => {
-      // Ensure user?.id and artistId are defined before making the query
+
       if (!user?.id || !artistId) {
         console.error("User ID or Artist ID is undefined.");
         setIsLiked(false);
@@ -42,19 +79,20 @@ const LikeUserButton = (props: LikeButtonProps) => {
         .eq('artist_id', artistId);
   
       if (error) {
-        console.log(error);
-        console.error("Error fetching liked song:", error.message);
-        setIsLiked(false); // Handle the error state as appropriate
+        console.error("Error fetching liked artist:", error.message);
+        setIsLiked(false);
         return;
       }
   
       setIsLiked(data.length > 0);
     };
   
-    fetchData();
-  }, [artistId, supabase, user?.id]);
+    if (user?.id && artistId) {
+      fetchData();
+    }
+    
+  }, [artistId, user?.id]); // supabase client should be stable and not required to be a dependency
   
-
   
 
   const Icon = isLiked ? AiFillHeart : AiOutlineHeart;

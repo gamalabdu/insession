@@ -1,10 +1,4 @@
 "use client"
-import LikeButton from '@/components/LikeButton'
-import LikeUserButton from '@/components/LikeUserButton'
-import MediaItem from '@/components/MediaItem'
-import ProfileItem from '@/components/ProfileItem'
-import useOnPlay from '@/hooks/useOnPlay'
-import { Profile } from '@/types'
 import React from 'react'
 import ExploreItem from '../../explore/components/ExploreItem'
 

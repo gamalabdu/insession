@@ -6,11 +6,11 @@ import { BiSearch } from "react-icons/bi";
 import Button from "../Button";
 import BackForward from "./BackForward";
 import Link from "next/link";
-import { createClient } from "@/utils/supabase/server";
-import toast from "react-hot-toast";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { signOut } from "@/actions/signOut";
+import { FiMessageSquare } from "react-icons/fi";
+import { MdOutlineTravelExplore, MdTableRows } from "react-icons/md";
+
+
 
 interface HeaderProps {
   children: React.ReactNode;
@@ -20,6 +20,7 @@ interface HeaderProps {
 const Header = (props: HeaderProps) => {
 
   const { children, className } = props;
+
 
   return (
     <div
@@ -34,8 +35,11 @@ const Header = (props: HeaderProps) => {
       )}
     >
       <div className="w-full mb-4 flex items-center justify-between">
+
         <BackForward />
+
         <div className="flex md:hidden gap-x-2 items-center">
+
           <Link
             href="/dashboard"
             className="
@@ -53,6 +57,25 @@ const Header = (props: HeaderProps) => {
             <HiHome className="text-black" size={20} />
           </Link>
 
+
+          <Link
+            href="/explore"
+            className="
+              rounded-full 
+              p-2 
+              bg-white 
+              flex 
+              items-center 
+              justify-center 
+              cursor-pointer 
+              hover:opacity-75 
+              transition
+            "
+          >
+            <MdOutlineTravelExplore className="text-black" size={20} />
+          </Link>
+
+
           <Link
             href="/search"
             className="
@@ -69,6 +92,43 @@ const Header = (props: HeaderProps) => {
           >
             <BiSearch className="text-black" size={20} />
           </Link>
+
+
+          <Link
+            href="/messages"
+            className="
+              rounded-full 
+              p-2 
+              bg-white 
+              flex 
+              items-center 
+              justify-center 
+              cursor-pointer 
+              hover:opacity-75 
+              transition
+            "
+          >
+            <FiMessageSquare className="text-black" size={20} />
+          </Link>
+
+          <Link
+            href="/sessions"
+            className="
+              rounded-full 
+              p-2 
+              bg-white 
+              flex 
+              items-center 
+              justify-center 
+              cursor-pointer 
+              hover:opacity-75 
+              transition
+            "
+          >
+            <MdTableRows className="text-black" size={20} />
+          </Link>
+
+
         </div>
         <div className="flex justify-between items-center gap-x-4">
           <div className="flex gap-x-4 items-center">

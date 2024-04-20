@@ -97,8 +97,8 @@ const ConversationItem = ({
           {sender_id != user?.id && latest_message?.seen != true && (
             <IoIosMail
               size={20}
-              className="absolute right-0 bottom-0"
-              color="red"
+              className="absolute right-0 bottom-0 text-orange-600"
+              color=""
             />
           )}
         </div>
