@@ -1,5 +1,6 @@
 "use client";
 import { useUser } from "@/hooks/useUser";
+import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
 import React from "react";
 import { LuFileAudio } from "react-icons/lu";
@@ -136,8 +137,13 @@ export const ChatBubble = (props: ChatBubbleProps) => {
             ))}
           </div>
         )}
-
-        {message.content}
+        {!message.content && message.files.length === 0 ? (
+          <div className="h-full w-full grid place-content-center flex-1 px-2">
+            <Spinner color="white" size="sm" />
+          </div>
+        ) : (
+          message.content
+        )}
       </div>
     </div>
   );
