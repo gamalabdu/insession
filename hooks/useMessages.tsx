@@ -5,10 +5,9 @@ import { createClient } from "@/utils/supabase/client";
 import { useContext, useEffect, useState } from "react";
 
 export default function useMessages(conversation_id: string) {
-
   const { setConversations } = useContext(ConversationsContext);
-  
-  const [messages, setMessages] = useState<Message[]>([]);
+
+  const [messages, setMessages] = useState<MessageWithFiles[]>([]);
 
   useEffect(() => {
     if (!setConversations) return;
@@ -16,26 +15,26 @@ export default function useMessages(conversation_id: string) {
     (async () => {
       const { data } = await supabase
         .from("messages")
-        .select("*, messages_files(id, url, type, file_name)")
+        .select("*, files:messages_files(id, url, type, file_name)")
         .eq("conversation_id", conversation_id)
         .order("sent_at", { ascending: true });
       if (data) {
         setMessages(data);
         setConversations((prev) => {
-          const newObj = [...prev];
-          const index = newObj.findIndex(
+          const newArr = [...prev];
+          const index = newArr.findIndex(
             (item) => item.conversation_id === conversation_id
           );
           if (index === -1) return prev;
-          const conversation = newObj[index];
+          const conversation = Object.assign({}, newArr[index]);
           conversation.latest_message = {
             ...conversation.latest_message,
             seen: true,
           };
-          return newObj;
+          newArr[index] = conversation;
+          return newArr;
         });
       }
-      data && setMessages(data);
     })();
     supabase
       .channel("table_db_changes")
@@ -43,15 +42,20 @@ export default function useMessages(conversation_id: string) {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
         async (payload) => {
-          const message = { ...payload.new, seen: true } as Message;
-          const { data: files } = await supabase
-            .from("messages_files")
-            .select("type")
-            .eq("message_id", message.message_id)
-            .returns<StorageFile[]>();
-          if (payload.new.conversation_id === conversation_id) {
-            setMessages((prev) => [...prev, message]);
-          }
+          // if (payload.new.conversation_id !== conversation_id) return;
+          // const { data: files } = await supabase
+          //   .from("messages_files")
+          //   .select("type")
+          //   .eq("message_id", payload.new.message_id)
+          //   .returns<StorageFile[]>();
+          const message = {
+            ...(payload.new as Message),
+            seen: true,
+            files: [],
+          } as MessageWithFiles;
+          // update current conversation
+          setMessages((prev) => [...prev, message]);
+          // update all conversations
           setConversations((prev) => {
             const newArr = [...prev];
             const index = newArr.findIndex(
@@ -60,7 +64,45 @@ export default function useMessages(conversation_id: string) {
             if (index === -1) {
               return prev;
             }
-            newArr[index].latest_message = { ...message, files: files || [] };
+            const conversation = Object.assign({}, newArr[index]);
+            conversation.latest_message = { ...message, files: [] };
+            newArr[index] = conversation;
+            return newArr;
+          });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages_files" },
+        async (payload) => {
+          const file = payload.new as StorageFile;
+          // update current conversation
+          setMessages((prev) => {
+            const index = prev.findIndex(
+              (message) => message.message_id === file.message_id
+            );
+            if (index === -1) return prev;
+            const newMessages = [...prev];
+            const newMessage = Object.assign({}, newMessages[index]);
+            newMessage.files = [...newMessage.files, file];
+            newMessages[index] = newMessage;
+            return newMessages;
+          });
+          // update all conversations
+          setConversations((prev) => {
+            const index = prev.findIndex(
+              (item) => item.conversation_id === conversation_id
+            );
+            if (index === -1) return prev;
+            const newArr = [...prev];
+            const conversation = Object.assign({}, newArr[index]);
+            const latestMessage = Object.assign(
+              {},
+              conversation.latest_message
+            );
+            latestMessage.files = [...latestMessage.files, file];
+            conversation.latest_message = latestMessage;
+            newArr[index] = conversation;
             return newArr;
           });
         }
