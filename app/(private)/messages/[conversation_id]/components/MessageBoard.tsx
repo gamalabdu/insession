@@ -250,6 +250,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
             type="text"
             value={newMessage.content}
             placeholder="type your message here..."
+            required={newMessage.files.length === 0}
             className={`${
               newMessage.files.length > 0 ? "pt-20" : ""
             } max-h-full`}
