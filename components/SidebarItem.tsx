@@ -1,5 +1,4 @@
 "use client"
-import useMessages from '@/hooks/useMessages'
 import { useUser } from '@/hooks/useUser'
 import { ConversationsContext } from '@/providers/conversations'
 import { createClient } from '@/utils/supabase/client'
@@ -29,7 +28,9 @@ const SidebarItem = (props: SidebarItemProps) => {
     const supabase = createClient();
 
     useEffect(() => {
+
         const fetchUnseenMessages = async () => {
+
             if (!user?.id) return; // Ensure user is defined
 
             const conversationIds = conversations.map(conv => conv.conversation_id);
@@ -51,6 +52,8 @@ const SidebarItem = (props: SidebarItemProps) => {
             }
 
             setUnseenMessages(data.length);
+
+
         };
 
         fetchUnseenMessages();
@@ -58,7 +61,7 @@ const SidebarItem = (props: SidebarItemProps) => {
     }, [conversations, user]);
 
 
-    console.log(unseenMessages)
+
 
 
     return (

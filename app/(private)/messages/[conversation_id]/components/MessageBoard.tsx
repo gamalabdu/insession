@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ChatBubble } from "../../components/ChatBubble";
 import { FiFilePlus } from "react-icons/fi";
 import { GrSend } from "react-icons/gr";
@@ -40,15 +40,27 @@ const defaultMessage: NewMessage = {
 
 const MessageBoard = ({ conversation }: MessagesPageProps) => {
   const { conversation_id } = conversation;
+
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
+
   const { user } = useUser();
+
   const [isLoading, setIsLoading] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const { messages } = useMessages(conversation_id);
 
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
 
   const [isOtherUserTyping, setIsOtherUserTyping] = useState<boolean>(false);
+
+  const filePreviews = useMemo(() => {
+    return newMessage.files.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+  }, [newMessage.files]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -78,6 +90,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
         })
         .select("message_id")
         .single();
+
       await Promise.all(
         newMessage.files.map(async (file) => {
           const fileUniqueID = uniqid();
@@ -113,7 +126,9 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
     }
 
     setNewMessage(defaultMessage);
+
     channel.track({ isTyping: false });
+
     setIsOtherUserTyping(false);
   };
 
@@ -126,9 +141,13 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
     const presenceChanged = () => {
       const newState: PresenceState = channel.presenceState();
+
       const otherUsersTyping = Object.entries(newState)
+
         .filter(([key]) => key !== user?.id)
+
         .flatMap(([, sessions]) => sessions)
+
         .some((session) => Date.now() - session.isTyping < 2000); // Check if last typing was within the last 2 seconds
 
       setIsOtherUserTyping(otherUsersTyping);
@@ -154,9 +173,45 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
     setIsOtherUserTyping(false);
   }, 3000);
 
+  useEffect(() => {
+    const supabase = createClient();
 
+    const setAllUnseenMessagesToSeen = async () => {
+      try {
+        // Step 1: Fetch messages that have not been seen
+        const { data: messagesToBeUpdated, error: selectError } = await supabase
+          .from("messages")
+          .select("message_id")
+          .eq("conversation_id", conversation_id)
+          .eq("seen", false);
 
+        if (selectError) {
+          throw selectError;
+        }
 
+        // Check if there are any messages to update
+        if (messagesToBeUpdated.length > 0) {
+          // Step 2: Update these messages to mark as seen
+          const { error: updateError } = await supabase
+            .from("messages")
+            .update({ seen: true })
+            .in(
+              "message_id",
+              messagesToBeUpdated.map((msg) => msg.message_id)
+            );
+
+          if (updateError) {
+            throw updateError;
+          }
+        }
+      } catch (error) {
+        console.log(error || "An unexpected error occurred");
+      } finally {
+      }
+    };
+
+    setAllUnseenMessagesToSeen();
+  }, []);
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -183,158 +238,14 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
         </p>
       )}
 
-      {/* <form
-        onSubmit={sendMessage}
-        className="w-full bottom-10 flex flex-row items-end p-4 gap-2"
-        className="w-full flex flex-row items-end p-4 gap-2"
-      >
-        <label
-          htmlFor="file-input"
-          className="cursor-pointer flex flex-col align-middle justify-center"
-        >
-          <FiFilePlus
-            size={22}
-            className="text-neutral-500 mt-1 hover:text-neutral-200"
-          />
-        </label>
-
-        <input
-          id="file-input"
-          multiple
-          type="file"
-          accept="image/*,audio/*, .zip,application/zip,application/x-zip,application/x-zip-compressed"
-          className="hidden"
-          onChange={(e) =>
-            setNewMessage((prev) => ({
-              ...prev,
-              files: Array.from(e.target.files || []),
-            }))
-          }
-        />
-
-        <div className="relative flex-1 h-full">
-
-          <div className="flex items-center gap-2 absolute top-3 left-3">
-
-            {newMessage.files
-              .filter((item) => item.type.startsWith("image/"))
-              .map((item, index) => (
-                <div className="relative flex">
-                  <FaX
-                    size={15} // Adjusted for better visibility, consider your design needs
-                    onClick={() => {
-                      setNewMessage(prev => ({
-                        ...prev,
-                        files: prev.files.filter((_, idx) => idx !== index)  // Use index to filter out the file
-                      }));
-                    }}
-                    className="cursor-pointer absolute top-0 right-0 m-1 mix-blend-difference" // margin for padding from edges
-                  />
-                  <Image
-                    className="rounded object-cover"
-                    width={64}
-                    height={64}
-                    src={URL.createObjectURL(item)}
-                    alt=""
-                  />
-                </div>
-              ))}
-
-            {newMessage.files
-              .filter((item) => item.type.startsWith("audio/"))
-              .map((item, index) => (
-                <div className="relative flex">
-                  <FaX
-                    size={10} // Adjusted for better visibility, consider your design needs
-                    onClick={() => {
-                      setNewMessage(prev => ({
-                        ...prev,
-                        files: prev.files.filter((_, idx) => idx !== index)  // Use index to filter out the file
-                      }));
-                    }}
-                    className="cursor-pointer absolute top-0 right-1 m-1 mix-blend-difference" // margin for padding from edges
-                  />
-                <div
-                  className="flex flex-col gap-2 items-center align-middle justify-center w-[50px]"
-                  key={index}
-                >
-                  <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[40px]">
-                    <LuFileAudio size={15} className="text-neutral-500" />
-                  </div>
-                  <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
-                    {item.name}
-                  </span>
-
-                </div>
-                </div>
-              ))}
-
-
-
-
-            {newMessage.files
-              .filter((item) => item.type.includes("zip"))
-              .map((item, index) => (
-                <div className="relative flex">
-                  <FaX
-                    size={12} // Adjusted for better visibility, consider your design needs
-                    onClick={() => {
-                      setNewMessage(prev => ({
-                        ...prev,
-                        files: prev.files.filter((_, idx) => idx !== index)  // Use index to filter out the file
-                      }));
-                    }}
-                    className="cursor-pointer absolute top-0 right-1 m-1 mix-blend-difference" // margin for padding from edges
-                  />
-
-                <div className="flex flex-col gap-2 items-center align-middle justify-center w-[60px]" key={index}>
-                  <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[50px]">
-                    <PiFileZip size={20} className="text-neutral-500" />
-                  </div>
-                  <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
-                    {item.name}
-                  </span>
-                </div>
-                </div>
-              ))}
-          </div>
-
-
-
-          <Input
-            type="text"
-            value={newMessage.content}
-            placeholder="type your message here..."
-            required={newMessage.files.length === 0}
-            className={`${
-              newMessage.files.length > 0 ? "pt-20" : ""
-            } max-h-full`}
-            onChange={(e) =>
-              setNewMessage((prev) => ({ ...prev, content: e.target.value }))
-            }
-          />
-        </div>
-
-        <div className="cursor-pointer flex flex-col align-middle justify-center">
-          {isLoading ? (
-            <Spinner size="sm" color="default" />
-          ) : (
-            <button type="submit">
-              <GrSend
-                size={20}
-                className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
-                className="text-neutral-500 mt-1 hover:text-neutral-200"
-              />
-            </button>
-          )}
-        </div>
-      </form>  */}
-
       <form
         onSubmit={sendMessage}
         className="w-full flex flex-row items-end align-middle justify-center p-2 gap-2"
       >
-        <label htmlFor="file-input" className="cursor-pointer bg-orange-700 hover:bg-orange-900 text-white p-2 rounded flex items-center justify-center">
+        <label
+          htmlFor="file-input"
+          className="cursor-pointer bg-orange-700 hover:bg-orange-900 text-white p-2 rounded flex items-center justify-center"
+        >
           <FiFilePlus size={20} />
         </label>
 
@@ -346,24 +257,27 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
           className="hidden"
           onChange={(e) => {
             const newFiles = Array.from(e.target.files || []);
-            setNewMessage(prev => {
+            setNewMessage((prev) => {
               // Create a map from existing files for quick lookup
               const existingFiles = new Map(
-                prev.files.map(file => [`${file.name}-${file.size}-${file.lastModified}`, file])
+                prev.files.map((file) => [
+                  `${file.name}-${file.size}-${file.lastModified}`,
+                  file,
+                ])
               );
-        
+
               // Add new files if they don't exist in the map
-              newFiles.forEach(file => {
+              newFiles.forEach((file) => {
                 const fileKey = `${file.name}-${file.size}-${file.lastModified}`;
                 if (!existingFiles.has(fileKey)) {
                   existingFiles.set(fileKey, file); // Add new file to map if not already present
                 }
               });
-        
+
               // Set files from map values, which includes all unique files
               return {
                 ...prev,
-                files: Array.from(existingFiles.values())
+                files: Array.from(existingFiles.values()),
               };
             });
           }}
@@ -371,9 +285,9 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
         <div className="relative flex-1">
           <div className="absolute top-1 left-3 right-3 flex flex-wrap gap-2 z-10">
-            {newMessage.files
-              .filter((file) => file.type.startsWith("image/"))
-              .map((item, index) => (
+            {filePreviews
+              .filter(({ file }) => file.type.startsWith("image/"))
+              .map(({ file, previewUrl }, index) => (
                 <div key={index} className="relative">
                   <FaX
                     size={12}
@@ -382,6 +296,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
                         ...prev,
                         files: prev.files.filter((_, idx) => idx !== index),
                       }));
+                      URL.revokeObjectURL(previewUrl); // Clean up the URL immediately on removal
                     }}
                     className="cursor-pointer absolute top-0 right-0 text-neutral-500"
                     style={{ margin: "2px" }}
@@ -390,15 +305,15 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
                     className="rounded object-cover"
                     width={64}
                     height={64}
-                    src={URL.createObjectURL(item)}
+                    src={previewUrl}
                     alt=""
                   />
                 </div>
               ))}
 
-            {newMessage.files
-              .filter((item) => item.type.startsWith("audio/"))
-              .map((item, index) => (
+            {filePreviews
+              .filter(({ file }) => file.type.startsWith("audio/"))
+              .map(({ file, previewUrl }, index) => (
                 <div className="relative flex">
                   <FaX
                     size={10} // Adjusted for better visibility, consider your design needs
@@ -418,15 +333,15 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
                       <LuFileAudio size={15} className="text-neutral-500" />
                     </div>
                     <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
-                      {item.name}
+                      {file.name}
                     </span>
                   </div>
                 </div>
               ))}
 
-            {newMessage.files
-              .filter((item) => item.type.includes("zip"))
-              .map((item, index) => (
+            {filePreviews
+              .filter(({ file }) => file.type.startsWith("zip/"))
+              .map(({ file, previewUrl }, index) => (
                 <div className="relative flex">
                   <FaX
                     size={12} // Adjusted for better visibility, consider your design needs
@@ -447,7 +362,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
                       <PiFileZip size={20} className="text-neutral-500" />
                     </div>
                     <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
-                      {item.name}
+                      {file.name}
                     </span>
                   </div>
                 </div>
