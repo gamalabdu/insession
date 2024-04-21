@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
+import Link from "next/link";
 
 interface FilesModalProps {
   filesModalOpen: boolean;
@@ -28,7 +29,6 @@ type MessageFileData = {
 const FilesModal = (props: FilesModalProps) => {
   const { filesModalOpen, setFilesModalOpen, conversation_id } = props;
 
-  const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { user, userDetails } = useUser();
@@ -38,9 +38,9 @@ const FilesModal = (props: FilesModalProps) => {
 
   const formattedDate = (created_at: string) => {
     const date = new Date(created_at);
-    const formattedDate = date.toLocaleDateString('en-CA');
-    return formattedDate
-  }
+    const formattedDate = date.toLocaleDateString("en-CA");
+    return formattedDate;
+  };
 
   const onChange = (open: boolean) => {
     if (!open) {
@@ -49,13 +49,14 @@ const FilesModal = (props: FilesModalProps) => {
   };
 
   useEffect(() => {
+    const supabase = createClient();
     const fetchData = async () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from("messages_files")
         .select("*")
         .eq("conversation_id", conversation_id)
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: false });
 
       if (error) {
         console.error("Error fetching files:", error.message);
@@ -84,7 +85,7 @@ const FilesModal = (props: FilesModalProps) => {
     };
 
     fetchData();
-  }, [supabase, conversation_id]);
+  }, [conversation_id]);
 
   return (
     <Modal
@@ -111,9 +112,13 @@ const FilesModal = (props: FilesModalProps) => {
               max-h-[100px]
               overflow-auto"
             >
-              {imageFiles.map((imageFile) => 
-              (
-                <div className="flex flex-col gap-1 justify-center align-middle items-center" key={imageFile.id}>
+              {imageFiles.map((imageFile) => (
+                <Link
+                  href={`${imageFile.url}?download=${imageFile.file_name}`}
+                  download={imageFile.file_name}
+                  className="flex flex-col gap-1 justify-center align-middle items-center"
+                  key={imageFile.id}
+                >
                   <Image
                     className="rounded object-cover"
                     width={64}
@@ -124,8 +129,10 @@ const FilesModal = (props: FilesModalProps) => {
                   <span className="flex text-xs overflow-hidden text-ellipsis truncate">
                     {imageFile.file_name}
                   </span>
-                  <span className="text-xs text-neutral-400">{formattedDate(imageFile.created_at)}</span>
-                </div>
+                  <span className="text-xs text-neutral-400">
+                    {formattedDate(imageFile.created_at)}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -150,7 +157,9 @@ const FilesModal = (props: FilesModalProps) => {
         "
             >
               {audioFiles.map((audioFile) => (
-                <div
+                <Link
+                  href={`${audioFile.url}?download=${audioFile.file_name}`}
+                  download={audioFile.file_name}
                   className="flex flex-col gap-2 items-center align-middle justify-center"
                   key={audioFile.id}
                 >
@@ -160,8 +169,10 @@ const FilesModal = (props: FilesModalProps) => {
                   <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
                     {audioFile.file_name}
                   </span>
-                  <span className="text-xs text-neutral-400">{formattedDate(audioFile.created_at)}</span>
-                </div>
+                  <span className="text-xs text-neutral-400">
+                    {formattedDate(audioFile.created_at)}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -186,15 +197,22 @@ const FilesModal = (props: FilesModalProps) => {
               overflow-auto"
             >
               {zipFiles.map((zipFile) => (
-                <div className="flex flex-col gap-2 items-center align-middle justify-center" key={zipFile.id}>
+                <Link
+                  className="flex flex-col gap-2 items-center align-middle justify-center"
+                  href={`${zipFile.url}?download=${zipFile.file_name}`}
+                  download={zipFile.file_name}
+                  key={zipFile.id}
+                >
                   <div className="flex pt-4 pb-4 rounded-md bg-neutral-100 justify-center items-center w-[40px]">
                     <PiFileZip size={20} className="text-neutral-500" />
                   </div>
                   <span className="flex w-full text-xs overflow-hidden text-ellipsis truncate">
                     {zipFile.file_name}
                   </span>
-                  <span className="text-xs text-neutral-400">{formattedDate(zipFile.created_at)}</span>
-                </div>
+                  <span className="text-xs text-neutral-400">
+                    {formattedDate(zipFile.created_at)}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -205,28 +223,3 @@ const FilesModal = (props: FilesModalProps) => {
 };
 
 export default FilesModal;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

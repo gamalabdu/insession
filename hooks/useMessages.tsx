@@ -5,12 +5,9 @@ import { createClient } from "@/utils/supabase/client";
 import { useContext, useEffect, useState } from "react";
 
 export default function useMessages(conversation_id: string) {
-  
   const { setConversations } = useContext(ConversationsContext);
 
   const [messages, setMessages] = useState<MessageWithFiles[]>([]);
-
-
 
   useEffect(() => {
     if (!setConversations) return;
@@ -46,11 +43,6 @@ export default function useMessages(conversation_id: string) {
         { event: "INSERT", schema: "public", table: "messages" },
         async (payload) => {
           // if (payload.new.conversation_id !== conversation_id) return;
-          // const { data: files } = await supabase
-          //   .from("messages_files")
-          //   .select("type")
-          //   .eq("message_id", payload.new.message_id)
-          //   .returns<StorageFile[]>();
           const message = {
             ...(payload.new as Message),
             seen: true,
