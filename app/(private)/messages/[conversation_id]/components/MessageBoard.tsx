@@ -173,46 +173,6 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
     setIsOtherUserTyping(false);
   }, 3000);
 
-  useEffect(() => {
-    const supabase = createClient();
-
-    const setAllUnseenMessagesToSeen = async () => {
-      try {
-        // Step 1: Fetch messages that have not been seen
-        const { data: messagesToBeUpdated, error: selectError } = await supabase
-          .from("messages")
-          .select("message_id")
-          .eq("conversation_id", conversation_id)
-          .eq("seen", false);
-
-        if (selectError) {
-          throw selectError;
-        }
-
-        // Check if there are any messages to update
-        if (messagesToBeUpdated.length > 0) {
-          // Step 2: Update these messages to mark as seen
-          const { error: updateError } = await supabase
-            .from("messages")
-            .update({ seen: true })
-            .in(
-              "message_id",
-              messagesToBeUpdated.map((msg) => msg.message_id)
-            );
-
-          if (updateError) {
-            throw updateError;
-          }
-        }
-      } catch (error) {
-        console.log(error || "An unexpected error occurred");
-      } finally {
-      }
-    };
-
-    setAllUnseenMessagesToSeen();
-  }, []);
-
   return (
     <div className="flex flex-col h-full w-full">
       <div className="flex flex-col flex-grow h-0 gap-4 p-6 overflow-auto rounded-md">
