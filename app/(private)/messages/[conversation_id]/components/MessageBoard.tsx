@@ -11,10 +11,10 @@ import Image from "next/image";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
 import uniqid from "uniqid";
-import useMessages from "@/hooks/useMessages";
 import { createClient } from "@/utils/supabase/client";
 import useDebounce from "@/hooks/useDebounce";
 import { FaX } from "react-icons/fa6";
+import useMessages from "@/hooks/useMessages";
 
 interface MessagesPageProps {
   conversation: Conversation;
@@ -172,46 +172,6 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
   useDebounce(() => {
     setIsOtherUserTyping(false);
   }, 3000);
-
-  useEffect(() => {
-    const supabase = createClient();
-
-    const setAllUnseenMessagesToSeen = async () => {
-      try {
-        // Step 1: Fetch messages that have not been seen
-        const { data: messagesToBeUpdated, error: selectError } = await supabase
-          .from("messages")
-          .select("message_id")
-          .eq("conversation_id", conversation_id)
-          .eq("seen", false);
-
-        if (selectError) {
-          throw selectError;
-        }
-
-        // Check if there are any messages to update
-        if (messagesToBeUpdated.length > 0) {
-          // Step 2: Update these messages to mark as seen
-          const { error: updateError } = await supabase
-            .from("messages")
-            .update({ seen: true })
-            .in(
-              "message_id",
-              messagesToBeUpdated.map((msg) => msg.message_id)
-            );
-
-          if (updateError) {
-            throw updateError;
-          }
-        }
-      } catch (error) {
-        console.log(error || "An unexpected error occurred");
-      } finally {
-      }
-    };
-
-    setAllUnseenMessagesToSeen();
-  }, []);
 
   return (
     <div className="flex flex-col h-full w-full">

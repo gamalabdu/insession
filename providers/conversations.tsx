@@ -15,16 +15,20 @@ import {
 
 type ConversationsContextType = {
   areLoading: boolean;
+  unseenMessages: number;
   conversations: ConversationWithMessage[];
   setConversations: Dispatch<SetStateAction<ConversationWithMessage[]>>;
   onlineUsers: string[];
+  setUnseenMessages: Dispatch<SetStateAction<number>>;
 };
 
 export const ConversationsContext = createContext<ConversationsContextType>({
   onlineUsers: [],
   conversations: [],
+  unseenMessages: 0,
   areLoading: true,
   setConversations: null!,
+  setUnseenMessages: null!,
 });
 
 export default function ConversationsProvider({
@@ -34,6 +38,7 @@ export default function ConversationsProvider({
 }) {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const { user } = useUser();
+  const [unseenMessages, setUnseenMessages] = useState(0);
   const [areLoading, setAreLoading] = useState(true);
   const pathname = usePathname();
   const [conversations, setConversations] = useState<ConversationWithMessage[]>(
@@ -44,19 +49,20 @@ export default function ConversationsProvider({
     const supabase = createClient();
     setAreLoading(true);
     (async () => {
-      const { data: results, error } = await supabase.rpc(
+      const { data: results } = await supabase.rpc(
         "get_conversations_with_message"
       );
       setConversations(results);
       setAreLoading(false);
     })();
-    if (pathname !== "/messages") return;
+    if (pathname.startsWith("/messages") && pathname !== "/messages") return;
     supabase
       .channel("table_db_changes")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
         async (payload) => {
+          setUnseenMessages((prev) => prev + 1);
           const message = payload.new as Message;
           const { data: files } = await supabase
             .from("messages_files")
@@ -64,14 +70,16 @@ export default function ConversationsProvider({
             .eq("message_id", message.message_id)
             .returns<StorageFile[]>();
           setConversations((prev) => {
-            const newArr = [...prev];
-            const index = newArr.findIndex(
+            const index = prev.findIndex(
               (item) => item.conversation_id === message.conversation_id
             );
             if (index === -1) {
               return prev;
             }
-            newArr[index].latest_message = { ...message, files: files || [] };
+            const newArr = [...prev];
+            const conversation = Object.assign({}, newArr[index]);
+            conversation.latest_message = { ...message, files: files || [] };
+            newArr[index] = conversation;
             return newArr;
           });
         }
@@ -120,11 +128,32 @@ export default function ConversationsProvider({
     };
   }, [conversations]);
 
+  useEffect(() => {
+    if (!user) return;
+    const supabase = createClient();
+    (async () => {
+      const { count } = await supabase
+        .from("messages")
+        .select("message_id", { count: "exact" })
+        .eq("seen", false)
+        .neq("sender_id", user?.id);
+      console.log({ count });
+      setUnseenMessages(count || 0);
+    })();
+  }, [user]);
+
   console.log(onlineUsers);
 
   return (
     <ConversationsContext.Provider
-      value={{ conversations, onlineUsers, areLoading, setConversations }}
+      value={{
+        conversations,
+        unseenMessages,
+        setUnseenMessages,
+        areLoading,
+        onlineUsers,
+        setConversations,
+      }}
     >
       {children}
     </ConversationsContext.Provider>

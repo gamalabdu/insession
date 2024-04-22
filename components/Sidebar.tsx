@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import Box from "./Box";
@@ -13,7 +13,6 @@ import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdTableRows } from "react-icons/md";
 import SideBarMessenges from "@/app/(private)/messages/components/SideBarMessenges";
-import { useUser } from "@/hooks/useUser";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -21,11 +20,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ children, songs }: SidebarProps) => {
-  
   const pathName = usePathname();
-
-  const { user } = useUser();
-
   const player = usePlayer();
 
   const routes = useMemo(
