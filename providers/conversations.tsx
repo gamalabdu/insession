@@ -142,8 +142,6 @@ export default function ConversationsProvider({
     })();
   }, [user]);
 
-  console.log(onlineUsers);
-
   return (
     <ConversationsContext.Provider
       value={{
