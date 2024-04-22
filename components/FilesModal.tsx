@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-import Button from "./Button";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { LuFileAudio } from "react-icons/lu";

@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
@@ -7,12 +7,14 @@ import { IoIosMail } from "react-icons/io";
 import { FaX } from "react-icons/fa6";
 import DeleteConversationModal from "./DeleteConversationModal";
 import Link from "next/link";
+import { ConversationsContext } from "@/providers/conversations";
 
 const ConversationItem = ({
   conversation_id,
   users,
   latest_message,
 }: ConversationWithMessage) => {
+  const { onlineUsers } = useContext(ConversationsContext);
   const router = useRouter();
   const { user } = useUser();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -77,6 +79,8 @@ const ConversationItem = ({
     );
   }
 
+  console.log(otherUser);
+
   return (
     <Fragment>
       <Link
@@ -101,6 +105,13 @@ const ConversationItem = ({
               color=""
             />
           )}
+          <div
+            className={`absolute bottom-0 left-0 border rounded-full h-4 w-4 ${
+              onlineUsers.includes(otherUser.id)
+                ? "border-white bg-green-500"
+                : "bg-neutral-500 border-neutral-400"
+            }`}
+          ></div>
         </div>
 
         <div className="flex-1 flex flex-col justify-center p-2 truncate">
