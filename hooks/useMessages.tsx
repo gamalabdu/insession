@@ -3,9 +3,12 @@
 import { ConversationsContext } from "@/providers/conversations";
 import { createClient } from "@/utils/supabase/client";
 import { useContext, useEffect, useState } from "react";
+import { useUser } from "./useUser";
 
 export default function useMessages(conversation_id: string) {
-  const { setConversations } = useContext(ConversationsContext);
+  const { setConversations, setUnseenMessages } =
+    useContext(ConversationsContext);
+  const { user } = useUser();
 
   const [messages, setMessages] = useState<MessageWithFiles[]>([]);
 
@@ -106,15 +109,26 @@ export default function useMessages(conversation_id: string) {
   }, [conversation_id, setConversations]);
 
   useEffect(() => {
-    if (messages.length === 0) return;
+    if (!user || messages.length === 0) return;
     const supabase = createClient();
     (async () => {
+      const { data: messageIds, count } = await supabase
+        .from("messages")
+        .select("message_id", { count: "exact", head: false })
+        .eq("seen", false)
+        .eq("conversation_id", conversation_id)
+        .neq("sender_id", user.id);
+      if (!count || count === 0) return;
+      setUnseenMessages((prev) => prev - count);
       await supabase
         .from("messages")
         .update({ seen: true })
-        .match({ conversation_id });
+        .in(
+          "message_id",
+          messageIds.map((item) => item.message_id)
+        );
     })();
-  }, [messages, conversation_id]);
+  }, [user, messages, conversation_id]);
 
   return {
     messages,

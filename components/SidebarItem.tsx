@@ -1,7 +1,7 @@
 "use client";
-import { createClient } from "@/utils/supabase/client";
+import { ConversationsContext } from "@/providers/conversations";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { IconType } from "react-icons";
 import { twMerge } from "tailwind-merge";
 
@@ -10,11 +10,11 @@ interface SidebarItemProps {
   label: string;
   active?: boolean;
   href: string;
-  unseenMessages: number;
 }
 
 const SidebarItem = (props: SidebarItemProps) => {
-  const { icon: Icon, label, active, href, unseenMessages } = props;
+  const { icon: Icon, label, active, href } = props;
+  const { unseenMessages } = useContext(ConversationsContext);
 
   return (
     <Link

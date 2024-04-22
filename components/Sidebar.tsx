@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import Box from "./Box";
@@ -13,9 +13,6 @@ import { MdOutlineTravelExplore } from "react-icons/md";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdTableRows } from "react-icons/md";
 import SideBarMessenges from "@/app/(private)/messages/components/SideBarMessenges";
-import { useUser } from "@/hooks/useUser";
-import { ConversationsContext } from "@/providers/conversations";
-import { createClient } from "@/utils/supabase/client";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -23,14 +20,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ children, songs }: SidebarProps) => {
-  const [unseenMessages, setUnseenMessages] = useState(0);
-
-  const { conversations, areLoading } = useContext(ConversationsContext);
-
   const pathName = usePathname();
-
-  const { user } = useUser();
-
   const player = usePlayer();
 
   const routes = useMemo(
@@ -69,36 +59,6 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
     [pathName]
   );
 
-  useEffect(() => {
-    const supabase = createClient();
-    const fetchUnseenMessages = async () => {
-      if (!user?.id) return; // Ensure user is defined
-
-      const conversationIds = conversations.map((conv) => conv.conversation_id);
-      if (conversationIds.length === 0) {
-        setUnseenMessages(0);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("messages")
-        .select("*", { count: "exact" })
-        .eq("seen", false)
-        .in("conversation_id", conversationIds)
-        .neq("sender_id", user.id);
-
-      if (error) {
-        console.error("Error fetching unseen messages:", error.message);
-        setUnseenMessages(0);
-        return;
-      }
-
-      setUnseenMessages(data.length);
-    };
-
-    fetchUnseenMessages();
-  }, [conversations, user]);
-
   return (
     <div
       className={twMerge(
@@ -114,11 +74,7 @@ const Sidebar = ({ children, songs }: SidebarProps) => {
         <Box>
           <div className="flex flex-col gap-y-4 px-5 py-4">
             {routes.map((item) => (
-              <SidebarItem
-                key={item.label}
-                unseenMessages={unseenMessages}
-                {...item}
-              />
+              <SidebarItem key={item.label} {...item} />
             ))}
           </div>
         </Box>
