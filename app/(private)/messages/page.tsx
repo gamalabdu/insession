@@ -2,10 +2,8 @@ import Header from "@/components/ui/Header";
 import SearchInput from "@/components/SearchInput";
 import React from "react";
 import MessagesPageContent from "./components/MessagesPageContent";
-import { createClient } from "@/utils/supabase/server";
 
-export default async function Page() {
-  
+export default function Page() {
   // const supabase = createClient();
 
   // const roomOne = supabase.channel("room_01");
