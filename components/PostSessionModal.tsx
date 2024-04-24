@@ -165,7 +165,6 @@ const PostSessionModal = () => {
       onChange={onChange}
     >
       <form className="flex flex-col gap-y-3" onSubmit={handleSubmit(onSubmit)}>
-
         <Input
           id="job_title"
           disabled={isLoading}
@@ -180,7 +179,6 @@ const PostSessionModal = () => {
           placeholder="Description - ex: Need an instrumental"
         />
 
-
         <Input
           id="additional_info"
           disabled={isLoading}
@@ -188,7 +186,10 @@ const PostSessionModal = () => {
           placeholder="Additional Info - ex: I'm looking to get this done in a week"
         />
 
-        <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+        <SelectGenres
+          selectedGenres={selectedGenres}
+          setSelectedGenres={setSelectedGenres}
+        />
 
         <Input
           id="budget"
@@ -198,55 +199,58 @@ const PostSessionModal = () => {
           placeholder="Dollar Amount ex: 4000"
         />
 
-       <div className="flex items-center align-middle">
-
-        {filePreviews.map((preview, index) => (
-
-          <div key={index}>
-
-            <div className="flex gap-2 align-middle items-center">
-              <LuFileAudio />
-              <span>{preview.name}</span>
+        <div>
+          {filePreviews.map((preview, index) => (
+            <div className="flex flex-col items-center align-middle mb-1">
+              <div className="flex items-center align-middle gap-4">
+                <LuFileAudio />
+                <span>{preview.name}</span>
+              </div>
+              <audio controls src={preview.url}>
+                Your browser does not support the audio element.
+              </audio>
             </div>
+          ))}
+        </div>
 
-            <audio controls src={preview.url}>
-              Your browser does not support the audio element.
-            </audio>
+        <Input
+          id="reference_files"
+          multiple
+          type="file"
+          disabled={isLoading}
+          {...register("reference_files")}
+          accept=".mp3 , .wav"
+        />
 
+        {/* YouTube Link Preview */}
+        {youtubePreview && (
+          <div className="h-full w-full">
+            <iframe
+              width="100%"
+              height="100%"
+              src={youtubePreview}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="YouTube video player"
+            ></iframe>
           </div>
+        )}
 
-        ))}
-
-      </div>
-
-
-
-        <Input id="reference_files" multiple type='file' disabled={isLoading} { ...register( 'reference_files' ) } accept='.mp3 , .wav' />
-
-
-              {/* YouTube Link Preview */}
-              {youtubePreview && (
-                  <div className="h-full w-full">
-                    <iframe
-                      width="100%" 
-                      height="100%"
-                      src={youtubePreview}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      title="YouTube video player"
-                    ></iframe>
-                  </div> 
-                )}          
-
-
-        <Input id="reference_link"  type='url' disabled={isLoading} { ...register( 'reference_link' ) } accept='.mp3 , .wav' placeholder="YouTube Link - https://example.com" pattern="https://.*" />
+        <Input
+          id="reference_link"
+          type="url"
+          disabled={isLoading}
+          {...register("reference_link")}
+          accept=".mp3 , .wav"
+          placeholder="YouTube Link - https://example.com"
+          pattern="https://.*"
+        />
 
         <Button disabled={isLoading} type="submit">
           Post Session
         </Button>
       </form>
-
     </Modal>
   );
 };

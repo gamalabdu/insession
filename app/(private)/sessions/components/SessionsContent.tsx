@@ -51,8 +51,9 @@ const SessionsContent = (props: SessionsContentProps) => {
         </div>
       </Header>
 
-      <div className="flex flex-col gap-y-2 w-full p-6">
-        <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-y-2 w-full p-6">  
+
+        <div className="flex justify-between items-center py-2">
           <h1 className="text-white text-2xl font-semibold">
             Your Posted Sessions :
           </h1>
@@ -64,7 +65,7 @@ const SessionsContent = (props: SessionsContentProps) => {
           </div>
         ) : (
           allUserJobs?.map((job) => (
-            <div className="flex items-center gap-x-4 w-full" key={job.job_id} >
+            <div className="flex items-center gap-x-4 w-full p-5" key={job.job_id} >
               <div className="flex-1">
                 <JobItem job={job} />
               </div>
@@ -72,7 +73,9 @@ const SessionsContent = (props: SessionsContentProps) => {
           ))
         )}
 
-        <div className="flex justify-between items-center">
+        <hr className="border border-neutral-700"/>
+
+        <div className="flex justify-between items-center py-2">
           <h1 className="text-white text-2xl font-semibold">
             All Posted Sessions :
           </h1>
@@ -84,7 +87,7 @@ const SessionsContent = (props: SessionsContentProps) => {
           </div>
         ) : (
           allOtherJobs?.map((job) => (
-            <div className="flex items-center gap-x-4 w-full" key={job.job_id} >
+            <div className="flex items-center gap-x-4 w-full p-5" key={job.job_id} >
               <div className="flex-1">
                 <JobItem job={job} />
               </div>

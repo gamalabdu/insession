@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import Image from 'next/image'
 import { LuFileAudio } from 'react-icons/lu'
+import SelectGenres from './SelectGenres'
 
 const UploadModal = () => {
 
@@ -30,6 +31,8 @@ const UploadModal = () => {
     const [fileSelected, setFileSelected] = useState(false);
 
     const [filePreview, setFilePreview] = useState<{ name: string, url: string} | null>(null);
+
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
 
     function formatDuration(durationInSeconds : number) {
@@ -64,7 +67,8 @@ const UploadModal = () => {
             song: null,
             image: null,
             bpm: '',
-            key: ''
+            key: '',
+            genre: selectedGenres
         }
     })
 
@@ -239,7 +243,7 @@ const UploadModal = () => {
             </div>
           )}
 
-          <div className="pb-1">Select a song file</div>
+          <div className="pb-1 text-sm">Select a song file</div>
 
           <Input
             id="song"
@@ -255,8 +259,12 @@ const UploadModal = () => {
 
         <Input id="key" type="text" disabled={isLoading} {...register("key", { required: true })} placeholder='Key ex: C Maj' />
 
+        <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+
 
         <div>
+
+        <div className='flex flex-col items-center align-middle mb-1'>
           {imagePreviewUrl && (
             <Image
               src={imagePreviewUrl}
@@ -266,6 +274,7 @@ const UploadModal = () => {
               className="object-cover"
             />
           )}
+          </div>
 
           <div className="pb-1">Select a cover art</div>
 
