@@ -82,7 +82,7 @@ export default function ConversationsProvider({
       )
       .subscribe();
   }, [pathname]);
-
+  // comment
   useEffect(() => {
     if (!user) return;
     const supabase = createClient();
