@@ -1,34 +1,31 @@
-"use client"
+
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 
-// Define the props for the component, if needed
 interface SelectGenresProps {
-    selectedGenres : string []
-    setSelectedGenres: Function
+    selectedGenres: string[];
+    setSelectedGenres: (genres: string[]) => void;
 }
 
 const SelectGenres = (props: SelectGenresProps) => {
+    const { selectedGenres, setSelectedGenres } = props;
 
-    const { selectedGenres, setSelectedGenres } = props 
-  
     const [genres, setGenres] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<any | null>(null);
+    const [isOpen, setIsOpen ] = useState(false)
 
-    const supabase = createClient()
-
+    const supabase = createClient();
 
     useEffect(() => {
-
         const fetchGenres = async () => {
-
             setLoading(true);
             try {
                 const { data, error } = await supabase.from('genres').select('*');
                 if (error) throw error;
                 if (data) {
-                    // Assuming your genres are in the format { name: string }[]
                     const genreNames = data.map((genre) => genre.name);
                     setGenres(genreNames);
                 }
@@ -40,76 +37,50 @@ const SelectGenres = (props: SelectGenresProps) => {
         };
 
         fetchGenres();
+    }, []);
 
-    }, []); 
-
-  // Function to handle selecting and deselecting genres
-  const toggleGenreSelection = (genre: string) => { 
-    if (selectedGenres.includes(genre)) {
-      // Remove genre from selection
-      setSelectedGenres(selectedGenres.filter((g) => g !== genre));
-    } else {
-      // Add genre to selection
-      setSelectedGenres([...selectedGenres, genre]);
-    }
-  };
-
-  return (
-    <div className="flex flex-col w-full">
-
-      <div className='flex gap-2'>
-          <label htmlFor="genres" className="mb-2 text-sm"> Select Genres : </label>
-            {selectedGenres.length > 0 ? (
-              <p className='text-sm'>{selectedGenres.join(' / ')}</p>
-            ) : (
-              <p className='text-sm text-neutral-500'>No genres selected.</p>
-            )}
-
-      </div>
-
-
-      <div className="border border-gray-300 rounded-md h-[80px] overflow-auto">
-
-        {
-        
-        loading ? 
-
-        <div> Loading... </div>
-
-
-        :
-        
-        genres.map((genre) => (
-          <div key={genre} className="flex items-center p-2">
-            <input
-              type="checkbox"
-              id={`genre-${genre}`}
-              checked={selectedGenres.includes(genre)}
-              onChange={() => toggleGenreSelection(genre)}
-              className="mr-2"
-            />
-            <label htmlFor={`genre-${genre}`} className="flex-1 cursor-pointer">{genre}</label>
-          </div>
-          ))
-        
+    const toggleGenreSelection = (genre: string) => {
+        if (selectedGenres.includes(genre)) {
+            setSelectedGenres(selectedGenres.filter((g) => g !== genre));
+        } else {
+            setSelectedGenres([...selectedGenres, genre]);
         }
+    };
 
-
-
-      </div>
-      {/* Optionally, you can display the selected genres below */}
-      
-      {/* <div className="mt-4">
-        <strong>Selected Genres:</strong>
-        {selectedGenres.length > 0 ? (
-          <p>{selectedGenres.join(' / ')}</p>
-        ) : (
-          <p>No genres selected.</p>
-        )}
-      </div> */}
-
-    </div>
-  );
+    return (
+        <div className="flex flex-col w-full">
+            <DropdownMenu.Root onOpenChange={ (open) => setIsOpen(open) }>
+                <DropdownMenu.Trigger className="bg-neutral-800 rounded-md p-2 cursor-pointer focus:outline-none flex align-middle justify-between items-center">
+                <div>{selectedGenres.length > 0 ? selectedGenres.join(', ') : "Select genre(s)"}</div>
+                <IoIosArrowDown className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content 
+                    className="rounded-md shadow-lg bg-neutral-800 p-1 max-h-60 w-[400px] overflow-auto border"
+                    id="dropdown-content"
+                >
+                    {loading ? (
+                        <div>Loading...</div>
+                    ) : (
+                        genres.map((genre) => (
+                            <DropdownMenu.Item key={genre} asChild onSelect={event => event.preventDefault()}>
+                                <div className="flex items-center p-2">
+                                    <input
+                                        type="checkbox"
+                                        id={`genre-${genre}`}
+                                        checked={selectedGenres.includes(genre)}
+                                        onChange={() => toggleGenreSelection(genre)}
+                                        className=" appearance-none mr-2 w-4 h-4 border-2 rounded-sm bg-transparent checked:bg-neutral-500 "
+                                    />
+                                    <label htmlFor={`genre-${genre}`} className="flex-1 cursor-pointer">{genre}</label>
+                                </div>
+                            </DropdownMenu.Item>
+                        ))
+                    )}
+                    {error && <p className="text-red-500 text-xs mt-2">Error loading genres</p>}
+                </DropdownMenu.Content>
+            </DropdownMenu.Root>
+        </div>
+    );
 };
 
 export default SelectGenres;
