@@ -2,6 +2,7 @@
 
 import { useUser } from "@/hooks/useUser";
 import { createClient } from "@/utils/supabase/client";
+import { RealtimeChannel } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 import {
   Dispatch,
@@ -17,10 +18,12 @@ type ConversationsContextType = {
   unseenMessages: number;
   conversations: ConversationWithMessage[];
   setConversations: Dispatch<SetStateAction<ConversationWithMessage[]>>;
+  onlineUsers: string[];
   setUnseenMessages: Dispatch<SetStateAction<number>>;
 };
 
 export const ConversationsContext = createContext<ConversationsContextType>({
+  onlineUsers: [],
   conversations: [],
   unseenMessages: 0,
   areLoading: true,
@@ -33,6 +36,7 @@ export default function ConversationsProvider({
 }: {
   children: ReactNode;
 }) {
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const { user } = useUser();
   const [unseenMessages, setUnseenMessages] = useState(0);
   const [areLoading, setAreLoading] = useState(true);
@@ -84,6 +88,47 @@ export default function ConversationsProvider({
   }, [pathname]);
 
   useEffect(() => {
+    if (!user || conversations.length === 0) return;
+    console.log("changed");
+    const supabase = createClient();
+    const members = conversations
+      .flatMap((item) => item.users)
+      .filter((item) => item.id !== user.id);
+    const memberIds = new Set(members.map((item) => item.id));
+    const channels: RealtimeChannel[] = [];
+    const ownChannel = supabase.channel(`${user.id}-online`);
+    (async () => {
+      ownChannel.subscribe(async (status) => {
+        if (status !== "SUBSCRIBED") return;
+        await ownChannel.track({ online_at: new Date().toISOString() });
+      });
+      for (const id of Array.from(memberIds)) {
+        const onlineChannel = supabase.channel(`${id}-online`);
+        onlineChannel
+          .on("presence", { event: "sync" }, () => {
+            const newState = onlineChannel.presenceState();
+            const isOnline = Object.keys(newState).length > 0;
+            if (isOnline) {
+              setOnlineUsers((prev) => [...prev, id]);
+            } else {
+              setOnlineUsers((prev) => prev.filter((item) => item !== id));
+            }
+          })
+          .subscribe(
+            (status) => status === "SUBSCRIBED" && channels.push(onlineChannel)
+          );
+      }
+    })();
+
+    return () => {
+      ownChannel.unsubscribe();
+      for (const channel of channels) {
+        channel.unsubscribe();
+      }
+    };
+  }, [conversations]);
+
+  useEffect(() => {
     if (!user) return;
     const supabase = createClient();
     (async () => {
@@ -104,6 +149,7 @@ export default function ConversationsProvider({
         unseenMessages,
         setUnseenMessages,
         areLoading,
+        onlineUsers,
         setConversations,
       }}
     >

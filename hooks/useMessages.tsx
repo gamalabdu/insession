@@ -13,7 +13,7 @@ export default function useMessages(conversation_id: string) {
   const [messages, setMessages] = useState<MessageWithFiles[]>([]);
 
   useEffect(() => {
-    if (!setConversations) return;
+    if (!conversation_id) return;
     const supabase = createClient();
     (async () => {
       const { data } = await supabase
@@ -106,7 +106,7 @@ export default function useMessages(conversation_id: string) {
         }
       )
       .subscribe();
-  }, [conversation_id, setConversations]);
+  }, [conversation_id]);
 
   useEffect(() => {
     if (!user || messages.length === 0) return;
