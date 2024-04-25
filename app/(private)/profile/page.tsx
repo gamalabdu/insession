@@ -19,7 +19,6 @@ const ProfilePage = async (props: userIdProps) => {
 
     const userProfileInfo = await getUserProfileById( searchParams.id )
 
-
   return (
     
     <ProfilePageContent userProfileInfo={ userProfileInfo } />

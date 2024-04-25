@@ -7,8 +7,8 @@ import uniqid from "uniqid";
 import Input from "./Input";
 import Button from "./Button";
 import { createClient } from "@/utils/supabase/client";
-import { Profile } from "@/types";
 import SelectGenres from "./SelectGenres";
+import { Genre } from "@/types";
 
 const ProfileSetupModal = ({
   userProfileInfo,
@@ -18,7 +18,7 @@ const ProfileSetupModal = ({
   const defaultOpen = !userProfileInfo.is_enabled;
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
 
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
@@ -72,6 +72,9 @@ const ProfileSetupModal = ({
         .from("profile-images")
         .getPublicUrl(`image-${userProfileInfo.username}-${uniqueID}`);
 
+      
+      const genreNames = selectedGenres.map(genre => genre.name);
+
       const { error: supabaseError } = await supabase
         .from("profiles")
         .update({
@@ -80,6 +83,7 @@ const ProfileSetupModal = ({
           last_name: values["last-name"],
           avatar_url: imageDataUrl.publicUrl,
           is_enabled: true,
+          genres: genreNames
         })
         .eq("id", userProfileInfo.id);
 
@@ -87,6 +91,24 @@ const ProfileSetupModal = ({
         setIsLoading(false);
         return toast.error(supabaseError.message);
       }
+
+      
+      const genreInserts = selectedGenres.map((genre) => ({
+        user_id: userProfileInfo.id,
+        genre_id: genre.id
+      }));
+  
+      // Batch insert genres
+      const { error: profilesGenreError } = await supabase
+        .from('profiles_genres')
+        .insert(genreInserts);
+  
+      if (profilesGenreError) {
+        toast.error(profilesGenreError.message);
+      } else {
+        toast.success("Profile updated!");
+      }
+
 
       setIsLoading(false);
       toast.success("Profile updated!");
@@ -130,7 +152,7 @@ const ProfileSetupModal = ({
           placeholder="ex: New York City, NY"
         />
 
-         <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+         <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} user_id={userProfileInfo.id} />
 
         <div>
           <div className="pb-1">Select a profile image</div>

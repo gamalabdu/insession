@@ -89,7 +89,6 @@ export default function ConversationsProvider({
 
   useEffect(() => {
     if (!user || conversations.length === 0) return;
-    console.log("changed");
     const supabase = createClient();
     const members = conversations
       .flatMap((item) => item.users)
@@ -137,7 +136,6 @@ export default function ConversationsProvider({
         .select("message_id", { count: "exact" })
         .eq("seen", false)
         .neq("sender_id", user?.id);
-      console.log({ count });
       setUnseenMessages(count || 0);
     })();
   }, [user]);
