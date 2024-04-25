@@ -93,7 +93,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
                 {userProfileInfo.email}
               </p>
               <p className="hidden md:block font-semibold text-sm text-neutral-400">
-                Rnb Hip Hop
+                Genres: {userProfileInfo.genres}
               </p>
 
               <button onClick={sendMessage}>

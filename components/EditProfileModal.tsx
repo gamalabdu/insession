@@ -10,25 +10,26 @@ import Button from "./Button";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import SelectGenres from "./SelectGenres";
+import { Genre } from "@/types";
 
 const EditProfileModal = ({
   userProfileInfo,
 }: {
   userProfileInfo: Profile;
 }) => {
-  const supabaseClient = createClient();
+  const supabase = createClient();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  //   const currentProfileImage = useLoadProfileImage(userProfileInfo);
 
 
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
 
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(
-    userProfileInfo.avatar_url
-  );
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(userProfileInfo.avatar_url);
+
   const [fileSelected, setFileSelected] = useState(false);
+
+  const currentImageName = imagePreviewUrl.split('/').pop();
 
 
 
@@ -40,6 +41,7 @@ const EditProfileModal = ({
         first_name: userProfileInfo?.first_name,
         last_name: userProfileInfo?.last_name,
         avatar_url: userProfileInfo?.avatar_url,
+        genres: userProfileInfo.genres
       },
     });
 
@@ -69,35 +71,57 @@ const EditProfileModal = ({
 
 
 
-
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
 
 
     setIsLoading(true);
 
     try {
-      const profileImage = values.avatar_url?.[0];
+
+      const profileImage: string = values.avatar_url?.[0];
+
+      const oldImageName = userProfileInfo.avatar_url.split('/').pop();
 
       const uniqueID = uniqid();
 
-      const { data: profileImageData, error: profileImageError } =
-        await supabaseClient.storage
+
+
+      if (fileSelected && oldImageName) {
+
+        const { error : deleteOldPhotoError } = await supabase
+        .storage
+        .from('profile-images')
+        .remove([oldImageName])
+        
+        if (deleteOldPhotoError) {
+          toast.error(deleteOldPhotoError.message)
+        }
+
+
+        const { data: profileImageData, error: profileImageError } =
+        await supabase.storage
           .from("profile-images")
           .upload(`image-${values.username}-${uniqueID}`, profileImage, {
             cacheControl: "3600",
             upsert: false,
           });
 
-      if (profileImageError) {
-        throw profileImageError;
+          if (profileImageError) {
+            throw profileImageError;
+          }
+
+
       }
 
-      const { data: imageDataUrl } = supabaseClient.storage
+
+
+
+      const { data: imageDataUrl } = supabase.storage
         .from("profile-images")
         .getPublicUrl(`image-${values.username}-${uniqueID}`);
 
       if (values.email !== userProfileInfo.email) {
-        const { error: emailError } = await supabaseClient.auth.updateUser({
+        const { error: emailError } = await supabase.auth.updateUser({
           email: values.email,
         });
         if (emailError) {
@@ -105,14 +129,20 @@ const EditProfileModal = ({
         }
       }
 
-      const { error: supabaseError } = await supabaseClient
+
+
+
+      const genreNames = selectedGenres.map(genre => genre.name);
+
+      const { error: supabaseError } = await supabase
         .from("profiles")
         .update({
           first_name: values["first-name"],
           last_name: values["last-name"],
           username: values.username,
           email: values.email,
-          avatar_url: imageDataUrl.publicUrl,
+          avatar_url: fileSelected ? imageDataUrl.publicUrl : userProfileInfo.avatar_url,
+          genres: genreNames
         })
         .eq("id", userProfileInfo.id);
 
@@ -120,18 +150,70 @@ const EditProfileModal = ({
         throw supabaseError;
       }
 
+
+      const genreInserts = selectedGenres.map((genre) => ({
+        user_id: userProfileInfo.id,
+        genre_id: genre.id,
+        name: genre.name
+      }));
+
+
+      //deletes all user profiles genres
+      const { error: deleteUserProfileGenresError } = await supabase
+      .from('profiles_genres')
+      .delete()
+      .eq('user_id', userProfileInfo.id)
+
+      if (deleteUserProfileGenresError ) {
+        toast.error(deleteUserProfileGenresError.message)
+      }
+
+  
+      // Batch insert genres
+      const { error: profilesGenreError } = await supabase
+        .from('profiles_genres')
+        .insert(genreInserts);
+  
+      if (profilesGenreError) {
+        toast.error(profilesGenreError.message);
+      }
+
+
+
       toast.success("Profile updated!");
       reset(values); // Reset form with new values to set a new baseline for "changes detection"
       router.refresh();
       setIsLoading(false);
       reset();
       setIsOpen(false);
+
+
+
     } catch (error) {
+
       toast.error(`Update failed: ${error}`);
+
+
     } finally {
+
       setIsLoading(false);
+
     }
-  };
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div>
@@ -156,7 +238,7 @@ const EditProfileModal = ({
           />
 
 
-            <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+            <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} user_id={userProfileInfo.id} />
 
 
           <div className="flex flex-col justify-center">
@@ -193,3 +275,16 @@ const EditProfileModal = ({
 };
 
 export default EditProfileModal;
+
+
+
+
+
+
+
+
+
+
+
+
+

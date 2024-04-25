@@ -12,6 +12,7 @@ import { createClient } from "@/utils/supabase/client";
 import uniqid from "uniqid";
 import { LuFileAudio } from "react-icons/lu";
 import SelectGenres from "./SelectGenres";
+import { Genre } from "@/types";
 
 
 const PostSessionModal = () => {
@@ -28,7 +29,7 @@ const PostSessionModal = () => {
 
   const [filePreviews, setFilePreviews] = useState<{ name: string, url: string}[]>([]);
   const [youtubePreview, setYoutubePreview] = useState("");
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
 
   //add the ability to upload a refrence via link or audio file
 

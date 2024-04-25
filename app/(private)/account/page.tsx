@@ -7,7 +7,9 @@ import EditProfileModal from "@/components/EditProfileModal";
 export const revalidate = 0;
 
 const Account = async () => {
+
   const userProfileInfo = await getUserProfileInfo();
+
   const displayClassName = `
         flex
         w-full
@@ -86,8 +88,14 @@ const Account = async () => {
               <p className={displayClassName}>{userProfileInfo.location}</p>
             </div>
 
+            <div className="flex flex-col items-center align-middle w-full p-3">
+              <p className="w-full pb-1 pl-1 text-neutral-300">Genres:</p>
+              <p className={displayClassName}>
+                {userProfileInfo.genres.join(" / ")}
+              </p>
+            </div>
 
-
+            
           </div>
         </div>
       </div>

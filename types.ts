@@ -10,6 +10,11 @@ export interface UserDetails {
   payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type];
 }
 
+export interface Genre {
+  id: string, 
+  name: string
+}
+
 export interface Song {
   id: string;
   user_id: string;

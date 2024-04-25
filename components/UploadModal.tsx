@@ -13,6 +13,7 @@ import { createClient } from '@/utils/supabase/client'
 import Image from 'next/image'
 import { LuFileAudio } from 'react-icons/lu'
 import SelectGenres from './SelectGenres'
+import { Genre } from '@/types'
 
 const UploadModal = () => {
 
@@ -32,7 +33,7 @@ const UploadModal = () => {
 
     const [filePreview, setFilePreview] = useState<{ name: string, url: string} | null>(null);
 
-    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
 
 
     function formatDuration(durationInSeconds : number) {
