@@ -11,18 +11,13 @@ interface LibaryProps {
   songs: Song[];
 }
 
-const Library = (props: LibaryProps) => {
-  
-  const { songs } = props;
-
+const Library = ({ songs }: LibaryProps) => {
   const uploadModal = useUploadModal();
 
   const onPlay = useOnPlay(songs);
 
   const onClick = () => {
-
     return uploadModal.onOpen();
-
   };
 
   return (

@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/server";
 import { Song } from "@/types";
 
 const getSongsByUserId = async (): Promise<Song[]> => {
-
   const supabase = createClient();
 
   const {
@@ -13,7 +12,7 @@ const getSongsByUserId = async (): Promise<Song[]> => {
 
   const { data, error } = await supabase
     .from("songs")
-    .select("*")
+    .select("*, genres(name)")
     .eq("user_id", user?.id)
     .order("created_at", { ascending: false });
 

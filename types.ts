@@ -11,8 +11,8 @@ export interface UserDetails {
 }
 
 export interface Genre {
-  id: string, 
-  name: string
+  id: string;
+  name: string;
 }
 
 export interface Song {
@@ -25,7 +25,8 @@ export interface Song {
   duration: string;
   key: string;
   bpm: string;
-  genres: string[]
+  owner: Profile;
+  genres: Genre[];
 }
 
 export interface Job {
