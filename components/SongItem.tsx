@@ -4,6 +4,9 @@ import { Song } from '@/types'
 import Image from 'next/image'
 import React from 'react'
 import PlayButton from './PlayButton'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import qs from "query-string";
 
 interface SongItemProps {
     song: Song
@@ -14,9 +17,22 @@ const SongItem = (props : SongItemProps) => {
 
     const { song, onClick } = props 
 
+    const router = useRouter()
+
+    const handleUsernameClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+
+        event.stopPropagation()
+
+        onClick(song.id)
+
+        router.push(`/profile?id=${song.user_id}`)
+      };
+
+
   return (
+    <Link href={`/songs/${song.id}`}>
     <div
-    onClick={ () => onClick(song.id) }
+    onClick={ handleUsernameClick  }
     className='relative group flex flex-col items-center justify-center rounded-md overflow-hidden gap-x-4 bg-neutral-400/5 cursor-pointer hover:bg-neutral-400/10 transition p-3 h-full' 
     >
         <div className='relative aspect-square w-full h-full rounded-md overflow-hidden'>
@@ -46,6 +62,7 @@ const SongItem = (props : SongItemProps) => {
         </div>
 
     </div>
+    </Link>
   )
 }
 

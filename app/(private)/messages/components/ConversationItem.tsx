@@ -35,41 +35,7 @@ const ConversationItem = ({
     setDeleteModalOpen(true);
   };
 
-  // const handleClick = async (conversation_id: string) => {
-  //   try {
-  //     // Step 1: Fetch messages that have not been seen
-  //     const { data: messagesToBeUpdated, error: selectError } = await supabase
-  //       .from("messages")
-  //       .select("message_id")
-  //       .eq("conversation_id", conversation_id)
-  //       .eq("seen", false);
-
-  //     if (selectError) {
-  //       throw selectError;
-  //     }
-
-  //     // Check if there are any messages to update
-  //     if (messagesToBeUpdated.length > 0) {
-  //       // Step 2: Update these messages to mark as seen
-  //       const { error: updateError } = await supabase
-  //         .from("messages")
-  //         .update({ seen: true })
-  //         .in(
-  //           "message_id",
-  //           messagesToBeUpdated.map((msg) => msg.message_id)
-  //         );
-
-  //       if (updateError) {
-  //         throw updateError;
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error || "An unexpected error occurred");
-  //   } finally {
-  //     // Navigate to the conversation page
-  //     router.push(`/messages/${conversation_id}`);
-  //   }
-  // };
+  
 
   if (!otherUser) {
     return (
@@ -79,7 +45,6 @@ const ConversationItem = ({
     );
   }
 
-  console.log(otherUser);
 
   return (
     <Fragment>

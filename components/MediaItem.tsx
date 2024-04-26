@@ -56,7 +56,6 @@ const MediaItem = (props : MediaItemProps) => {
                 }
     
                 if (data) {
-                    console.log(data);
                     setSongGenres(data);
                 }
             } catch (error) {
