@@ -1,8 +1,9 @@
 "use client"
 import { Song } from '@/types'
+import { createClient } from '@/utils/supabase/client'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 interface MediaItemProps {
@@ -11,11 +12,21 @@ interface MediaItemProps {
     isInLibrary?: boolean
 }
 
+type SongGenres = {
+    song_id : string,
+    genres: string[]
+}
+
 const MediaItem = (props : MediaItemProps) => {
 
     const { song, onClick, isInLibrary } = props
 
     const router = useRouter()
+
+    const supabase = createClient()
+
+    const [ songGenres, setSongGenres ] = useState<SongGenres[]>([])
+
 
     const goToProfile = () => {
         router.push(`/profile?id=${song.user_id}`);
@@ -29,6 +40,78 @@ const MediaItem = (props : MediaItemProps) => {
 
         // turn on player default
     }
+
+
+
+
+    
+    
+    // useEffect(() => {
+
+    //     const fetchGenresForSong = async () => {
+
+    //         const { data: songGenresData, error: songGenreErrors } = await supabase
+    //         .rpc('get_all_song_genres')
+    //         .returns<SongGenres[]>()
+            
+        
+    //         if (songGenreErrors) {
+    //             console.error('Error fetching song genres:', songGenreErrors);
+    //             return;
+    //         }
+        
+    //         if (songGenresData) {
+    
+    //             console.log(songGenresData);
+    
+    //             setSongGenres(songGenresData)
+    //         }
+    
+    
+    //     }
+
+    //     fetchGenresForSong()
+
+    // }, [song.id])
+
+
+
+
+
+
+
+    useEffect(() => {
+
+        async function fetchGenresForSong() {
+            
+            try {
+                const { data, error } = await supabase
+                .rpc('get_song_genres', { p_song_id: song.id });
+    
+                if (error) {
+                    console.error('Error fetching song genres:', error.message);
+                    return;
+                }
+    
+                if (data) {
+                    console.log(data);
+                    setSongGenres(data);
+                }
+            } catch (error) {
+                console.error('Fetching error:', error);
+            }
+        }
+    
+        fetchGenresForSong();
+
+    }, [song.id, supabase]);
+    
+    
+
+
+
+    console.log(songGenres)
+    
 
 
   return (
@@ -76,6 +159,15 @@ const MediaItem = (props : MediaItemProps) => {
            <span className='text-neutral-400'>{song.bpm}</span>
 
            <span className='text-neutral-400'>{song.duration}</span>
+
+         {
+            songGenres?.length > 0 &&
+
+            <span className='text-neutral-400 truncate'>
+            {songGenres.map(genre => genre.genres)}
+            </span>
+         }
+
 
         </div>
     }

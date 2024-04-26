@@ -108,11 +108,13 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { Genre } from '@/types';
 import { useUser } from '@/hooks/useUser';
+import toast from 'react-hot-toast';
 
 interface SelectGenresProps {
     selectedGenres: Genre[];
     setSelectedGenres: (genres: Genre[]) => void;
     user_id: string
+    isSong?: boolean
 }
 
 type GenreItem = {
@@ -121,10 +123,16 @@ type GenreItem = {
     name: string
 }
 
+type SongItem = {
+    song_id: string,
+    genre_id: string,
+    name: string
+}
+
 const SelectGenres = (props: SelectGenresProps) => {
 
 
-    const { selectedGenres, setSelectedGenres, user_id } = props;
+    const { selectedGenres, setSelectedGenres, user_id, isSong } = props;
 
     const [genres, setGenres] = useState<Genre[]>([]);
     const [userGenres, setUserGenres ] = useState<GenreItem[]>([])
@@ -144,9 +152,21 @@ useEffect(() => {
         setLoading(true);
 
         try {
+
+
             const { data: allGenres, error: genreError } = await supabase
                 .from('genres')
                 .select('id, name');
+            
+                    if ( genreError ) {
+                        toast.error(genreError.message)
+                    }
+
+                    if ( allGenres)   { setGenres(allGenres) }
+
+
+
+            if ( !isSong ) {
             
             const { data: userGenresData, error: userGenresError } = await supabase
                 .from('profiles_genres')
@@ -156,13 +176,17 @@ useEffect(() => {
 
             if (genreError || userGenresError) throw { genreError, userGenresError };
 
-            if (allGenres && userGenresData) {
-                setGenres(allGenres);
+            if (userGenresData) {
                 // Filter to only include genres that the user currently has
                 const activeGenres = allGenres.filter(g => userGenresData.some(ug => ug.name === g.name));
                 setSelectedGenres(activeGenres);  // Set initially selected genres from user's current genres
                 setUserGenres(userGenresData);
             }
+
+        }
+
+
+
         } catch (error) {
             setError(error);
         } finally {
@@ -189,7 +213,22 @@ useEffect(() => {
         <div className="flex flex-col w-full">
             <DropdownMenu.Root onOpenChange={setIsOpen}>
                 <DropdownMenu.Trigger className="bg-neutral-800 rounded-md p-2 cursor-pointer focus:outline-none flex align-middle justify-between items-center">
-                    <div>{selectedGenres.length > 0 ? userGenres.map(g => g.name).join(', ') : "Select genre(s)"}</div>
+                    <div>
+                        {   selectedGenres.length > 0 ? 
+
+                               isSong ? 
+
+                               selectedGenres.map(g => g.name).join(', ')
+
+                               :
+                        
+                               userGenres.map(g => g.name).join(', ') : 
+
+                               "Select genre(s)"
+                        
+                        }
+                    
+                    </div>
                     <IoIosArrowDown className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content 

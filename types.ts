@@ -25,6 +25,7 @@ export interface Song {
   duration: string;
   key: string;
   bpm: string;
+  genres: string[]
 }
 
 export interface Job {

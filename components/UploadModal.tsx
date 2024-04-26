@@ -195,12 +195,40 @@ const UploadModal = () => {
             }
 
 
+            const { data: songId, error: songIdError } = await supabase
+            .from('songs')
+            .select('id')
+            .eq('title', values.title)
+
+
+            if ( songIdError ) {
+              toast.error(songIdError.message)
+            }
+
+
+            const genreInserts = selectedGenres.map((genre) => ({
+              song_id: songId?.[0].id,
+              genre_id: genre.id
+            }));
+        
+            // Batch insert genres
+            const { error: songGenreError } = await supabase
+              .from('song_genres')
+              .insert(genreInserts)
+        
+            if (songGenreError) {
+              toast.error(songGenreError.message)
+            } 
+
+
             router.refresh()
             setIsLoading(false)
             toast.success("Song created!")
             reset()
             setFilePreview(null)
+            setImagePreviewUrl('')
             setFileSelected(false)
+            setSelectedGenres([])
             uploadModal.onClose()
 
 
@@ -260,7 +288,7 @@ const UploadModal = () => {
 
         <Input id="key" type="text" disabled={isLoading} {...register("key", { required: true })} placeholder='Key ex: C Maj' />
 
-        <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} />
+        <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} user_id={user?.id || ''} isSong={true} />
 
 
         <div>

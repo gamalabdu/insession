@@ -34,24 +34,34 @@ const Search = async (props: SearchProps) => {
         "
     >
       <Header className="from-bg-neutral-900">
+
         <div className="mb-2 flex flex-col gap-y-6">
+
           <h1 className="text-white text-3xl font-semibold"> Search </h1>
+
           <SearchInput placeholder=" What would you like to listen to? " />
+
           <div className="flex items-start justify-between px-1 ">
             <div className="w-[190px]"> Artist / Producer </div>
             <div> Key </div>
             <div> BPM </div>
             <div> Duration </div>
+            <div> Genre(s) </div>
             <div> Liked </div>
           </div>
           <hr />
+          
         </div>
+
       </Header>
 
       <SearchContent songs={songs} />
       
     </div>
-  );
-};
+
+  )
+
+}
+
 
 export default Search;

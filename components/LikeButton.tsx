@@ -22,33 +22,39 @@ const LikeButton = (props: LikeButtonProps) => {
 
   const { user } = useUser();
 
+
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
   useEffect(() => {
+
   
     const fetchData = async () => {
 
-      const { data, error } = await supabaseClient
-    .from('liked_songs')
-    .select('*')
-    .eq('user_id', user?.id)
-    .eq('song_id', songId);
+      if (user) {
 
-  if (error) {
-    console.error("Error fetching liked song:", error.message);
-    setIsLiked(false); // Handle the error state as appropriate
-    return;
-  }
+        const { data, error } = await supabaseClient
+          .from("liked_songs")
+          .select("*")
+          .eq("user_id", user?.id)
+          .eq("song_id", songId);
 
-  setIsLiked(data.length > 0);
+        if (error) {
+          console.error("Error fetching liked song:", error.message);
+          setIsLiked(false); // Handle the error state as appropriate
+          return;
+        }
+
+        setIsLiked(data.length > 0)
+
+      }
 
     }
 
     fetchData();
 
-  }, [songId, supabaseClient, user?.id]);
+  }, [songId, supabaseClient, user?.id])
 
-  const Icon = isLiked ? AiFillHeart : AiOutlineHeart;
+  const Icon = isLiked ? AiFillHeart : AiOutlineHeart
 
   const handleLike = async () => {
 
@@ -74,14 +80,14 @@ const LikeButton = (props: LikeButtonProps) => {
         })
 
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message)
       } else {
-        setIsLiked(true);
-        toast.success('Success');
+        setIsLiked(true)
+        toast.success('Success')
       }
     }
 
-    router.refresh();
+    router.refresh()
 
   }
 
@@ -93,8 +99,9 @@ const LikeButton = (props: LikeButtonProps) => {
 
     router.refresh()
 
-
    }, [isLiked])
+
+   
 
   return (
     <button 
