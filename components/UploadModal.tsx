@@ -188,7 +188,7 @@ const UploadModal = () => {
           value={JSON.stringify(selectedGenres)}
         />
         <input
-          type="duration"
+          type="hidden"
           value={duration || ""}
           name="duration"
           id="duration"

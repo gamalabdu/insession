@@ -1,7 +1,6 @@
 "use server";
 
 import { Genre } from "@/types";
-import { getAudioDuration } from "@/utils/songs";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import uniqid from "uniqid";
@@ -70,7 +69,6 @@ export async function uploadSong(formData: FormData) {
     .insert({
       user_id: user?.id,
       title,
-      username: "", // we don't need this if the song is already connected to users
       image_path: imageUrl.publicUrl,
       song_path: songUrl.publicUrl,
       duration,

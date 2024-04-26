@@ -25,6 +25,7 @@ export interface Song {
   duration: string;
   key: string;
   bpm: string;
+  owner: Profile;
   genres: Genre[];
 }
 
