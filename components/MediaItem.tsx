@@ -42,44 +42,6 @@ const MediaItem = (props : MediaItemProps) => {
     }
 
 
-
-
-    
-    
-    // useEffect(() => {
-
-    //     const fetchGenresForSong = async () => {
-
-    //         const { data: songGenresData, error: songGenreErrors } = await supabase
-    //         .rpc('get_all_song_genres')
-    //         .returns<SongGenres[]>()
-            
-        
-    //         if (songGenreErrors) {
-    //             console.error('Error fetching song genres:', songGenreErrors);
-    //             return;
-    //         }
-        
-    //         if (songGenresData) {
-    
-    //             console.log(songGenresData);
-    
-    //             setSongGenres(songGenresData)
-    //         }
-    
-    
-    //     }
-
-    //     fetchGenresForSong()
-
-    // }, [song.id])
-
-
-
-
-
-
-
     useEffect(() => {
 
         async function fetchGenresForSong() {
