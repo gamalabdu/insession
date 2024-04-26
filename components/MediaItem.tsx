@@ -89,11 +89,11 @@ const MediaItem = (props: MediaItemProps) => {
 
           <span className="text-neutral-400">{song.duration}</span>
 
-          {/* {songGenres?.length > 0 && (
+          {song.genres.length > 0 && (
             <span className="text-neutral-400 truncate">
-              {songGenres.map((genre) => genre.genres)}
+              {song.genres.map((genre) => genre.name)}
             </span>
-          )} */}
+          )}
         </div>
       )}
     </div>

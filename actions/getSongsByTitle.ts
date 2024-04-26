@@ -29,12 +29,6 @@
 
 // export default getSongsByTitle;
 
-
-
-
-
-
-
 import { createClient } from "@/utils/supabase/server";
 import { Song } from "@/types";
 import getSongs from "./getSongs";
@@ -54,12 +48,12 @@ const searchSongs = async (searchQuery: string): Promise<Song[]> => {
     bpm.ilike.%${searchQuery}%,
     key.ilike.%${searchQuery}%,
     username.ilike.%${searchQuery}%
-  `.replace(/\s+/g, '');  // Removes whitespace which might cause issues
+  `.replace(/\s+/g, ""); // Removes whitespace which might cause issues
 
   const { data, error } = await supabase
     .from("songs")
-    .select("*")
-    .or(formattedQuery)  // Apply the OR condition
+    .select("*, genres(name)")
+    .or(formattedQuery) // Apply the OR condition
     .order("created_at", { ascending: false });
 
   if (error) {
