@@ -7,10 +7,11 @@ const getSongs = async (): Promise<Song[]> => {
 
   const { data, error } = await supabase
     .from("songs")
-    .select("*")
+    .select("*, owner:profiles!songs_user_id_fkey(username)")
     .order("created_at", { ascending: false });
 
   if (error) {
+    console.log({ error });
     console.log(error.message);
   }
 
