@@ -4,7 +4,7 @@ import { Song } from "@/types";
 import Image from "next/image";
 import React from "react";
 import PlayButton from "./PlayButton";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface SongItemProps {
