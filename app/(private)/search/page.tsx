@@ -7,7 +7,7 @@ import { Song } from "@/types";
 
 interface SearchProps {
   searchParams: {
-    title: string;
+    search: string;
   };
 }
 
@@ -17,9 +17,10 @@ const Search = async (props: SearchProps) => {
   
   const { searchParams } = props;
 
-  const songs = await getSongsByTitle(searchParams.title);
+  const songs = await getSongsByTitle(searchParams.search);
 
   const likedSongs = await getLikedSongs();
+
   // if I use likedSongs then it renders apporpiately but I need to unlink LikeButton so that it renders the right Heart
 
   return (

@@ -8,7 +8,9 @@ import ProfileSetupModal from "@/components/ProfileSetupModal";
 export const revalidate = 0;
 
 export default async function Dashboard() {
+
   const songs = await getSongs();
+
   const userProfileInfo = await getUserProfileInfo();
 
   return (

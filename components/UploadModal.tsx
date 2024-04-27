@@ -109,6 +109,7 @@ const UploadModal = () => {
         <Input
           id="title"
           disabled={isPending}
+          required
           {...register("title", { required: true })}
           placeholder="Song title"
         />
@@ -131,6 +132,7 @@ const UploadModal = () => {
           <Input
             id="song"
             type="file"
+            required
             disabled={isPending}
             {...register("song", { required: true })}
             accept=".mp3 , .wav"
@@ -141,6 +143,7 @@ const UploadModal = () => {
         <Input
           id="bpm"
           type="text"
+          required
           disabled={isPending}
           {...register("bpm", { required: true })}
           placeholder=" BPM ex: 145"
@@ -149,6 +152,7 @@ const UploadModal = () => {
         <Input
           id="key"
           type="text"
+          required
           disabled={isPending}
           {...register("key", { required: true })}
           placeholder="Key ex: C Maj"
@@ -160,6 +164,7 @@ const UploadModal = () => {
           user_id={user?.id || ""}
           isSong={true}
         />
+
         <div>
           <div className="flex flex-col items-center align-middle mb-1">
             {imagePreviewUrl && (
@@ -176,6 +181,7 @@ const UploadModal = () => {
           <Input
             id="image"
             type="file"
+            required
             disabled={isPending}
             {...register("image", { required: true })}
             accept="image/*"

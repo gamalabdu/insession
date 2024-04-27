@@ -5,6 +5,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import useAuthModal from "@/hooks/useAuthModal";
 import { createClient } from "@/utils/supabase/client";
 
+
 const AuthModal = () => {
   
   const supabase = createClient();

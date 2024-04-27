@@ -22,7 +22,7 @@ const useGetSongById = (id?: string) => {
         const fetchSong = async () => {
             const { data , error  } = await supabase
             .from('songs')
-            .select('*')
+            .select("*, genres(name), owner:profiles!songs_user_id_fkey(username)")
             .eq('id', id)
             .single()
 

@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 
 
 
+
 interface SongPageProps {
     params?: {
         song_id: string
@@ -17,16 +18,11 @@ const SongPage = async (props : SongPageProps) => {
 
     const { params } = props 
 
-    console.log(params?.song_id)
-
     if ( !params?.song_id) {
       redirect('/dashboard')
     }
 
-
     const song = await getSongBySongId(params.song_id)
-
-    console.log(song)
 
   return (
 
@@ -35,7 +31,7 @@ const SongPage = async (props : SongPageProps) => {
       <Header>
         <div className="mt-20 flex">
           <div className="flex md:flex-row items-center gap-x-5">
-            <div className="relative rounded-md h-[100px] w-[100px]">
+            <div className="relative rounded-md h-[300px] w-[300px]">
               <Image
                 src={song.image_path || "/images/userIcon.png"}
                 alt="User profile"
@@ -46,21 +42,24 @@ const SongPage = async (props : SongPageProps) => {
             </div>
             <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
               <p className="hidden md:block font-semibold text-sm">
-                {song.title}
+                by {song.owner.username}
               </p>
-              <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold pl-8">
-                by {song.username}
+              <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">
+                {song.title}
               </h1>
             </div>
           </div>
         </div>
       </Header>
 
+
+       <SongPageContent song={song} />
         
     
     </div>
 
   )
 }
+
 
 export default SongPage

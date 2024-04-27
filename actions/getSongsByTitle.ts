@@ -1,73 +1,43 @@
-// import { createClient } from "@/utils/supabase/server";
-
-// import { Song } from "@/types";
-// import getSongs from "./getSongs";
-
-// const getSongsByTitle = async (title: string): Promise<Song[]> => {
-
-//   const supabase = createClient();
-
-//   if (!title) {
-//     const allSongs = await getSongs();
-
-//     return allSongs;
-//   }
-
-//   const { data, error } = await supabase
-//     .from("songs")
-//     .select("*")
-//     .ilike("title", `%${title}%`)
-//     .order("created_at", { ascending: false });
-
-//   if (error) {
-//     console.log(error.message);
-//   }
-
-//   return (data as any) || [];
-
-// };
-
-// export default getSongsByTitle;
 
 import { createClient } from "@/utils/supabase/server";
 import { Song } from "@/types";
 import getSongs from "./getSongs";
 
 const searchSongs = async (searchQuery: string): Promise<Song[]> => {
-  const supabase = createClient();
 
-  if (!searchQuery.trim()) {
-    const allSongs = await getSongs();
+  const supabase = createClient()
 
-    return allSongs;
+  if (!searchQuery.trim()) {  // Trim to handle cases where searchQuery is just whitespace
+    const allSongs = await getSongs()
+    return allSongs
   }
 
   // Properly constructing the OR query
-  const formattedQuery = `
-    title.ilike.%${searchQuery}%,
-    bpm.ilike.%${searchQuery}%,
-    key.ilike.%${searchQuery}%,
-    username.ilike.%${searchQuery}%
-  `.replace(/\s+/g, ""); // Removes whitespace which might cause issues
+  const formattedQuery = `title.ilike.%${encodeURIComponent(searchQuery)}%` +
+                         `,bpm.ilike.%${encodeURIComponent(searchQuery)}%` +
+                         `,key.ilike.%${encodeURIComponent(searchQuery)}%`;
 
   const { data, error } = await supabase
     .from("songs")
-    .select("*, genres(name)")
-    .or(formattedQuery) // Apply the OR condition
-    .order("created_at", { ascending: false });
+    .select("*, genres(name), owner:profiles!songs_user_id_fkey(username)")
+    .or(formattedQuery.replace(/\s+/g, '')) // Ensure to remove any unintended whitespace
+    .returns<Song[]>()
+    .order("created_at", { ascending: false })
 
   if (error) {
-    console.error("Error fetching songs:", error.message);
+    console.error("Error fetching songs:", error.message)
     return [];
   }
 
   if (data?.length > 0) {
-    console.log("Fetched data:", data); // Log fetched data
+    console.log("Fetched data:", data)
   } else {
-    console.log("No data matches the search criteria.");
+    console.log("No data matches the search criteria.")
   }
 
-  return data || [];
-};
+  return data as Song[] || [];
+
+}
 
 export default searchSongs;
+

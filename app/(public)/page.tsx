@@ -1,6 +1,4 @@
-import { PiMicrophoneStageFill } from "react-icons/pi";
 import { twMerge } from "tailwind-merge";
-import useAuthModal from "@/hooks/useAuthModal";
 import Button from "@/components/Button";
 import { GiSoundWaves } from "react-icons/gi";
 import Link from "next/link";

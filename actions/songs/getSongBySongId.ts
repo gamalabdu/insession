@@ -10,7 +10,7 @@ const getSongBySongId = async (song_id: string): Promise<Song> => {
 
   const { data, error } = await supabase
     .from("songs")
-    .select("*")
+    .select("*, genres(name), owner:profiles!songs_user_id_fkey(username)")
     .eq('id', song_id)
     .order("created_at", { ascending: false })
     .returns<Song[]>()

@@ -10,6 +10,7 @@ interface SearchContentProps {
 }
 
 const SearchContent = ({ songs }: SearchContentProps) => {
+  
   const onPlay = useOnPlay(songs);
 
   if (songs.length === 0) {

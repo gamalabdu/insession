@@ -1,6 +1,5 @@
 
 import { createClient } from "@/utils/supabase/server";
-import { Profile } from "@/types";
 
 const getLikedArtistProfiles = async (): Promise<Profile[]> => {
 

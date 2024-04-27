@@ -17,7 +17,6 @@ const PageContent = (props : PageContentProps) => {
   const onPlay = useOnPlay(songs)
 
 
-
   if(songs.length === 0) {
     return (
         <div className='mt-4 text-neutral-400'>
@@ -53,7 +52,7 @@ const PageContent = (props : PageContentProps) => {
     <div className='ml-8 flex flex-nowrap overflow-x-auto p-4 gap-4'>
   {songs.map(song => (
     <div key={song.id} className='flex-shrink-0 w-48'>
-      <SongItem key={song.id} onClick={(id: string) => onPlay(id)} song={song} />
+      <SongItem key={song.id} onClick={ (id: string) => onPlay(id) } song={song} />
     </div>
   ))}
 </div>

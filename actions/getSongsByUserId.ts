@@ -12,7 +12,7 @@ const getSongsByUserId = async (): Promise<Song[]> => {
 
   const { data, error } = await supabase
     .from("songs")
-    .select("*, genres(name)")
+    .select("*, genres(name), owner:profiles!songs_user_id_fkey(username)")
     .eq("user_id", user?.id)
     .order("created_at", { ascending: false });
 

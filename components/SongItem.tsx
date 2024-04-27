@@ -13,6 +13,7 @@ interface SongItemProps {
 }
 
 const SongItem = (props: SongItemProps) => {
+
   const { song, onClick } = props;
 
     const router = useRouter()
@@ -47,7 +48,7 @@ const SongItem = (props: SongItemProps) => {
         <p className="font-semibold truncate w-full">{song?.title}</p>
 
         <p className="text-neutral-400 text-sm pb-4 w-full truncate">
-          By {song?.owner.username}
+          By {song.owner.username}
         </p>
       </div>
 

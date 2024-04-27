@@ -9,11 +9,13 @@ interface MediaItemProps {
 }
 
 const MediaItem = (props: MediaItemProps) => {
+
+
   const { song, onClick, isInLibrary } = props;
 
-  // const [ songGenres, setSongGenres ] = useState<SongGenres[]>([])
 
   const handleClick = () => {
+
     if (onClick) {
       return onClick(song.id);
     }
@@ -21,31 +23,9 @@ const MediaItem = (props: MediaItemProps) => {
     // turn on player default
   };
 
-  // useEffect(() => {
 
-  //     async function fetchGenresForSong() {
 
-  //         try {
-  //             const { data, error } = await supabase
-  //             .rpc('get_song_genres', { p_song_id: song.id });
 
-  //             if (error) {
-  //                 console.error('Error fetching song genres:', error.message);
-  //                 return;
-  //             }
-
-  //             if (data) {
-  //                 console.log(data);
-  //                 setSongGenres(data);
-  //             }
-  //         } catch (error) {
-  //             console.error('Fetching error:', error);
-  //         }
-  //     }
-
-  //     fetchGenresForSong();
-
-  // }, [song.id, supabase]);
 
   return (
     <div
@@ -77,12 +57,16 @@ const MediaItem = (props: MediaItemProps) => {
           className="text-neutral-400 text-sm truncate hover:underline"
           href={`/profile?id=${song.user_id}`}
         >
-          {song?.username}
+          {song.owner.username}
+
         </Link>
+
       </div>
 
       {!isInLibrary && (
+
         <div className="flex flex-grow justify-evenly h-full">
+
           <span className="text-neutral-400">{song.key}</span>
 
           <span className="text-neutral-400">{song.bpm}</span>
@@ -90,12 +74,15 @@ const MediaItem = (props: MediaItemProps) => {
           <span className="text-neutral-400">{song.duration}</span>
 
           {song.genres.length > 0 && (
-            <span className="text-neutral-400 truncate">
-              {song.genres.map((genre) => genre.name)}
-            </span>
+            <span className="text-neutral-400 truncate w-[80px]">
+              {song.genres.map((genre) => genre.name).join(' / ')}
+            </span> 
           )}
+    
         </div>
+
       )}
+
     </div>
   );
 };
