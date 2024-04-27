@@ -188,6 +188,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
         })}
 
         <div ref={messagesEndRef} />
+        
       </div>
 
       {/* Input Field */}

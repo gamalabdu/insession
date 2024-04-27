@@ -34,6 +34,16 @@ const MessagesPageContent = () => {
       px-6
     "
     >
+
+      <div className="flex items-center justify-center gap-24">
+
+          <div> Conversations </div>
+
+          <div> Sessions </div>
+
+      </div>
+
+
       {conversations.map((conversation, idx) => {
         return (
           <div key={idx} className="flex items-center gap-x-4 w-full">
@@ -41,11 +51,13 @@ const MessagesPageContent = () => {
               <ConversationItem {...conversation} />
             </div>
           </div>
-        );
+        )
       })}
+
+
     </div>
-  );
-};
+  )
+}
 
 const Loader = () => (
   <div className="flex flex-col gap-4 px-6 w-full">

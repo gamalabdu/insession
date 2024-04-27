@@ -13,6 +13,7 @@ import { createClient } from "@/utils/supabase/client";
 import MessageModal from "@/components/MessageModal";
 
 
+
 interface ProfileContentProps {
   userProfileInfo: Profile;
 }
@@ -48,6 +49,35 @@ const ProfilePageContent = (props: ProfileContentProps) => {
   };
 
 
+  const testAlbums = [
+    {
+      name: "Thriller",
+      artist: "Michael Jackson",
+      artwork: "https://pbs.twimg.com/media/GAIeUD5W8AAn98v.jpg"
+    },
+    {
+      name: "archives & lullabies",
+      artist: "Sabrina Claudio",
+      artwork: "https://e.snmc.io/i/600/s/e2b3c8f41c94b33aad0bc51676b99b2f/10696704/sabrina-claudio-archives-and-lullabies-Cover-Art.jpg"
+    },
+    {
+      name:"Take Care",
+      artist: "Drake",
+      artwork: "https://m.media-amazon.com/images/I/71q3s6618yL._AC_UF894,1000_QL80_.jpg"
+    },
+    {
+      name:"Continuum",
+      artist: "John Mayer",
+      artwork: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Continuum_by_John_Mayer_%282006%29.jpg"
+    },
+    {
+      name:"To Pimp a Butterfly",
+      artist: "Kendrick Lamar",
+      artwork: "https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/pictures/2015/3/11/1426099817173/f1efb3f4-9a6d-4f78-8ca8-594ab646d198-bestSizeAvailable.jpeg?width=620&quality=85&auto=format&fit=max&s=1bb96ed49608e22a3d9f6fefff086971"
+    }
+  ]
+
+
 
 
 
@@ -76,16 +106,17 @@ const ProfilePageContent = (props: ProfileContentProps) => {
       <Header>
         <div className="mt-20">
           <div className="flex flex-col md:flex-row items-center gap-x-5">
-            <div className="relative h-32 w-32 lg:h-44 lg:w-44">
+            <div className="relative h-40 w-40 lg:h-80 lg:w-80">
               <Image
                 fill
                 src={userProfileInfo.avatar_url || "/images/userIcon.png"}
                 alt="playlist"
-                className="object-cover"
+                className="object-cover rounded-full"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
             <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
+              <span> Profile </span>
               <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">
                 {userProfileInfo.username}
               </h1>
@@ -105,11 +136,29 @@ const ProfilePageContent = (props: ProfileContentProps) => {
       </Header>
 
       <div className="mt-2 mb-7 px-6">
+
         <div className="flex justify-between items-center">
+
           <h1 className="text-white text-2xl font-semibold">
             {userProfileInfo.username}'s Shop
           </h1>
+
         </div>
+
+        {/* <div className="flex border">
+
+          {
+            testAlbums.map((album, index) => {
+              return (
+                <div key={index} className=" w-[100px] border lg:w-[300px]">
+                  <img src={album.artwork} alt={album.artist} />
+                </div>
+              )
+            })
+          }
+
+
+        </div> */}
 
         <PageContent songs={safeSongs} heroImage={userProfileInfo.avatar_url} />
 
@@ -118,8 +167,11 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
 
       </div>
+
     </div>
-  );
-};
+
+  )
+
+}
 
 export default ProfilePageContent;

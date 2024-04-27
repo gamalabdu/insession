@@ -60,11 +60,7 @@ const MessageModal = (props: MessageModalProps) => {
 
     try {
 
-
-
       setIsLoading(true);
-
-
 
       const { data: existingConversations, error: existingConversationsError } = await 
       supabase.rpc("check_conversation_exist", { userid1: user?.id, userid2: userProfileInfo.id });
