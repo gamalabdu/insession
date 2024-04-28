@@ -14,6 +14,8 @@ const JobItem = (props : JobItemProps) => {
 
     const { job } = props
 
+    // console.log(job)
+
     const { userProfileInfo } = useGetUserProfileInfo(job.user_id)
 
     const router = useRouter()
@@ -22,7 +24,7 @@ const JobItem = (props : JobItemProps) => {
 
       router.push(`/sessions/${job_id}`); 
   
-  };
+    }
 
 
   return (
@@ -63,7 +65,7 @@ const JobItem = (props : JobItemProps) => {
 
     <p className='text-neutral-300 text-sm truncate'> Budget: {job.budget}$ </p>
 
-    <p className='text-neutral-300 text-sm truncate'> Genre: {job.genre} </p>
+    <p className='text-neutral-300 text-sm truncate'> Genre(s): Genre Type Here </p>
 
   </div>
 

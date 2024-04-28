@@ -121,7 +121,7 @@ const PostSessionModal = () => {
       }
   
       // Inserting data into jobs table directly using uploadedUrls
-      const { error: supabaseError } = await supabase
+      const { data: jobData, error: supabaseError } = await supabase
         .from("jobs")
         .insert({
           user_id: user?.id,
@@ -129,16 +129,34 @@ const PostSessionModal = () => {
           job_title: values.job_title,
           job_description: values.job_description,
           additional_info: values.additional_info,
-          genre: values.genre,
           reference_link : values.reference_link,
           reference_files: uploadedFilesData,
           budget: values.budget,
-        });
+        })
+        .select('job_id')
+
+
   
       if (supabaseError) {
         throw supabaseError;
       }
+
+
+      const genreInserts = selectedGenres.map((genre) => ({
+        job_id: jobData[0].job_id,
+        genre_id: genre.id
+      }));
   
+      // Batch insert genres
+      const { error: profilesGenreError } = await supabase
+        .from('jobs_genres')
+        .insert(genreInserts);
+  
+      if (profilesGenreError) {
+        toast.error(profilesGenreError.message);
+      }
+
+
       // Success handling
       router.refresh();
       toast.success("Session Posted!");
@@ -190,6 +208,7 @@ const PostSessionModal = () => {
         <SelectGenres
           selectedGenres={selectedGenres}
           setSelectedGenres={setSelectedGenres}
+          isSongOrBid 
         />
 
         <Input

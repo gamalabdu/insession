@@ -113,8 +113,8 @@ import toast from 'react-hot-toast';
 interface SelectGenresProps {
     selectedGenres: Genre[];
     setSelectedGenres: (genres: Genre[]) => void;
-    user_id: string
-    isSong?: boolean
+    user_id?: string
+    isSongOrBid?: boolean
 }
 
 type GenreItem = {
@@ -132,7 +132,7 @@ type SongItem = {
 const SelectGenres = (props: SelectGenresProps) => {
 
 
-    const { selectedGenres, setSelectedGenres, user_id, isSong } = props;
+    const { selectedGenres, setSelectedGenres, user_id, isSongOrBid } = props;
 
     const [genres, setGenres] = useState<Genre[]>([]);
     const [userGenres, setUserGenres ] = useState<GenreItem[]>([])
@@ -166,7 +166,7 @@ useEffect(() => {
 
 
 
-            if ( !isSong ) {
+            if ( !isSongOrBid ) {
             
             const { data: userGenresData, error: userGenresError } = await supabase
                 .from('profiles_genres')
@@ -183,7 +183,7 @@ useEffect(() => {
                 setUserGenres(userGenresData);
             }
 
-        }
+            }
 
 
 
@@ -216,7 +216,7 @@ useEffect(() => {
                     <div>
                         {   selectedGenres.length > 0 ? 
 
-                               isSong ? 
+                               isSongOrBid ? 
 
                                selectedGenres.map(g => g.name).join(', ')
 

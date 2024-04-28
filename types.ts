@@ -15,6 +15,13 @@ export interface Genre {
   name: string;
 }
 
+export interface Bid {
+  id: string,
+  proposal: string
+  title: string
+  owner: Profile
+}
+
 export interface Song {
   id: string;
   user_id: string;
@@ -36,7 +43,6 @@ export interface Job {
   job_title: string;
   job_description: string;
   additional_info: string;
-  genre: string;
   budget: number;
   reference_link: string;
   reference_files: { name: string; url: string }[];

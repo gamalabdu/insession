@@ -1,25 +1,34 @@
 "use client";
-import React from "react";
-import { Job } from "@/types";
+import React, { useState } from "react";
+import { Bid, Job } from "@/types";
 import { LuFileAudio } from "react-icons/lu";
 import qs from "query-string";
 import Button from "@/components/Button";
 import Header from "@/components/ui/Header";
 import Image from "next/image";
-import useBidModal from "@/hooks/useBidModal";
 import { useRouter } from "next/navigation";
+import BidModal from "@/components/BidModal";
+import SessionInfoContent from "./SessionInfoContent";
+import { useUser } from "@/hooks/useUser";
+import Proposals from "./Proposals";
 
 interface SessionPageContentProps {
   job: Job;
   userProfileInfo: Profile;
+  proposals: Bid[] | null
 }
 
 const SessionPageContent = (props: SessionPageContentProps) => {
-  const { job, userProfileInfo } = props;
 
-  const bidModal = useBidModal();
+  const { job, userProfileInfo, proposals } = props;
 
   const router = useRouter();
+
+  const [ tab, setTab ] = useState<"info" | "proposals">("info")
+
+  const [ bidModalOpen, setBidModalOpen ] = useState(false)
+
+  const { user } = useUser()
 
   const extractVideoId = (url: string) => {
     const regex =
@@ -29,6 +38,9 @@ const SessionPageContent = (props: SessionPageContentProps) => {
   };
 
   const videoId = job.reference_link ? extractVideoId(job.reference_link) : "";
+
+  const isCurrentUser = job.user_id === user?.id
+
 
   const handleClick = () => {
     const query = {
@@ -73,90 +85,74 @@ const SessionPageContent = (props: SessionPageContentProps) => {
                 {job.job_title}
               </h1>
 
-              <Button onClick={bidModal.onOpen}>Bid for Session</Button>
+              { !isCurrentUser && (
+                <Button onClick={() => setBidModalOpen(true)}>
+                  Bid for Session
+                </Button>
+              )}
             </div>
           </div>
         </div>
       </Header>
 
-      <div className="flex flex-col gap-y-5 px-6 max-w-screen-xl">
-        <div className="text-lg text-neutral-400">Job Information</div>
+    {
+      isCurrentUser && 
 
-        <div className="text-lg text-neutral-400">
-          <div className="flex gap-1">
-            <span className="text-neutral-300 font-bold"> Title : </span>
-            <span> {job.job_title} </span>
-          </div>
-
-          <div className="flex gap-1">
-            <span className="text-neutral-300 font-bold"> Description : </span>
-            <span> {job.job_description} </span>
-          </div>
-
-          <div className="flex gap-1">
-            <span className="text-neutral-300 font-bold">
-              {" "}
-              Additional Info :{" "}
-            </span>
-            <span> {job.additional_info} </span>
-          </div>
-
-          <div className="flex gap-1">
-            <span className="text-neutral-300 font-bold"> Budget : </span>
-            <span> {job.budget} </span>
-          </div>
-
-          <div className="flex gap-1">
-            <span className="text-neutral-300 font-bold"> Genres(s) : </span>
-            <span> {job.genre} </span>
-          </div>
-
-          <div className="flex gap-1">
-            <span className="text-neutral-300 font-bold"> Posted By : </span>
-            <span
-              className=" hover:underline cursor-pointer"
-              onClick={() => handleClick()}
-            >
-              {" "}
-              {job.created_by}{" "}
-            </span>
-          </div>
+      <div className="flex items-center justify-center gap-24 text-neutral-400 p-2">
+        <div
+          className={
+            tab === "info"
+              ? " text-neutral-100 cursor-pointer"
+              : "cursor-pointer"
+          }
+          onClick={() => setTab("info")}
+        >
+          {" "}
+          Information{" "}
         </div>
 
-        <hr className="border-neutral-600 border-1" />
-
-        <div className="text-neutral-400 text-2xl flex flex-col gap-y-4 h-full">
-          <span className="text-lg text-neutral-400">
-            References / Demos / Drafts
-          </span>
-
-          <div className="p-3 flex gap-4 h-auto flex-col gap-y-5">
-            {job.reference_files &&
-              job.reference_files.map((preview, index) => (
-                <div className="text-lg flex items-center gap-4" key={index}>
-                  <LuFileAudio />
-                  <span>{preview.name}</span>
-                  <audio controls src={preview.url}>
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              ))}
-
-            {videoId && (
-              <div className="aspect-video">
-                <iframe
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title="YouTube video player"
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-            )}
-          </div>
+        <div
+          className={
+            tab === "proposals"
+              ? " text-neutral-100 cursor-pointer"
+              : "cursor-pointer"
+          }
+          onClick={() => setTab("proposals")}
+        >
+          {" "}
+          Proposals{" "}
         </div>
       </div>
+
+    }
+
+      {
+        tab === 'info' ? 
+
+        <SessionInfoContent
+        job={job}
+        videoId={videoId}
+        handleClick={handleClick}
+        isCurrentUser={isCurrentUser}
+      />
+
+      : 
+
+
+        <Proposals job={job} proposals={proposals} />
+
+
+      }
+
+
+      <BidModal
+        bidModalOpen={bidModalOpen}
+        setBidModalOpen={setBidModalOpen}
+        job={job}
+        user_id={userProfileInfo.id}
+      />
+
+
     </div>
   );
 };

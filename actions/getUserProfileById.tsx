@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 
-import { Profile } from "@/types";
 
 const getUserProfileById = async (id: string): Promise<Profile> => {
 

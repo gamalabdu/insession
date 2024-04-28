@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import ConversationItem from "./ConversationItem";
 import { ConversationsContext } from "@/providers/conversations";
 import { Skeleton, Spinner } from "@nextui-org/react";
@@ -9,6 +9,8 @@ import { Skeleton, Spinner } from "@nextui-org/react";
 const MessagesPageContent = () => {
 
   const { conversations, areLoading } = useContext(ConversationsContext);
+
+  const [ tab, setTab ] = useState<"messages" | "sessions">("messages")
 
   if (areLoading) {
     return <Loader />;
@@ -35,14 +37,15 @@ const MessagesPageContent = () => {
     "
     >
 
-      <div className="flex items-center justify-center gap-24">
+      <div className="flex items-center justify-center gap-24 text-neutral-400">
 
-          <div> Conversations </div>
+          <div className={ tab === 'messages' ? ' text-neutral-100 cursor-pointer' : 'cursor-pointer' } onClick={() => setTab("messages")} > Conversations </div>
 
-          <div> Sessions </div>
+          <div className={ tab === 'sessions' ? ' text-neutral-100 cursor-pointer' : 'cursor-pointer' } onClick={() => setTab("sessions")} > Sessions </div>
 
       </div>
 
+     
 
       {conversations.map((conversation, idx) => {
         return (
@@ -92,3 +95,5 @@ const Loader = () => (
 );
 
 export default MessagesPageContent;
+
+

@@ -13,7 +13,7 @@ const getAllJobs = async (): Promise<Job[]> => {
 
   const { data, error } = await supabase
     .from("jobs")
-    .select("*")
+    .select(" * ")
     .not("user_id", "eq", user?.id)
     .order("created_at", { ascending: false });
 

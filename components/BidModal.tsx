@@ -14,8 +14,18 @@ import Image from 'next/image'
 import { LuFileAudio } from 'react-icons/lu'
 import useBidModal from '@/hooks/useBidModal'
 import { twMerge } from 'tailwind-merge'
+import { Job } from '@/types'
 
-const BidModal = () => {
+interface BidModalProps {
+  bidModalOpen: boolean
+  setBidModalOpen: (open: boolean ) => void
+  job: Job
+  user_id: string
+}
+
+const BidModal = (props : BidModalProps) => {
+
+    const { bidModalOpen, setBidModalOpen, job, user_id } = props 
 
     const bidModal = useBidModal()
 
@@ -50,7 +60,7 @@ const BidModal = () => {
             setFilePreview(null)
             setFileSelected(false)
             reset()
-            bidModal.onClose()
+            setBidModalOpen(false)
         }
 
     }
@@ -65,10 +75,13 @@ const BidModal = () => {
             const uniqueID = uniqid()
 
             const { error: supabaseError } = await supabase
-            .from('songs')
+            .from('bids')
             .insert({ 
+                id: job.job_id,
                 title: values.title,
-                proposal: values.proposal
+                proposal: values.proposal,
+                bidder_id: user_id,
+                user_id: user?.id
             })
 
             if ( supabaseError ) {
@@ -79,11 +92,11 @@ const BidModal = () => {
 
             router.refresh()
             setIsLoading(false)
-            toast.success("Song created!")
+            toast.success("Bid submitted!")
             reset()
             setFilePreview(null)
             setFileSelected(false)
-            bidModal.onClose()
+            setBidModalOpen(false)
 
 
         } catch (error) {
@@ -101,7 +114,7 @@ const BidModal = () => {
     <Modal
       title="Bid on this Session"
       description="Bidding Time!"
-      isOpen={bidModal.isOpen}
+      isOpen={bidModalOpen}
       onChange={onChange}
     >
       <form className="flex flex-col gap-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -142,7 +155,11 @@ const BidModal = () => {
                     disabled:opacity-50
                     focus:outline-none
                 `,
-                )} placeholder='Describe your work.'/>
+                )} placeholder='Describe your work.'
+                id='proposal'
+                disabled={isLoading}
+                {...register("proposal", { required: true })}
+                />
 
        
         <Button disabled={isLoading} type="submit">
