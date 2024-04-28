@@ -62,8 +62,9 @@ export default function ConversationsProvider({
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
         async (payload) => {
-          setUnseenMessages((prev) => prev + 1);
           const message = payload.new as Message;
+          message.sender_id !== user?.id &&
+            setUnseenMessages((prev) => prev + 1);
           const { data: files } = await supabase
             .from("messages_files")
             .select("type")
