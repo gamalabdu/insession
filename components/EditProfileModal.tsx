@@ -238,7 +238,7 @@ const EditProfileModal = ({
           />
 
 
-            <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} user_id={userProfileInfo.id} />
+        <SelectGenres selectedGenres={selectedGenres} setSelectedGenres={setSelectedGenres} user_id={userProfileInfo.id} />
 
 
           <div className="flex flex-col justify-center">

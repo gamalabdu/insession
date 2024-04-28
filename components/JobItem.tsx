@@ -65,7 +65,12 @@ const JobItem = (props : JobItemProps) => {
 
     <p className='text-neutral-300 text-sm truncate'> Budget: {job.budget}$ </p>
 
-    <p className='text-neutral-300 text-sm truncate'> Genre(s): Genre Type Here </p>
+    {job.genres.length > 0 && (
+             <p className='text-neutral-300 text-sm truncate'> Genre(s) :  
+              {" "} {job.genres.map((genre) => genre.name).join(' / ')}
+            </p> 
+    )}
+
 
   </div>
 

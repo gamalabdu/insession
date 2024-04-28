@@ -68,6 +68,21 @@ const BidModal = (props : BidModalProps) => {
 
     const onSubmit : SubmitHandler<FieldValues> = async (values) => {
 
+
+      // checking if bid already exist for this job from this user
+      const { data: checkBid, error: supabaseError } = await supabase
+            .from('bids')
+            .select('*')
+            .eq('bidder_id', user_id)
+            .eq('user_id', user?.id)
+
+      if ( checkBid && checkBid?.length > 0 ) {
+        toast.error("You have already sent a bid!")
+      } 
+      
+      
+      else {
+
         try {
 
             setIsLoading(true)
@@ -80,7 +95,7 @@ const BidModal = (props : BidModalProps) => {
                 id: job.job_id,
                 title: values.title,
                 proposal: values.proposal,
-                bidder_id: user_id,
+                bidder_id: user_id, // this is the user_id of the userProfileInfo we passed down, this is the user whos page we are on
                 user_id: user?.id
             })
 
@@ -105,6 +120,10 @@ const BidModal = (props : BidModalProps) => {
         } finally {
             setIsLoading(false)
         }
+
+
+
+      }
 
 
     } 

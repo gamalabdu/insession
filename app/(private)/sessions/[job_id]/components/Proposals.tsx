@@ -1,18 +1,34 @@
 "use client"
 import Button from '@/components/Button'
+import MessageModal from '@/components/MessageModal'
 import { Bid, Job } from '@/types'
 import Image from 'next/image'
+import { useState } from 'react'
 
 
 
 interface ProposalsProps {
     job: Job
     proposals: Bid[] | null
+    userProfileInfo : Profile
 }
 
 const Proposals = async (props : ProposalsProps) => {
 
-    const { job, proposals } = props 
+    const { job, proposals, userProfileInfo } = props 
+
+    const [ messageModalOpen, setMessageModalOpen ] = useState(false)
+
+    const [ bidder, setBidder ] = useState<Profile>()
+
+
+    const handleClick = (bidder: Profile ) => {
+
+      setMessageModalOpen(true)
+
+      setBidder(bidder)
+
+    }
 
 
   return (
@@ -70,11 +86,25 @@ const Proposals = async (props : ProposalsProps) => {
             </div>
 
 
-            <Button className='w-[100px]'> Reply </Button>
+            <Button className='w-[100px]' 
+            onClick={() => handleClick(proposal
+              .owner
+            )}
+            > Reply </Button>
+
+
+             <MessageModal messageModalOpen={messageModalOpen} setMessageModalOpen={setMessageModalOpen} userProfileInfo={proposal.owner} />
+
+
       
           </div>
+
+
         ))
        }
+
+
+
 
     </div>
 

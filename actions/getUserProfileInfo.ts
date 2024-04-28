@@ -17,7 +17,7 @@ const getUserProfileInfo = async (): Promise<Profile> => {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select("* , genres(name)")
     .eq("id", user?.id)
     .single();
 

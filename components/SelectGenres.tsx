@@ -181,6 +181,8 @@ useEffect(() => {
                 const activeGenres = allGenres.filter(g => userGenresData.some(ug => ug.name === g.name));
                 setSelectedGenres(activeGenres);  // Set initially selected genres from user's current genres
                 setUserGenres(userGenresData);
+
+                // the genres appear but I cannot select new genres 
             }
 
             }
@@ -198,16 +200,30 @@ useEffect(() => {
 }, [user_id, setSelectedGenres])
 
 
+    // const toggleGenreSelection = (genre: Genre) => {
+    //     const isAlreadySelected = selectedGenres.some(selected => selected.name === genre.name);
+    //     setSelectedGenres(
+    //         isAlreadySelected
+    //             ? selectedGenres.filter((g) => g.name !== genre.name)
+    //             : [...selectedGenres, genre]
+    //     );
+    // };
+
+
+
     const toggleGenreSelection = (genre: Genre) => {
+        console.log("Toggling genre:", genre);
         const isAlreadySelected = selectedGenres.some(selected => selected.name === genre.name);
-        setSelectedGenres(
-            isAlreadySelected
-                ? selectedGenres.filter((g) => g.name !== genre.name)
-                : [...selectedGenres, genre]
-        );
+        const newSelectedGenres = isAlreadySelected
+            ? selectedGenres.filter((g) => g.name !== genre.name)
+            : [...selectedGenres, genre];
+        setSelectedGenres(newSelectedGenres);
+        console.log("New selected genres:", newSelectedGenres);
     };
+    
 
 
+    
 
     return (
         <div className="flex flex-col w-full">

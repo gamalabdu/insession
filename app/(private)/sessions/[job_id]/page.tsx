@@ -30,7 +30,7 @@ const SessionPage = async (props: SessionPageProps ) => {
     .returns<Bid[]>()
     .order("created_at", { ascending: false });
 
-    console.log(job)
+    // console.log(job)
 
 
   return (

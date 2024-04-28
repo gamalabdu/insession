@@ -42,7 +42,7 @@ const SessionInfoContent = (props : SessionInfoContentProps) => {
 
       <div className="flex gap-1">
         <span className="text-neutral-300 font-bold"> Budget : </span>
-        <span> {job.budget} </span>
+        <span> {job.budget} $ </span>
       </div>
 
       <div className="flex gap-1">

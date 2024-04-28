@@ -139,7 +139,7 @@ const SessionPageContent = (props: SessionPageContentProps) => {
       : 
 
 
-        <Proposals job={job} proposals={proposals} />
+        <Proposals job={job} proposals={proposals} userProfileInfo={userProfileInfo} />
 
 
       }

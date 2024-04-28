@@ -44,6 +44,7 @@ export interface Job {
   job_description: string;
   additional_info: string;
   budget: number;
+  genres: Genre[];
   reference_link: string;
   reference_files: { name: string; url: string }[];
 }
