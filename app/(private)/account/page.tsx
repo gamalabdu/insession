@@ -10,8 +10,6 @@ const Account = async () => {
 
   const userProfileInfo = await getUserProfileInfo();
 
-  console.log(userProfileInfo)
-
   const displayClassName = `
         flex
         w-full

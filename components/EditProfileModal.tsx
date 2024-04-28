@@ -184,6 +184,7 @@ const EditProfileModal = ({
       reset(values); // Reset form with new values to set a new baseline for "changes detection"
       router.refresh();
       setIsLoading(false);
+      setSelectedGenres([])
       reset();
       setIsOpen(false);
 

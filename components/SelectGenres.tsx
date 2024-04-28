@@ -101,7 +101,6 @@
 
 
 
-
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
@@ -200,25 +199,15 @@ useEffect(() => {
 }, [user_id, setSelectedGenres])
 
 
-    // const toggleGenreSelection = (genre: Genre) => {
-    //     const isAlreadySelected = selectedGenres.some(selected => selected.name === genre.name);
-    //     setSelectedGenres(
-    //         isAlreadySelected
-    //             ? selectedGenres.filter((g) => g.name !== genre.name)
-    //             : [...selectedGenres, genre]
-    //     );
-    // };
-
-
 
     const toggleGenreSelection = (genre: Genre) => {
-        console.log("Toggling genre:", genre);
+        // console.log("Toggling genre:", genre);
         const isAlreadySelected = selectedGenres.some(selected => selected.name === genre.name);
         const newSelectedGenres = isAlreadySelected
             ? selectedGenres.filter((g) => g.name !== genre.name)
             : [...selectedGenres, genre];
         setSelectedGenres(newSelectedGenres);
-        console.log("New selected genres:", newSelectedGenres);
+        // console.log("New selected genres:", newSelectedGenres);
     };
     
 
@@ -238,7 +227,9 @@ useEffect(() => {
 
                                :
                         
-                               userGenres.map(g => g.name).join(', ') : 
+                            //    userGenres.map(g => g.name).join(', ') : 
+
+                               selectedGenres.map(g => g.name).join(', ') : 
 
                                "Select genre(s)"
                         

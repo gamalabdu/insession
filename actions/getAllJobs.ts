@@ -17,8 +17,6 @@ const getAllJobs = async (): Promise<Job[]> => {
     .not("user_id", "eq", user?.id)
     .order("created_at", { ascending: false });
 
-  
-  console.log(data)
 
   if (error) {
     console.log(error.message);

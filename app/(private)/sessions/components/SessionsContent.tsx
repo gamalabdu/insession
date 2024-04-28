@@ -16,8 +16,7 @@ const SessionsContent = (props: SessionsContentProps) => {
   
   const { allOtherJobs, allUserJobs } = props;
 
-  const postSessionModal = usePostSessionModal();
-
+  const postSessionModal = usePostSessionModal()
 
 
   return (

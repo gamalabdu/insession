@@ -17,8 +17,6 @@ const getJobsByUserId = async (): Promise<Job[]> => {
     .eq("user_id", user?.id)
     .order("created_at", { ascending: false });
 
-    console.log(data)
-
   if (error) {
     console.log(error.message);
   }

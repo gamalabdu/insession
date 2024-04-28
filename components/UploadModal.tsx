@@ -162,7 +162,7 @@ const UploadModal = () => {
           selectedGenres={selectedGenres}
           setSelectedGenres={setSelectedGenres}
           user_id={user?.id || ""}
-          isSong={true}
+          isSongOrBid={true}
         />
 
         <div>

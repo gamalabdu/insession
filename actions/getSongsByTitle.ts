@@ -7,7 +7,7 @@ const searchSongs = async (searchQuery: string): Promise<Song[]> => {
 
   const supabase = createClient()
 
-  if (!searchQuery.trim()) {  // Trim to handle cases where searchQuery is just whitespace
+  if ( !searchQuery ) {  // Trim to handle cases where searchQuery is just whitespace
     const allSongs = await getSongs()
     return allSongs
   }

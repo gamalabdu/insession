@@ -15,9 +15,6 @@ const Sessions = async () => {
     const allUserJobs = await getJobsByUserId()
 
 
-    console.log(allOtherJobs)
-
-
   return (
 
         <SessionsContent 
