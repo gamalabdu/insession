@@ -20,7 +20,7 @@ const SongItem = (props: SongItemProps) => {
 
     const handleUsernameClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
 
-        event.stopPropagation()
+        // event.stopPropagation()
 
         onClick(song.id)
 

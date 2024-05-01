@@ -4,6 +4,7 @@ import React from 'react'
 import SongPageContent from './components/SongPageContent'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
+import getUserProfileInfo from '@/actions/getUserProfileInfo'
 
 
 
@@ -24,12 +25,14 @@ const SongPage = async (props : SongPageProps) => {
 
     const song = await getSongBySongId(params.song_id)
 
+    const userProfileInfo = await getUserProfileInfo()
+
   return (
 
     <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
 
       <Header>
-        <div className="mt-20 flex">
+        <div className="mt-10 flex">
           <div className="flex md:flex-row items-center gap-x-5">
             <div className="relative rounded-md h-[300px] w-[300px]">
               <Image
@@ -53,7 +56,7 @@ const SongPage = async (props : SongPageProps) => {
       </Header>
 
 
-       <SongPageContent song={song} />
+       <SongPageContent song={song} userProfileInfo={userProfileInfo} />
         
     
     </div>
