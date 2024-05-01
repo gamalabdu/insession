@@ -1,4 +1,3 @@
-
 import { twMerge } from "tailwind-merge";
 import { FaUserAlt } from "react-icons/fa";
 import { HiHome } from "react-icons/hi";
@@ -12,22 +11,15 @@ import { MdOutlineTravelExplore, MdTableRows } from "react-icons/md";
 import Image from "next/image";
 import getUserProfileInfo from "@/actions/getUserProfileInfo";
 
-
-
-
-
-
 interface HeaderProps {
   children: React.ReactNode;
   className?: string;
 }
 
 const Header = async (props: HeaderProps) => {
-
   const { children, className } = props;
 
-  const userProfileInfo = await getUserProfileInfo()
-
+  // const userProfileInfo = await getUserProfileInfo()
 
   return (
     <div
@@ -42,11 +34,9 @@ const Header = async (props: HeaderProps) => {
       )}
     >
       <div className="w-full mb-4 flex items-center justify-between">
-
         <BackForward />
 
         <div className="flex md:hidden gap-x-2 items-center">
-
           <Link
             href="/dashboard"
             className="
@@ -63,7 +53,6 @@ const Header = async (props: HeaderProps) => {
           >
             <HiHome className="text-black" size={20} />
           </Link>
-
 
           <Link
             href="/explore"
@@ -82,7 +71,6 @@ const Header = async (props: HeaderProps) => {
             <MdOutlineTravelExplore className="text-black" size={20} />
           </Link>
 
-
           <Link
             href="/search"
             className="
@@ -99,7 +87,6 @@ const Header = async (props: HeaderProps) => {
           >
             <BiSearch className="text-black" size={20} />
           </Link>
-
 
           <Link
             href="/messages"
@@ -134,8 +121,6 @@ const Header = async (props: HeaderProps) => {
           >
             <MdTableRows className="text-black" size={20} />
           </Link>
-
-
         </div>
         <div className="flex justify-between items-center gap-x-4">
           <div className="flex gap-x-4 items-center">
@@ -145,16 +130,13 @@ const Header = async (props: HeaderProps) => {
               </Button>
             </form>
 
-
-
             <Link href="/account">
-
               {/* <Button asChild className="bg-white">
                 
                 <FaUserAlt />
               </Button> */}
 
-                <Button asChild className="bg-transparent">
+              {/* <Button asChild className="bg-transparent">
                     <div className="aspect-square h-[40px] relative rounded-full bg-gray-200">
                         <Image
                           src={userProfileInfo.avatar_url}
@@ -165,12 +147,8 @@ const Header = async (props: HeaderProps) => {
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                     </div>
-                </Button>
-              
+                </Button> */}
             </Link>
-
-
-
           </div>
         </div>
       </div>
