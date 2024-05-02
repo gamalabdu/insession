@@ -10,16 +10,18 @@ import { FiMessageSquare } from "react-icons/fi";
 import { MdOutlineTravelExplore, MdTableRows } from "react-icons/md";
 import Image from "next/image";
 import getUserProfileInfo from "@/actions/getUserProfileInfo";
+import UserProfileMenu from "./UserProfileMenu";
 
 interface HeaderProps {
-  children: React.ReactNode;
+  children: React.ReactNode; 
   className?: string;
 }
 
 const Header = async (props: HeaderProps) => {
+
   const { children, className } = props;
 
-  // const userProfileInfo = await getUserProfileInfo()
+  const userProfileInfo = await getUserProfileInfo()
 
   return (
     <div
@@ -130,13 +132,14 @@ const Header = async (props: HeaderProps) => {
               </Button>
             </form>
 
-            <Link href="/account">
+            {/* <Link href="/account"> */}
+
               {/* <Button asChild className="bg-white">
                 
                 <FaUserAlt />
               </Button> */}
 
-              {/* <Button asChild className="bg-transparent">
+                    {/* <Button asChild className="bg-transparent">
                     <div className="aspect-square h-[40px] relative rounded-full bg-gray-200">
                         <Image
                           src={userProfileInfo.avatar_url}
@@ -147,8 +150,13 @@ const Header = async (props: HeaderProps) => {
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                     </div>
-                </Button> */}
-            </Link>
+              </Button> */}
+
+            {/* </Link> */}
+
+
+            <UserProfileMenu userProfileInfo={userProfileInfo} /> 
+
           </div>
         </div>
       </div>
@@ -160,4 +168,4 @@ const Header = async (props: HeaderProps) => {
 
 export default Header;
 
-// server action for signing out
+

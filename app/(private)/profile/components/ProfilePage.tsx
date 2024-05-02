@@ -145,7 +145,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
         </div>
 
-        {/* <div className="flex border">
+        <div className="flex border">
 
           {
             testAlbums.map((album, index) => {
@@ -158,7 +158,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
           }
 
 
-        </div> */}
+        </div> 
 
         <PageContent songs={safeSongs} heroImage={userProfileInfo.avatar_url} />
 

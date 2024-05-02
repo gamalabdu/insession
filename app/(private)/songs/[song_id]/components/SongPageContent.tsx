@@ -114,7 +114,7 @@ const SongPageContent = (props: SongPageContentProps) => {
           setComments((prev) => [...prev, comment]);
         }
       );
-  }, [song.id]);
+  }, [song.id, comments]);
 
   return (
     <div
