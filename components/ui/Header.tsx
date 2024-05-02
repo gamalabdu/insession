@@ -8,7 +8,6 @@ import Link from "next/link";
 import { signOut } from "@/actions/signOut";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdOutlineTravelExplore, MdTableRows } from "react-icons/md";
-import Image from "next/image";
 import getUserProfileInfo from "@/actions/getUserProfileInfo";
 import UserProfileMenu from "./UserProfileMenu";
 

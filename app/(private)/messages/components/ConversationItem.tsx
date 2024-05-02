@@ -55,6 +55,7 @@ const ConversationItem = ({
         {/* overflow-hidden */}
         <div className="aspect-square h-[70px] relative rounded-full bg-gray-200">
           <Image
+            priority
             src={otherUser.avatar_url}
             alt="User profile"
             fill
