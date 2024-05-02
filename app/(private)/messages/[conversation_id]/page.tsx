@@ -41,15 +41,14 @@ const ConversationPage = async ({
                 src={otherUser?.avatar_url || "/images/userIcon.png"}
                 alt="User profile"
                 fill
-                objectFit="cover"
-                className="rounded-md"
+                className="rounded-md object-cover"
               />
               <div className="absolute bottom-0 right-0 translate-x-2/4 translate-y-1/4 rounded-md overflow-hidden h-[70px] w-[70px]">
                 <Image
                   src={currentUser!.avatar_url}
                   alt="User profile"
                   fill
-                  objectFit="cover"
+                  className="object-cover"
                 />
               </div>
             </div>

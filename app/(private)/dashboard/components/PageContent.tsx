@@ -39,6 +39,7 @@ const PageContent = (props : PageContentProps) => {
            <Image 
            height={500}
            width={1200}
+           priority
           className="object-cover h-full rounded-md" 
           src={heroImage} 
           alt='source-image' 

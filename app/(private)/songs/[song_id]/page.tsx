@@ -39,8 +39,7 @@ const SongPage = async (props : SongPageProps) => {
                 src={song.image_path || "/images/userIcon.png"}
                 alt="User profile"
                 fill
-                objectFit="cover"
-                className="rounded-md"
+                className="rounded-md object-cover"
               />
             </div>
             <div className="flex flex-col gap-y-2 mt-4 md:mt-0">

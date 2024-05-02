@@ -40,7 +40,7 @@ const JobItem = (props : JobItemProps) => {
 
       <Image
         priority
-        layout='fill'
+        fill
         src={userProfileInfo?.avatar_url || "/images/userIcon.png"}
         alt="media-item"
         className="object-cover"

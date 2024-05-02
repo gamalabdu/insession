@@ -22,16 +22,11 @@ const loading = () => {
       </div>
 
 
-     <div className='flex gap-3 mt-10'>
+     <div className='flex gap-3 mt-10 w-full'>
 
-      <div>
-        <Skeleton className="flex rounded-full w-[150px] h-[150px]" />
-      </div>
 
-        <div className="w-full h-full flex flex-col gap-2 align-middle justify-center">
-           <Skeleton className="h-5 w-3/5 rounded-lg" />
-           <Skeleton className="h-5 w-4/5 rounded-lg" />
-        </div>
+         <Skeleton className="flex rounded-full w-full h-[40px]" />
+
 
      </div>
 

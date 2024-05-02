@@ -190,7 +190,7 @@ const SideMessageModal = (props: MessageModalProps) => {
               <Image
                 src={selectedUser.avatar_url || "/default-avatar.png"} // Fallback to a default image if none is provided
                 alt="User Avatar"
-                layout="fill"
+                fill
                 className="object-cover" // Ensures the image covers the div completely
               />
             </div>
@@ -236,7 +236,7 @@ const SideMessageModal = (props: MessageModalProps) => {
                   <Image
                     src={resultUser.avatar_url || "/default-avatar.png"} // Fallback to a default image if none is provided
                     alt="User Avatar"
-                    layout="fill"
+                    fill
                     className="object-cover" // Ensures the image covers the div completely
                   />
                 </div>

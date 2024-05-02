@@ -44,7 +44,7 @@ const Library = ({ songs }: LibaryProps) => {
             />
           ))
         ) : (
-          <div> No songs uploaded. Click the plus icon to upload a song! </div>
+          <div className="p-5 text-neutral-500"> No songs uploaded. Click the plus icon to upload a song! </div>
         )}
       </div>
     </div>

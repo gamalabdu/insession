@@ -141,8 +141,7 @@ const SongPageContent = (props: SongPageContentProps) => {
               src={userProfileInfo.avatar_url}
               alt="User profile"
               fill
-              objectFit="cover"
-              className="rounded-full"
+              className="rounded-full object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
@@ -190,8 +189,7 @@ const SongPageContent = (props: SongPageContentProps) => {
                         src={comment.owner.avatar_url}
                         alt="User profile"
                         fill
-                        objectFit="cover"
-                        className="rounded-full"
+                        className="rounded-full object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>

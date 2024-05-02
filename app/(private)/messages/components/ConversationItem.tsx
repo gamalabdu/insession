@@ -57,9 +57,8 @@ const ConversationItem = ({
           <Image
             src={otherUser.avatar_url}
             alt="User profile"
-            layout="fill"
-            objectFit="cover"
-            className="rounded-full"
+            fill
+            className="rounded-full object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
