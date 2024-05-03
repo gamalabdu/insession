@@ -6,6 +6,7 @@ import Image from "next/image";
 import Button from "@/components/Button";
 import Header from "@/components/ui/Header";
 import usePostSessionModal from "@/hooks/usePostSessionModal";
+import drakePic from '../../../../public/images/liked.jpg'
 
 interface SessionsContentProps {
   allOtherJobs: Job[];
@@ -28,7 +29,7 @@ const SessionsContent = (props: SessionsContentProps) => {
               <Image
                 priority
                 fill
-                src="/../../../../public/images/liked.jpg"
+                src={drakePic}
                 alt="playlist"
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
