@@ -1,3 +1,4 @@
+"use client"
 import { twMerge } from "tailwind-merge";
 import { FaUserAlt } from "react-icons/fa";
 import { HiHome } from "react-icons/hi";
@@ -10,17 +11,20 @@ import { FiMessageSquare } from "react-icons/fi";
 import { MdOutlineTravelExplore, MdTableRows } from "react-icons/md";
 import getUserProfileInfo from "@/actions/getUserProfileInfo";
 import UserProfileMenu from "./UserProfileMenu";
+import { useUser } from "@/hooks/useUser";
+
+
 
 interface HeaderProps {
   children: React.ReactNode; 
   className?: string;
 }
 
-const Header = async (props: HeaderProps) => {
+const Header = (props: HeaderProps) => {
 
   const { children, className } = props;
 
-  const userProfileInfo = await getUserProfileInfo()
+  const { userDetails } = useUser()
 
   return (
     <div
@@ -154,7 +158,7 @@ const Header = async (props: HeaderProps) => {
             {/* </Link> */}
 
 
-            <UserProfileMenu userProfileInfo={userProfileInfo} /> 
+         { userDetails &&  <UserProfileMenu userProfileInfo={userDetails} /> }
 
           </div>
         </div>
