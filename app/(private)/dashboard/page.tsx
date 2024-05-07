@@ -9,6 +9,7 @@ import { Suspense } from "react";
 export const revalidate = 0;
 
 export default async function Dashboard() {
+  
   const songs = await getSongs();
 
   const userProfileInfo = await getUserProfileInfo();
@@ -61,6 +62,7 @@ export default async function Dashboard() {
       </div>
 
       <ProfileSetupModal userProfileInfo={userProfileInfo} />
+      
     </div>
   );
 }

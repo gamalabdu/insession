@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { BsFillSendFill } from "react-icons/bs";
 import { FaRegMessage } from "react-icons/fa6";
 import { GrSend } from "react-icons/gr";
+import CommentItem from "./CommentItem";
 
 interface SongPageContentProps {
   song: Song;
@@ -180,25 +181,10 @@ const SongPageContent = (props: SongPageContentProps) => {
                 const timeAgoString = timeAgo(comment.created_at);
 
                 return (
-                  <div
-                    key={idx}
-                    className="flex items-center align-middle gap-5 p-2 rounded-md bg-neutral-800"
-                  >
-                    <div className="aspect-square h-[40px] relative rounded-full bg-gray-200">
-                      <Image
-                        src={comment.owner.avatar_url}
-                        alt="User profile"
-                        fill
-                        className="rounded-full object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    </div>
-                    <div className="text-neutral-400">{comment.content}</div>
-                    <div className="text-sm text-neutral-600">
-                      {timeAgoString}
-                    </div>
-                  </div>
-                );
+
+                  <CommentItem key={idx} comment={comment} timeAgo={timeAgoString} />
+
+                )
               })}
             </div>
           )}

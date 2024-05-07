@@ -4,42 +4,22 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Header from "@/components/ui/Header";
 import PageContent from "../../dashboard/components/PageContent";
-import useGetSongsByUserId from "@/hooks/useGetSongsByUserId";
 import { FiMessageSquare } from "react-icons/fi";
-import useMessageModal from "@/hooks/useMessageModal";
-import { useUser } from "@/hooks/useUser";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import MessageModal from "@/components/MessageModal";
 
 
 
 interface ProfileContentProps {
   userProfileInfo: Profile;
+  songs : Song[]
 }
 
 const ProfilePageContent = (props: ProfileContentProps) => {
 
+  const { userProfileInfo, songs } = props;
 
-  const { userProfileInfo } = props;
-
-  const { user } = useUser();
-
-  const supabase = createClient()
-
-  const songs = useGetSongsByUserId(userProfileInfo?.id).songs;
-
-  const router = useRouter();
 
   const [ messageModalOpen, setMessageModalOpen ] = useState(false)
-
-  let safeSongs: Song[] = [];
-
-  if (songs) {
-    safeSongs = songs;
-  }
-
-  const messageModal = useMessageModal();
 
 
   const sendMessage = async () => {
@@ -80,6 +60,9 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
 
 
+  
+
+
 
   const displayClassName = `
   flex
@@ -117,6 +100,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
             </div>
             <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
               <span> Profile </span>
+              <span className="w-fit bg-neutral-700 text-neutral-200 p-2 rounded-lg opacity-90"> Producer </span>
               <h1 className="text-white text-4xl sm:text-5xl lg:text-7xl font-bold">
                 {userProfileInfo.username}
               </h1>
@@ -124,12 +108,14 @@ const ProfilePageContent = (props: ProfileContentProps) => {
                 {userProfileInfo.email}
               </p>
               <p className="hidden md:block font-semibold text-sm text-neutral-400">
-                Genres: {userProfileInfo.genres}
+                Genres: {userProfileInfo.genres.map((genre) => genre).join(" / ")}
               </p>
 
-              <button onClick={sendMessage}>
-                <FiMessageSquare />
+              <button onClick={sendMessage} className="border w-fit rounded-md p-2 hover:scale-[1.05] transition-all">
+                {/* <FiMessageSquare /> */}
+                Message
               </button>
+
             </div>
           </div>
         </div>
@@ -145,7 +131,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
         </div>
 
-        <div className="flex border">
+        {/* <div className="flex border">
 
           {
             testAlbums.map((album, index) => {
@@ -158,12 +144,15 @@ const ProfilePageContent = (props: ProfileContentProps) => {
           }
 
 
-        </div> 
+        </div>  */}
 
-        <PageContent songs={safeSongs} heroImage={userProfileInfo.avatar_url} />
+
+        <PageContent songs={songs} heroImage={userProfileInfo.avatar_url} />
 
 
         <MessageModal messageModalOpen={messageModalOpen} setMessageModalOpen={setMessageModalOpen} userProfileInfo={userProfileInfo}  />
+
+
 
 
       </div>

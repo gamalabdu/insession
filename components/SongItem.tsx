@@ -1,5 +1,4 @@
 "use client";
-import useLoadImage from "@/hooks/useLoadImage";
 import { Song } from "@/types";
 import Image from "next/image";
 import React from "react";
@@ -50,6 +49,7 @@ const SongItem = (props: SongItemProps) => {
         <p className="text-neutral-400 text-sm pb-4 w-full truncate">
           By {song.owner.username}
         </p>
+
       </div>
 
       <div className="absolute bottom-24 right-5">

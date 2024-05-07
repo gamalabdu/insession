@@ -2,6 +2,7 @@
 import React from 'react'
 import ProfilePageContent from './components/ProfilePage'
 import getUserProfileById from '@/actions/getUserProfileById'
+import getSongsByUserId from '@/actions/getSongsByUserId'
 
 
 interface userIdProps {
@@ -19,9 +20,11 @@ const ProfilePage = async (props: userIdProps) => {
 
     const userProfileInfo = await getUserProfileById( searchParams.id )
 
+    const songs = await getSongsByUserId(searchParams.id)
+
   return (
     
-    <ProfilePageContent userProfileInfo={ userProfileInfo } />
+    <ProfilePageContent userProfileInfo={ userProfileInfo } songs={songs} />
   )
 
 }
