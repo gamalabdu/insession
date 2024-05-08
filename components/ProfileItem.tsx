@@ -67,9 +67,11 @@ const ProfileItem = (props : ProfileItemProps) => {
                 {profile.username}
             </p>
 
+           { profile.genres != null && 
             <p className='text-neutral-400 text-sm pb-4 w-full truncate'>
-                HIP HOP / RNB
+                {profile.genres.map((genre) => genre).join(" / ")}
             </p>
+            }
 
 
             <LikeUserButton artistId={profile.id} />

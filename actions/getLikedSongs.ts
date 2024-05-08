@@ -11,10 +11,10 @@ const getLikedSongs = async (): Promise<Song[]> => {
     error: sessionError,
   } = await supabase.auth.getUser();
 
+
   const { data, error } = await supabase
     .from("liked_songs")
-    // .select("*, genres(name), owner:profiles!songs_user_id_fkey(username)")
-    .select('*')
+    .select('*, songs(*)')
     .eq("user_id", user?.id)
     .order("created_at", { ascending: false });
 

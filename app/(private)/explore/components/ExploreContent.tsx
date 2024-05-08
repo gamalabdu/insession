@@ -1,5 +1,4 @@
 "use client"
-import { Profile } from '@/types'
 import React from 'react'
 import ExploreItem from './ExploreItem'
 
@@ -11,6 +10,7 @@ interface ExploreContentProps {
 const ExploreContent = (props: ExploreContentProps) => {
 
     const { allUsers } = props
+
 
 
     if ( allUsers.length === 0) {

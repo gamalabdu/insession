@@ -14,6 +14,8 @@ const MediaItem = (props: MediaItemProps) => {
   const { song, onClick, isInLibrary } = props;
 
 
+
+
   const handleClick = () => {
 
     if (onClick) {
@@ -57,7 +59,7 @@ const MediaItem = (props: MediaItemProps) => {
           className="text-neutral-400 text-sm truncate hover:underline"
           href={`/profile?id=${song.user_id}`}
         >
-          {song.owner.username}
+          {/* {song.owner.username} */}
 
         </Link>
 
@@ -73,7 +75,7 @@ const MediaItem = (props: MediaItemProps) => {
 
           <span className="text-neutral-400">{song.duration}</span>
 
-          {song.genres.length > 0 && (
+          {song.genres != null && (
             <span className="text-neutral-400 truncate w-[80px]">
               {song.genres.map((genre) => genre.name).join(' / ')}
             </span> 

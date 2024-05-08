@@ -10,6 +10,7 @@ interface LikedContentProps {
 }
 
 const LikedContent = ({ songs }: LikedContentProps) => {
+  
   const onPlay = useOnPlay(songs);
 
   if (songs.length === 0) {
@@ -31,8 +32,8 @@ const LikedContent = ({ songs }: LikedContentProps) => {
 
   return (
     <div className="flex flex-col gap-y-2 w-full p-6">
-      {songs.map((song) => (
-        <div className="flex items-center gap-x-4 w-full" key={song.id}>
+      {songs.map((song, idx) => (
+        <div key={idx} className="flex items-center gap-x-4 w-full">
           <div className="flex-1">
             <MediaItem onClick={(id: string) => onPlay(id)} song={song} />
           </div>
