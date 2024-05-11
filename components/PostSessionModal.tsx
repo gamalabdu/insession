@@ -15,7 +15,15 @@ import SelectGenres from "./SelectGenres";
 import { Genre } from "@/types";
 
 
-const PostSessionModal = () => {
+interface PostSessionModalProps {
+  isPrivate?: boolean
+  userProfile?: Profile
+}
+
+
+const PostSessionModal = (props: PostSessionModalProps) => {
+
+  const { isPrivate, userProfile } = props
     
   const supabase = createClient();
 
@@ -92,6 +100,8 @@ const PostSessionModal = () => {
   };
 
 
+  // somewhere here we need to see if a user has already sent a session to a given user and not let them send another one
+
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
 
     try {
@@ -132,6 +142,8 @@ const PostSessionModal = () => {
           reference_link : values.reference_link,
           reference_files: uploadedFilesData,
           budget: values.budget,
+          job_type: isPrivate ? "private" : "public",
+          receiver_id: isPrivate ? userProfile?.id : null
         })
         .select('job_id')
 
@@ -160,6 +172,7 @@ const PostSessionModal = () => {
       // Success handling
       router.refresh();
       toast.success("Session Posted!");
+      setSelectedGenres([])
 
 
     } catch (error) {
@@ -221,7 +234,7 @@ const PostSessionModal = () => {
 
         <div>
           {filePreviews.map((preview, index) => (
-            <div className="flex flex-col items-center align-middle mb-1">
+            <div key={index} className="flex flex-col items-center align-middle mb-1">
               <div className="flex items-center align-middle gap-4">
                 <LuFileAudio />
                 <span>{preview.name}</span>

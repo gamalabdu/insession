@@ -4,11 +4,14 @@ import { useContext, useState } from "react";
 import ConversationItem from "./ConversationItem";
 import { ConversationsContext } from "@/providers/conversations";
 import { Skeleton, Spinner } from "@nextui-org/react";
+import ConversationsContent from "./ConversationsContent";
+import MessagesSessionsContent from "./MessagesSessionsContent";
 
 
 const MessagesPageContent = () => {
 
-  const { conversations, areLoading } = useContext(ConversationsContext);
+  const { conversations, areLoading } = useContext(ConversationsContext)
+
 
   const [ tab, setTab ] = useState<"messages" | "sessions">("messages")
 
@@ -45,17 +48,32 @@ const MessagesPageContent = () => {
 
       </div>
 
-     
 
-      {conversations.map((conversation, idx) => {
-        return (
-          <div key={idx} className="flex items-center gap-x-4 w-full">
-            <div className="flex-1 overflow-y-auto">
-              <ConversationItem {...conversation} />
-            </div>
-          </div>
-        )
-      })}
+
+      {
+
+
+             tab === 'messages' ?
+
+             <ConversationsContent conversations={conversations} />
+
+             :
+
+             <MessagesSessionsContent />
+
+      }
+
+
+
+  
+
+
+
+
+
+
+
+      
 
 
     </div>

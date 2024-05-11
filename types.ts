@@ -47,6 +47,8 @@ export interface Job {
   genres: Genre[];
   reference_link: string;
   reference_files: { name: string; url: string }[];
+  job_type: string
+  receiver_id: string
 }
 
 export interface Product {

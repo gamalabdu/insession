@@ -14,14 +14,14 @@ const Button = forwardRef<any, ButtonProps>(
       `
     w-full 
     rounded-full 
-    bg-green-500 
+    bg-orange-600 
     border 
     border-transparent 
     px-3 
     py-3 
     disabled:cursor-not-allowed 
     disabled:opacity-50
-    text-black
+    text-neutral-800
     font-bold
     hover:opacity-75
     transition`,

@@ -13,20 +13,16 @@ interface ProposalsProps {
     userProfileInfo : Profile
 }
 
-const Proposals = async (props : ProposalsProps) => {
+const Proposals = (props : ProposalsProps) => {
 
-    const { job, proposals, userProfileInfo } = props 
+    const { proposals } = props 
 
     const [ messageModalOpen, setMessageModalOpen ] = useState(false)
 
-    const [ bidder, setBidder ] = useState<Profile>()
 
-
-    const handleClick = (bidder: Profile ) => {
+    const handleClick = () => {
 
       setMessageModalOpen(true)
-
-      setBidder(bidder)
 
     }
 
@@ -44,9 +40,10 @@ const Proposals = async (props : ProposalsProps) => {
     >
 
        {
-        proposals?.map((proposal) => (
+        proposals?.map((proposal, idx) => (
             <div
             // onClick={handleClick}
+            key={idx}
             className="flex items-center gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md justify-between"
           >
 
@@ -87,9 +84,7 @@ const Proposals = async (props : ProposalsProps) => {
 
 
             <Button className='w-[100px]' 
-            onClick={() => handleClick(proposal
-              .owner
-            )}
+            onClick={() => handleClick()}
             > Reply </Button>
 
 

@@ -15,6 +15,9 @@ import { createClient } from "@/utils/supabase/client";
 import useDebounce from "@/hooks/useDebounce";
 import { FaX } from "react-icons/fa6";
 import useMessages from "@/hooks/useMessages";
+import Button from "@/components/Button";
+import usePostSessionModal from "@/hooks/usePostSessionModal";
+import { Job } from "@/types";
 
 interface MessagesPageProps {
   conversation: Conversation;
@@ -39,11 +42,14 @@ const defaultMessage: NewMessage = {
 };
 
 const MessageBoard = ({ conversation }: MessagesPageProps) => {
+
   const { conversation_id } = conversation;
 
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
 
   const { user } = useUser();
+
+  const postSessionModal = usePostSessionModal()
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,6 +60,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
 
   const [isOtherUserTyping, setIsOtherUserTyping] = useState<boolean>(false);
+
 
   const filePreviews = useMemo(() => {
     return newMessage.files.map((file) => ({
@@ -175,7 +182,9 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
   return (
     <div className="flex flex-col h-full w-full">
+
       <div className="flex flex-col flex-grow h-0 gap-4 p-6 overflow-auto rounded-md">
+
         {messages?.map((message, idx) => {
           return (
             <ChatBubble
@@ -187,11 +196,10 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
           );
         })}
 
+
         <div ref={messagesEndRef} />
         
       </div>
-
-      {/* Input Field */}
 
       {isOtherUserTyping && (
         <p className="w-full text-end p-2 text-neutral-500">
@@ -205,7 +213,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
       >
         <label
           htmlFor="file-input"
-          className="cursor-pointer bg-orange-700 hover:bg-orange-900 text-white p-2 rounded flex items-center justify-center"
+          className="cursor-pointer bg-orange-600 hover:bg-orange-700 text-white p-2 rounded flex items-center justify-center"
         >
           <FiFilePlus size={20} />
         </label>
@@ -346,7 +354,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
         <button
           type="submit"
-          className="flex items-center justify-center bg-orange-700 hover:bg-orange-900 text-white p-2 rounded"
+          className="flex items-center justify-center bg-orange-600 hover:bg-orange-700 text-white p-2 rounded"
           disabled={isLoading}
         >
           {isLoading ? (
@@ -355,7 +363,17 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
             <GrSend size={20} />
           )}
         </button>
+
+        <Button 
+          onClick={postSessionModal.onOpen}
+          className="max-w-[150px] h-[38px] hover:bg-orange-700 text-white flex align-middle justify-center items-center">
+          Send Session
+        </Button>
+
+
       </form>
+
+
     </div>
   );
 };

@@ -1,15 +1,21 @@
 "use client";
+import JobItem from "@/components/JobItem";
 import { useUser } from "@/hooks/useUser";
+import { Job } from "@/types";
+import { createClient } from "@/utils/supabase/client";
 import { Spinner } from "@nextui-org/react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
+import { isPromise } from "util/types";
 
 interface ChatBubbleProps {
   message: MessageWithFiles;
   otherUser?: Profile;
   isLoading: boolean;
+  session?: Job
 }
 
 type GroupedFiles = {
@@ -17,7 +23,9 @@ type GroupedFiles = {
 };
 
 export const ChatBubble = (props: ChatBubbleProps) => {
-  const { message, otherUser, isLoading } = props;
+
+
+  const { message, otherUser, isLoading, session } = props;
 
   const { user, userDetails, isLoading: loading } = useUser();
 
@@ -26,6 +34,44 @@ export const ChatBubble = (props: ChatBubbleProps) => {
   if (loading.profile) {
     return <></>;
   }
+
+
+
+
+  const supabase = createClient()
+
+  const [ sessions, setSessions ] = useState<Job[]>([])
+
+  const [ sessionsIsLoading, setSessionsIsLoading ] = useState(false)
+
+
+  useEffect(() => {
+
+    setSessionsIsLoading(true)
+
+    const fetchPrivateSessions = async () => {
+      
+          const { data: privateSessions, error: privateSessionsError } = await supabase
+          .from("jobs")
+          .select("* , genres(name)")
+          .eq("receiver_id", user?.id)
+          .eq("job_type", "private")
+          .returns<Job[]>()
+
+          if (privateSessionsError) {
+            toast.error(privateSessionsError.message)
+          }
+          setSessionsIsLoading(false)
+          setSessions(privateSessions as Job[])
+
+  }
+
+  fetchPrivateSessions()
+    
+  }, [])
+
+
+
 
   const avatarUrl = isSignedIn
     ? userDetails?.avatar_url
@@ -79,8 +125,9 @@ export const ChatBubble = (props: ChatBubbleProps) => {
       <div
         className={`${
           !isSignedIn
-            ? "flex flex-col bg-neutral-700 rounded-md gap-5 w-1/2 max-w-fit p-2"
-            : "flex flex-col bg-neutral-600 rounded-md gap-5 w-1/2 max-w-fit p-2"
+                                                               //w-1/2
+            ? "flex flex-col bg-neutral-700 rounded-md gap-5         max-w-fit p-2"
+            : "flex flex-col bg-neutral-600 rounded-md gap-5         max-w-fit p-2"
         }`}
       >
         {images.length > 0 && (
@@ -146,8 +193,14 @@ export const ChatBubble = (props: ChatBubbleProps) => {
           message.content
         )}
 
+        {
+          sessions.length > 0 && <JobItem job={ sessions[0] } isPrivate={true} />
+        }
+
 
       </div>
+
+
     </div>
   );
 };

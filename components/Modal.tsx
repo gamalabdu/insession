@@ -25,7 +25,7 @@ const Modal = (props: ModalProps) => {
         />
         <Dialog.Content
           onInteractOutside={(e) => {
-            e.preventDefault();
+            e.preventDefault()
           }}
           className="
         fixed 
@@ -57,7 +57,9 @@ const Modal = (props: ModalProps) => {
           </Dialog.Description>
           <div>{children}</div>
           {!disableClose && (
-            <Dialog.Close asChild>
+            <Dialog.Close asChild
+               onClick={(e) => e.stopPropagation()}
+            >
               <button
                 className="
                 text-neutral-400 

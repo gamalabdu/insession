@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Bid, Job } from "@/types";
 import { LuFileAudio } from "react-icons/lu";
 import qs from "query-string";
@@ -28,7 +28,7 @@ const SessionPageContent = (props: SessionPageContentProps) => {
 
   const [ bidModalOpen, setBidModalOpen ] = useState(false)
 
-  const { user } = useUser()
+  const { user, isLoading } = useUser()
 
   const extractVideoId = (url: string) => {
     const regex =
@@ -40,6 +40,15 @@ const SessionPageContent = (props: SessionPageContentProps) => {
   const videoId = job.reference_link ? extractVideoId(job.reference_link) : "";
 
   const isCurrentUser = job.user_id === user?.id
+
+
+  useEffect(() => {
+    if (!isLoading) {  // Ensure the loading is complete
+      if (job.receiver_id !== user?.id) {
+        router.push('/sessions');
+      }
+    }
+  }, [isLoading, user, job.receiver_id, router]);
 
 
   const handleClick = () => {
@@ -85,7 +94,7 @@ const SessionPageContent = (props: SessionPageContentProps) => {
                 {job.job_title}
               </h1>
 
-              { !isCurrentUser && (
+              { !isCurrentUser && job.job_type === "public" && (
                 <Button onClick={() => setBidModalOpen(true)}>
                   Bid for Session
                 </Button>

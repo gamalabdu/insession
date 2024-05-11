@@ -3,7 +3,9 @@ import SearchInput from "@/components/SearchInput";
 import React from "react";
 import MessagesPageContent from "./components/MessagesPageContent";
 
-export default function Page() {
+
+const Page = () => {
+
 
   return (
     <div
@@ -31,3 +33,5 @@ export default function Page() {
     </div>
   );
 }
+
+export default Page

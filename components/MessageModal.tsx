@@ -24,8 +24,6 @@ const MessageModal = (props: MessageModalProps) => {
 
   const supabase = createClient();
 
-  const router = useRouter();
-
   const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useUser();
@@ -42,13 +40,6 @@ const MessageModal = (props: MessageModalProps) => {
       setMessageModalOpen(false);
     }
   };
-
-
-
-
-
-
-
 
 
 

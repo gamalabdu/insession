@@ -6,6 +6,8 @@ import Header from "@/components/ui/Header";
 import PageContent from "../../dashboard/components/PageContent";
 import { FiMessageSquare } from "react-icons/fi";
 import MessageModal from "@/components/MessageModal";
+import PostSessionModal from "@/components/PostSessionModal";
+import usePostSessionModal from "@/hooks/usePostSessionModal";
 
 
 
@@ -21,12 +23,18 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
   const [ messageModalOpen, setMessageModalOpen ] = useState(false)
 
+  const postSessionModal = usePostSessionModal()
 
-  const sendMessage = async () => {
+
+  const sendMessage = () => {
 
     setMessageModalOpen(true)
 
-  };
+  }
+
+  const sendPrivateSession = () => {
+      postSessionModal.onOpen()
+  }
 
 
   const testAlbums = [
@@ -111,10 +119,22 @@ const ProfilePageContent = (props: ProfileContentProps) => {
                 Genres: {userProfileInfo.genres.map((genre) => genre).join(" / ")}
               </p>
 
+              <div className="flex gap-5">
+
               <button onClick={sendMessage} className="border w-fit rounded-md p-2 hover:scale-[1.05] transition-all">
                 {/* <FiMessageSquare /> */}
                 Message
               </button>
+
+
+              <button onClick={sendPrivateSession} className="border w-fit rounded-md p-2 hover:scale-[1.05] transition-all">
+                {/* <FiMessageSquare /> */}
+                Send Session Bid
+              </button>
+
+              </div>
+
+              
 
             </div>
           </div>
@@ -152,7 +172,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
 
         <MessageModal messageModalOpen={messageModalOpen} setMessageModalOpen={setMessageModalOpen} userProfileInfo={userProfileInfo}  />
 
-
+        <PostSessionModal isPrivate={true} userProfile={userProfileInfo} />
 
 
       </div>

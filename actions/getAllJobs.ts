@@ -15,6 +15,7 @@ const getAllJobs = async (): Promise<Job[]> => {
     .from("jobs")
     .select("* , genres(name)")
     .not("user_id", "eq", user?.id)
+    .neq("job_type", "private")
     .order("created_at", { ascending: false });
 
 

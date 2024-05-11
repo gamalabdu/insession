@@ -59,7 +59,7 @@ const MediaItem = (props: MediaItemProps) => {
           className="text-neutral-400 text-sm truncate hover:underline"
           href={`/profile?id=${song.user_id}`}
         >
-          {/* {song.owner.username} */}
+          {song.owner.username}
 
         </Link>
 
