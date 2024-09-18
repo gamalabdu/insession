@@ -5,25 +5,28 @@ import Image from "next/image";
 import Header from "@/components/ui/Header";
 import PageContent from "../../dashboard/components/PageContent";
 import { FiMessageSquare } from "react-icons/fi";
-import MessageModal from "@/components/MessageModal";
-import PostSessionModal from "@/components/PostSessionModal";
-import usePostSessionModal from "@/hooks/usePostSessionModal";
+import MessageModal from "@/components/modals/MessageModal";
+import PostSessionModal from "@/components/modals/PostSessionModal";
+
+
 
 
 
 interface ProfileContentProps {
   userProfileInfo: Profile;
   songs : Song[]
+  allUsers: Profile[]
 }
 
 const ProfilePageContent = (props: ProfileContentProps) => {
 
-  const { userProfileInfo, songs } = props;
+  const { userProfileInfo, songs, allUsers } = props;
 
 
   const [ messageModalOpen, setMessageModalOpen ] = useState(false)
 
-  const postSessionModal = usePostSessionModal()
+  const [ postModalOpen, setPostModalOpen ] = useState(false)
+
 
 
   const sendMessage = () => {
@@ -33,7 +36,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
   }
 
   const sendPrivateSession = () => {
-      postSessionModal.onOpen()
+      setPostModalOpen(true)
   }
 
 
@@ -113,24 +116,27 @@ const ProfilePageContent = (props: ProfileContentProps) => {
                 {userProfileInfo.username}
               </h1>
               <p className="hidden md:block font-semibold text-sm">
-                {userProfileInfo.email}
+                {userProfileInfo.location}
               </p>
+
+              { userProfileInfo.genres &&
               <p className="hidden md:block font-semibold text-sm text-neutral-400">
                 Genres: {userProfileInfo.genres.map((genre) => genre).join(" / ")}
               </p>
+             }
 
               <div className="flex gap-5">
 
-              <button onClick={sendMessage} className="border w-fit rounded-md p-2 hover:scale-[1.05] transition-all">
-                {/* <FiMessageSquare /> */}
-                Message
-              </button>
+                <button onClick={sendMessage} className="border w-fit rounded-md p-2 hover:scale-[1.05] transition-all">
+                  {/* <FiMessageSquare /> */}
+                  Message
+                </button>
 
 
-              <button onClick={sendPrivateSession} className="border w-fit rounded-md p-2 hover:scale-[1.05] transition-all">
-                {/* <FiMessageSquare /> */}
-                Send Session Bid
-              </button>
+                <button onClick={sendPrivateSession} className="border w-fit rounded-md p-2 hover:scale-[1.05] transition-all">
+                  {/* <FiMessageSquare /> */}
+                  Send Session
+                </button>
 
               </div>
 
@@ -142,14 +148,7 @@ const ProfilePageContent = (props: ProfileContentProps) => {
       </Header>
 
       <div className="mt-2 mb-7 px-6">
-
-        <div className="flex justify-between items-center">
-
-          <h1 className="text-white text-2xl font-semibold">
-            {userProfileInfo.username}'s Shop
-          </h1>
-
-        </div>
+   
 
         {/* <div className="flex border">
 
@@ -167,12 +166,12 @@ const ProfilePageContent = (props: ProfileContentProps) => {
         </div>  */}
 
 
-        <PageContent songs={songs} heroImage={userProfileInfo.avatar_url} />
+        <PageContent songs={songs} userProfileInfo={userProfileInfo} allUsers={allUsers} />
 
 
         <MessageModal messageModalOpen={messageModalOpen} setMessageModalOpen={setMessageModalOpen} userProfileInfo={userProfileInfo}  />
 
-        <PostSessionModal isPrivate={true} userProfile={userProfileInfo} />
+        <PostSessionModal postModalOpen={postModalOpen} setPostModalOpen={setPostModalOpen} isPrivate={true} userProfile={userProfileInfo} />
 
 
       </div>

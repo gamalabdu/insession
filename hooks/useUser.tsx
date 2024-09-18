@@ -70,6 +70,7 @@ export const MyUserContextProvider = ({
 };
 
 export const useUser = () => {
+  
   const context = useContext(UserContext);
 
   if (context === undefined) {

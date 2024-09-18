@@ -1,10 +1,9 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import Modal from './Modal'
+
 import useUploadModal from '@/hooks/useUploadModal'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
-import Input from './Input'
-import Button from './Button'
+
 import toast from 'react-hot-toast'
 import { useUser } from '@/hooks/useUser'
 import uniqid from 'uniqid'
@@ -15,6 +14,9 @@ import { LuFileAudio } from 'react-icons/lu'
 import useBidModal from '@/hooks/useBidModal'
 import { twMerge } from 'tailwind-merge'
 import { Job } from '@/types'
+import Modal from '../Modal'
+import Button from '../Button'
+import Input from '../Input'
 
 interface BidModalProps {
   bidModalOpen: boolean

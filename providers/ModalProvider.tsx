@@ -1,10 +1,8 @@
 "use client";
 
-import AuthModal from "@/components/AuthModal";
-import BidModal from "@/components/BidModal";
-import MessageModal from "@/components/MessageModal";
-import PostSessionModal from "@/components/PostSessionModal";
-import UploadModal from "@/components/UploadModal";
+
+import AuthModal from "@/components/modals/AuthModal";
+import UploadModal from "@/components/modals/UploadModal";
 import { useEffect, useState } from "react";
 
 const ModalProvider = () => {
@@ -23,8 +21,8 @@ const ModalProvider = () => {
     <>
       <AuthModal />
       <UploadModal />
-      <PostSessionModal />
-      <BidModal />
+      {/* <PostSessionModal /> */}
+      {/* <BidModal /> */}
     </>
   );
 };

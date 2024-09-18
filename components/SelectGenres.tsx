@@ -217,7 +217,7 @@ useEffect(() => {
     return (
         <div className="flex flex-col w-full">
             <DropdownMenu.Root onOpenChange={setIsOpen}>
-                <DropdownMenu.Trigger className="bg-neutral-800 rounded-md p-2 cursor-pointer focus:outline-none flex align-middle justify-between items-center">
+                <DropdownMenu.Trigger className="bg-neutral-800 text-neutral-400 text-sm rounded-md p-2 cursor-pointer focus:outline-none flex align-middle justify-between items-center">
                     <div>
                         {   selectedGenres.length > 0 ? 
 
@@ -239,7 +239,7 @@ useEffect(() => {
                     <IoIosArrowDown className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content 
-                    className="rounded-md shadow-lg bg-neutral-800 p-1 max-h-60 w-[400px] overflow-auto border"
+                    className="rounded-md text-sm text-neutral-400 bg-neutral-800 p-1 max-h-60 w-[400px] overflow-auto border"
                     id="dropdown-content"
                 >
                     {loading ? (
@@ -253,7 +253,7 @@ useEffect(() => {
                                         id={`genre-${genre.id}`}
                                         checked={selectedGenres.some(g => g.name === genre.name)}
                                         onChange={() => toggleGenreSelection(genre)}
-                                        className="appearance-none mr-2 w-4 h-4 border-2 rounded-sm bg-transparent checked:bg-neutral-500"
+                                        className=" border-neutral-400 appearance-none mr-2 w-4 h-4 border-2 rounded-sm bg-transparent checked:bg-neutral-500"
                                     />
                                     <label htmlFor={`genre-${genre.name}`} className="flex-1 cursor-pointer">{genre.name}</label>
                                 </div>

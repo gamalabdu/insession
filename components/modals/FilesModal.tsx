@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Modal from "./Modal";
+
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { createClient } from "@/utils/supabase/client";
@@ -8,6 +8,7 @@ import Image from "next/image";
 import { LuFileAudio } from "react-icons/lu";
 import { PiFileZip } from "react-icons/pi";
 import Link from "next/link";
+import Modal from "../Modal";
 
 interface FilesModalProps {
   filesModalOpen: boolean;

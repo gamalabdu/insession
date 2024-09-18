@@ -1,6 +1,7 @@
 "use client";
+import FilesModal from "@/components/modals/FilesModal";
 import React, { useState } from "react";
-import FilesModal from "@/components/FilesModal";
+
 
 interface ClientFileModalHandlerProps {
     conversation_id: string

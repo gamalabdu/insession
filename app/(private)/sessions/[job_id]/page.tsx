@@ -4,6 +4,8 @@ import getJobByJobId from '@/actions/getJobByJobId';
 import getUserProfileById from '@/actions/getUserProfileById';
 import { Bid } from '@/types';
 import { createClient } from '@/utils/supabase/server';
+import toast from 'react-hot-toast';
+import DeleteSessionModal from './components/DeleteSessionModal';
 
 
 interface SessionPageProps {
@@ -22,13 +24,15 @@ const SessionPage = async (props: SessionPageProps ) => {
     const userProfileInfo = await getUserProfileById(job.user_id)
 
     const supabase = createClient()
-
+    
     const { data: ProposalsData, error: ProposalsError } = await supabase
     .from('bids')
     .select('*, owner:profiles!bids_user_id_fkey(*)')
     .eq('id', job.job_id )
     .returns<Bid[]>()
     .order("created_at", { ascending: false });
+
+
 
 
 

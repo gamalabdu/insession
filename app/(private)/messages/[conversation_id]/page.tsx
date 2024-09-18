@@ -6,31 +6,35 @@ import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
 import ClientModalHandler from "./components/ClientFileModalHandler";
 
+
 interface ConversationPageProps {
   params: {
     conversation_id?: string;
   };
 }
 
-const ConversationPage = async ({
-  params: { conversation_id },
-}: ConversationPageProps) => {
+const ConversationPage = async ( { params: { conversation_id } } : ConversationPageProps ) => {
+
+
   if (!conversation_id) {
     return notFound();
   }
-  const {
-    results: [conversation],
-    error,
-  } = await getConversation(conversation_id);
+
+
+  const { results: [conversation], error } = await getConversation(conversation_id);
+  
   if (error || !conversation) {
     throw new Error(error || "Not found");
   }
+
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
+  const { data: { user } } = await supabase.auth.getUser();
+
   const currentUser = conversation.users.find((item) => item.id === user?.id);
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
+
+
   return (
     <div className="flex flex-col bg-neutral-900 overflow-hidden rounded-lg h-full w-full">
       <Header>
@@ -66,7 +70,12 @@ const ConversationPage = async ({
         </div>
       </Header>
 
-      <MessageBoard conversation={conversation} />
+      {/* Render MessageBoard only if otherUser is defined */}
+      {otherUser && (
+        <MessageBoard conversation={conversation} userProfile={otherUser} />
+      )}
+ 
+
     </div>
   );
 };

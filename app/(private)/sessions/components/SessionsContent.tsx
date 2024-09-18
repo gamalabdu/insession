@@ -1,12 +1,14 @@
 "use client";
 import JobItem from "@/components/JobItem";
 import { Job } from "@/types";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/Button";
 import Header from "@/components/ui/Header";
 import usePostSessionModal from "@/hooks/usePostSessionModal";
 import drakePic from '../../../../public/images/liked.jpg'
+import PostSessionModal from "@/components/modals/PostSessionModal";
+
 
 interface SessionsContentProps {
   allOtherJobs: Job[];
@@ -17,7 +19,7 @@ const SessionsContent = (props: SessionsContentProps) => {
   
   const { allOtherJobs, allUserJobs } = props;
 
-  const postSessionModal = usePostSessionModal()
+  const [ postModalOpen, setPostModalOpen ] = useState(false)
 
 
   return (
@@ -45,7 +47,7 @@ const SessionsContent = (props: SessionsContentProps) => {
                 These are potential sessions waiting for you!
               </p>
 
-              <Button onClick={postSessionModal.onOpen}>Post a Session</Button>
+              <Button onClick={() => setPostModalOpen(true)}>Post a Session</Button>
               
             </div>
           </div>
@@ -96,6 +98,9 @@ const SessionsContent = (props: SessionsContentProps) => {
           ))
         )}
       </div>
+
+      <PostSessionModal postModalOpen={postModalOpen} setPostModalOpen={setPostModalOpen} isPrivate={true} />
+      
     </div>
   );
 };

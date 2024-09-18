@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import Modal from "./Modal";
+
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import Input from "./Input";
-import Button from "./Button";
+
 import toast from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { v4 as uuidv4 } from 'uuid'; 
+import Input from "../Input";
+import Button from "../Button";
+import Modal from "../Modal";
 
 
 interface MessageModalProps {

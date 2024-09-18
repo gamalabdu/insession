@@ -5,7 +5,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import Button from './Button'
-import MessageModal from './MessageModal'
+import MessageModal from './modals/MessageModal'
+import { useUser } from '@/hooks/useUser'
 
 
 interface JobItemProps {
@@ -21,6 +22,8 @@ const JobItem = (props : JobItemProps) => {
     const { userProfileInfo } = useGetUserProfileInfo(job.user_id)
 
     const [ messageModalOpen, setMessageModalOpen ] = useState(false)
+
+    const { user } = useUser()
 
     const router = useRouter()
 
@@ -94,8 +97,9 @@ const JobItem = (props : JobItemProps) => {
 
   <div className="flex gap-5 w-fit">
   {/* xl:w-[150px] */}
-    {isPrivate && <Button onClick={(e) => replyMessage(e)} className='w-full'>Reply</Button>}
-    {isPrivate && <Button className='w-full'>Accept</Button>}
+        { (isPrivate && user?.id != userProfileInfo?.id) &&  <Button onClick={(e) => replyMessage(e)} className='w-full'>Reply</Button>}
+        { (isPrivate && user?.id != userProfileInfo?.id) && <Button className='w-full'>Accept</Button>}
+        { (isPrivate && user?.id != userProfileInfo?.id) && <Button className='w-full'>Decline</Button>}
   </div>
 
 

@@ -1,6 +1,7 @@
 "use client"
 import Button from '@/components/Button'
-import MessageModal from '@/components/MessageModal'
+import MessageModal from '@/components/modals/MessageModal'
+
 import { Bid, Job } from '@/types'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -83,9 +84,9 @@ const Proposals = (props : ProposalsProps) => {
             </div>
 
 
-            <Button className='w-[100px]' 
-            onClick={() => handleClick()}
-            > Reply </Button>
+                <Button className='w-[100px]' onClick={ () => handleClick() }> 
+                  Reply 
+                </Button>
 
 
              <MessageModal messageModalOpen={messageModalOpen} setMessageModalOpen={setMessageModalOpen} userProfileInfo={proposal.owner} />

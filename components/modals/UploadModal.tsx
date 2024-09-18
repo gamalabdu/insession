@@ -1,23 +1,32 @@
 "use client";
 import { ChangeEvent, useEffect, useState, useTransition } from "react";
-import Modal from "./Modal";
+
 import useUploadModal from "@/hooks/useUploadModal";
 import { FieldValues, useForm } from "react-hook-form";
-import Input from "./Input";
-import Button from "./Button";
+
+
 import toast from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
 import Image from "next/image";
 import { LuFileAudio } from "react-icons/lu";
-import SelectGenres from "./SelectGenres";
+
 import { Genre } from "@/types";
 import { uploadSong } from "@/actions/songs";
 import { getAudioDuration } from "@/utils/songs";
+import Input from "../Input";
+import SelectGenres from "../SelectGenres";
+import Button from "../Button";
+import Modal from "../Modal";
 
 const UploadModal = () => {
+
+
   const uploadModal = useUploadModal();
+
   const { user } = useUser();
+
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+
   const [filePreview, setFilePreview] = useState<{
     name: string;
     url: string;
@@ -28,7 +37,8 @@ const UploadModal = () => {
   const [durationLoading, setDurationLoading] = useState(false);
   const [duration, setDuration] = useState<string | null>(null);
 
-  const { register, reset, watch } = useForm<FieldValues>({
+
+  const { register, reset, watch, handleSubmit  } = useForm<FieldValues>({
     defaultValues: {
       title: "",
       song: null,
@@ -36,10 +46,14 @@ const UploadModal = () => {
       bpm: "",
       key: "",
       genre: selectedGenres,
+      type: ""
     },
   });
 
   const songWatch = watch("song");
+
+  const typeWatch = watch("type")
+
 
   useEffect(() => {
     if (songWatch && songWatch.length > 0) {
@@ -106,6 +120,7 @@ const UploadModal = () => {
       onChange={onChange}
     >
       <form className="flex flex-col gap-y-4" action={onSubmit}>
+
         <Input
           id="title"
           disabled={isPending}
@@ -188,21 +203,53 @@ const UploadModal = () => {
             onChange={handleFileChange}
           />
         </div>
+
         <input
           type="hidden"
           name="genres"
           value={JSON.stringify(selectedGenres)}
         />
+
         <input
           type="hidden"
           value={duration || ""}
           name="duration"
           id="duration"
         />
+
+      <div className="flex flex-col gap-4 p-2">
+        <span className="text-base text-neutral-200">Do you want to add this to your Portfolio or Shop?</span>
+        <div className="flex gap-4">
+          <label className={`cursor-pointer border text-white rounded-md p-2 ${watch('type') === 'sell' ? 'bg-orange-600 border-none' : ''}`}>
+            Sell
+            <input
+              type="radio"
+              value="sell"
+              required
+              className="sr-only"
+              {...register('type', { required: true })}
+            />
+          </label>
+          <label className={`cursor-pointer border text-white rounded-md p-2 ${watch('type') === 'profile' ? 'bg-orange-600 border-none' : ''}`}>
+            Profile
+            <input
+              type="radio"
+              value="profile"
+              required
+              className="sr-only"
+              {...register('type', { required: true })}
+            />
+          </label>
+        </div>
+
+      </div>
+
         <Button disabled={isPending || durationLoading} type="submit">
           Create
         </Button>
+
       </form>
+
     </Modal>
   );
 };

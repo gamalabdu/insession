@@ -193,9 +193,11 @@ export const ChatBubble = (props: ChatBubbleProps) => {
           message.content
         )}
 
-        {
-          sessions.length > 0 && <JobItem job={ sessions[0] } isPrivate={true} />
-        }
+        {/* {
+          sessions.length > 0 && sessions.map((session, idx) => (
+            <JobItem job={ session } isPrivate={true} />
+          ))
+        } */}
 
 
       </div>

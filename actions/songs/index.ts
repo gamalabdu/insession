@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import uniqid from "uniqid";
 
 export async function uploadSong(formData: FormData) {
+
   const songFile = formData.get("song") as File;
   const imageFile = formData.get("image") as File;
 
@@ -19,6 +20,7 @@ export async function uploadSong(formData: FormData) {
   const key = formData.get("key")?.toString();
   const title = formData.get("title")?.toString();
   const duration = formData.get("duration")?.toString();
+  const type = formData.get("type")?.toString()
 
   const supabase = createClient();
 
@@ -74,6 +76,7 @@ export async function uploadSong(formData: FormData) {
       duration,
       bpm,
       key,
+      type
     })
     .select("id")
     .single();

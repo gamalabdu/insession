@@ -1,9 +1,10 @@
 "use client";
-import Modal from "./Modal";
+
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import useAuthModal from "@/hooks/useAuthModal";
 import { createClient } from "@/utils/supabase/client";
+import Modal from "../Modal";
 
 
 const AuthModal = () => {

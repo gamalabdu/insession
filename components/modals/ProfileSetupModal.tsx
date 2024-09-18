@@ -1,14 +1,17 @@
 "use client";
 import { useState } from "react";
-import Modal from "./Modal";
+
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import uniqid from "uniqid";
-import Input from "./Input";
-import Button from "./Button";
+
 import { createClient } from "@/utils/supabase/client";
-import SelectGenres from "./SelectGenres";
+
 import { Genre } from "@/types";
+import Modal from "../Modal";
+import Input from "../Input";
+import SelectGenres from "../SelectGenres";
+import Button from "../Button";
 
 const ProfileSetupModal = ({
   userProfileInfo,

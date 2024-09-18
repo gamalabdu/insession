@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import { IoIosMail } from "react-icons/io";
 import { FaX } from "react-icons/fa6";
-import DeleteConversationModal from "./DeleteConversationModal";
+import DeleteConversationModal from "../../../../components/modals/DeleteConversationModal";
 import Link from "next/link";
 import { ConversationsContext } from "@/providers/conversations";
 

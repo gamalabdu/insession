@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Modal from "./Modal";
+
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import Input from "./Input";
-import Button from "./Button";
+
 import toast from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { v4 as uuidv4 } from "uuid";
-import SearchInput from "./SearchInput";
+
 import Image from "next/image";
 import { FaX } from "react-icons/fa6";
+import Modal from "../Modal";
+import Input from "../Input";
+import Button from "../Button";
 
 interface MessageModalProps {
   sideMessageModalOpen: boolean;

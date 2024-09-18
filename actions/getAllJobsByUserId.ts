@@ -15,6 +15,7 @@ const getJobsByUserId = async (): Promise<Job[]> => {
     .from("jobs")
     .select("*, genres(name)")
     .eq("user_id", user?.id)
+    .eq("job_type", "public")
     .order("created_at", { ascending: false });
 
   if (error) {

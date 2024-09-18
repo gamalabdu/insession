@@ -18,9 +18,11 @@ import useMessages from "@/hooks/useMessages";
 import Button from "@/components/Button";
 import usePostSessionModal from "@/hooks/usePostSessionModal";
 import { Job } from "@/types";
+import PostSessionModal from "@/components/modals/PostSessionModal";
 
 interface MessagesPageProps {
   conversation: Conversation;
+  userProfile: Profile
 }
 
 interface PresenceInfo {
@@ -41,21 +43,21 @@ const defaultMessage: NewMessage = {
   content: "",
 };
 
-const MessageBoard = ({ conversation }: MessagesPageProps) => {
+const MessageBoard = (props:  MessagesPageProps) => {
 
-  const { conversation_id } = conversation;
+  const { conversation, userProfile } = props
 
   const [newMessage, setNewMessage] = useState<NewMessage>(defaultMessage);
 
   const { user } = useUser();
 
-  const postSessionModal = usePostSessionModal()
-
   const [isLoading, setIsLoading] = useState(false);
+
+  const [postSessionModal, setPostSessionModal] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages } = useMessages(conversation_id);
+  const { messages } = useMessages(conversation.conversation_id);
 
   const otherUser = conversation.users.find((item) => item.id !== user?.id);
 
@@ -78,7 +80,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
 
     const supabase = createClient();
 
-    const channel = supabase.channel(`presence-${conversation_id}`, {
+    const channel = supabase.channel(`presence-${conversation.conversation_id}`, {
       config: {
         presence: { key: user?.id },
       },
@@ -90,7 +92,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
       const { data: messageData, error: messageError } = await supabase
         .from("messages")
         .insert({
-          conversation_id: conversation_id,
+          conversation_id: conversation.conversation_id,
           sender_id: user?.id,
           content: newMessage.content,
           seen: false,
@@ -117,7 +119,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
             url: returnUrl.publicUrl,
             type: file.type,
             file_name: file.name,
-            conversation_id: conversation_id,
+            conversation_id: conversation.conversation_id,
           });
         })
       );
@@ -140,7 +142,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
   };
 
   useEffect(() => {
-    const channel = createClient().channel(`presence-${conversation_id}`, {
+    const channel = createClient().channel(`presence-${conversation.conversation_id}`, {
       config: {
         presence: { key: user?.id },
       },
@@ -174,7 +176,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
       channel.unsubscribe();
       channel.untrack().then(() => setIsOtherUserTyping(false));
     };
-  }, [user?.id, conversation_id]);
+  }, [user?.id, conversation.conversation_id]);
 
   useDebounce(() => {
     setIsOtherUserTyping(false);
@@ -193,7 +195,7 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
               message={{ ...message, seen: true }}
               key={idx}
             />
-          );
+          )
         })}
 
 
@@ -365,13 +367,16 @@ const MessageBoard = ({ conversation }: MessagesPageProps) => {
         </button>
 
         <Button 
-          onClick={postSessionModal.onOpen}
+          onClick={ () => setPostSessionModal(true) }
           className="max-w-[150px] h-[38px] hover:bg-orange-700 text-white flex align-middle justify-center items-center">
           Send Session
         </Button>
 
 
       </form>
+
+
+      <PostSessionModal postModalOpen={postSessionModal} setPostModalOpen={setPostSessionModal} isPrivate={true} userProfile={userProfile}  />
 
 
     </div>

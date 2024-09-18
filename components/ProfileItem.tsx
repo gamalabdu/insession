@@ -64,7 +64,7 @@ const ProfileItem = (props : ProfileItemProps) => {
             </p>
 
             <p className='text-neutral-400 text-sm w-full truncate'>
-                {profile.username}
+                {profile.location}
             </p>
 
            { profile.genres != null && 

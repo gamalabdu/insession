@@ -2,6 +2,8 @@ import { twMerge } from "tailwind-merge";
 import Button from "@/components/Button";
 import { GiSoundWaves } from "react-icons/gi";
 import Link from "next/link";
+import InSessionLogo from '../../public/images/GAMAL LOGO 1.png'
+import Image from "next/image";
 
 export const revalidate = 0;
 
@@ -15,7 +17,9 @@ const Home = () => {
           <div className="w-full mb-4 flex items-center justify-between">
 
               <div className="hidden md:flex gap-x-2 items-center">
-              <GiSoundWaves size={40}/> <h1 className="text-2xl font-bold"> InSession </h1>
+              <GiSoundWaves size={60}/> <h1 className="text-2xl font-bold"> InSession </h1>
+                  {/* <Image height={100} src={InSessionLogo} alt="logo" />
+                 <h1 className="text-2xl font-bold"> InSession </h1>  */}
               </div>
 
             <div className="flex justify-between items-center gap-x-4">

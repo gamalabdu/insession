@@ -33,7 +33,10 @@ export interface Song {
   bpm: string;
   owner: Profile;
   genres: Genre[];
+  type: string
 }
+
+
 
 export interface Job {
   user_id: string;

@@ -7,10 +7,12 @@ import Button from "@/components/Button";
 import Header from "@/components/ui/Header";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import BidModal from "@/components/BidModal";
 import SessionInfoContent from "./SessionInfoContent";
 import { useUser } from "@/hooks/useUser";
 import Proposals from "./Proposals";
+import deleteSessionBySessionId from "@/actions/deleteSessionBySessionId";
+import DeleteSessionModal from "./DeleteSessionModal";
+import BidModal from "@/components/modals/BidModal";
 
 interface SessionPageContentProps {
   job: Job;
@@ -24,9 +26,12 @@ const SessionPageContent = (props: SessionPageContentProps) => {
 
   const router = useRouter();
 
+
   const [ tab, setTab ] = useState<"info" | "proposals">("info")
 
   const [ bidModalOpen, setBidModalOpen ] = useState(false)
+
+  const [deleteModalOpen, setDeleteModalOpen ] = useState(false)
 
   const { user, isLoading } = useUser()
 
@@ -99,9 +104,24 @@ const SessionPageContent = (props: SessionPageContentProps) => {
                   Bid for Session
                 </Button>
               )}
+
+              { isCurrentUser && job.job_type === "private" && (
+                <Button onClick={ () => setDeleteModalOpen(true) }>
+                  Delete Session
+                </Button>
+              )}
+
+
+
             </div>
+            
           </div>
+
+          
+
         </div>
+
+        
       </Header>
 
     {
@@ -160,6 +180,8 @@ const SessionPageContent = (props: SessionPageContentProps) => {
         job={job}
         user_id={userProfileInfo.id}
       />
+
+     <DeleteSessionModal jobId={job?.job_id} userId={user?.id || ""} deleteModalOpen={deleteModalOpen} onClose={setDeleteModalOpen} />
 
 
     </div>

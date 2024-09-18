@@ -11,8 +11,12 @@ const MessagesSessionsContent = () => {
 
   const supabase = createClient()
 
-  const [sessions, setSessions ] = useState<Job[]>()
+  const [sentSessions, setSentSessions ] = useState<Job[]>()
+  const [receievedSessions, setRecievedSessions ] = useState<Job[]>()
+
   const [ loading, setLoading ] = useState(false)
+
+  const [ tab, setTab ] = useState<"recieved" | "sent">("recieved")
 
   const { user } = useUser()
 
@@ -20,7 +24,7 @@ const MessagesSessionsContent = () => {
 
     setLoading(true)
 
-    const fetchPrivateSessions = async () => {
+    const fetchRecievedPrivateSessions = async () => {
       
           const { data: privateSessions, error: privateSessionsError } = await supabase
           .from("jobs")
@@ -33,17 +37,35 @@ const MessagesSessionsContent = () => {
             toast.error(privateSessionsError.message)
           }
           setLoading(false)
-          setSessions(privateSessions as Job[])
+          setRecievedSessions(privateSessions as Job[])
     }
 
 
+    const fetchSentPrivateSessions = async () => {
+      
+      const { data: privateSessions, error: privateSessionsError } = await supabase
+      .from("jobs")
+      .select("* , genres(name)")
+      .neq("receiver_id", user?.id)
+      .eq("job_type", "private")
+      .returns<Job[]>()
 
-    fetchPrivateSessions()
+      if (privateSessionsError) {
+        toast.error(privateSessionsError.message)
+      }
+      setLoading(false)
+      setSentSessions(privateSessions as Job[])
+}
+
+
+
+    fetchRecievedPrivateSessions()
+    fetchSentPrivateSessions()
     
   }, [])
 
 
-  if ( sessions?.length === 0 ) {
+  if ( sentSessions?.length === 0 && receievedSessions?.length === 0 ) {
     return <span className='p-4'> You've got no sessions. </span>
   }
 
@@ -65,9 +87,27 @@ const MessagesSessionsContent = () => {
   return (
 
     <div>
+
+          <div className="flex items-center justify-center gap-24 text-neutral-400">
+
+              <div className={ tab === 'recieved' ? ' text-neutral-100 cursor-pointer' : 'cursor-pointer' } onClick={() => setTab("recieved")} > Recieved </div>
+
+              <div className={ tab === 'sent' ? ' text-neutral-100 cursor-pointer' : 'cursor-pointer' } onClick={() => setTab("sent")} > Sent </div>
+
+          </div>
         
         {
-          sessions?.map((session, idx) => {
+          tab === "recieved" ? 
+
+          receievedSessions?.length === 0 ? 
+              
+              
+              <span className='p-4'> You've got recieved sessions. </span>
+
+
+          :
+
+          receievedSessions?.map((session, idx) => {
             return (
               <div key={idx} className="flex items-center gap-x-4 w-full">
                 <div className="flex-1 overflow-y-auto">
@@ -76,6 +116,28 @@ const MessagesSessionsContent = () => {
             </div>
             )
           })
+
+          :
+
+          sentSessions?.length === 0 ? 
+              
+              
+              <span className='p-4'> You've got sent sessions. </span>
+
+
+          :
+
+          sentSessions?.map((session, idx) => {
+            return (
+              <div key={idx} className="flex items-center gap-x-4 w-full">
+                <div className="flex-1 overflow-y-auto">
+                  <JobItem job={session} isPrivate={true} />
+                </div>
+            </div>
+            )
+          })
+
+
         }
 
     </div>

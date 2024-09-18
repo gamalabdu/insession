@@ -5,7 +5,8 @@ import ConversationItem from "./ConversationItem";
 import { ConversationsContext } from "@/providers/conversations";
 import { Skeleton, Spinner } from "@nextui-org/react";
 import { FiMessageSquare } from "react-icons/fi";
-import SideMessageModal from "@/components/SideMessageModal";
+import SideMessageModal from "@/components/modals/SideMessageModal";
+
 
 const SideBarMessenges = () => {
 

@@ -2,10 +2,12 @@
 import { createClient } from "@/utils/supabase/server";
 import { Song } from "@/types";
 import getSongs from "./getSongs";
+import getUserProfileInfo from "./getUserProfileInfo";
 
 const searchSongs = async (searchQuery: string): Promise<Song[]> => {
 
   const supabase = createClient()
+
 
   if ( !searchQuery ) {  // Trim to handle cases where searchQuery is just whitespace
     const allSongs = await getSongs()
